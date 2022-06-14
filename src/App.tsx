@@ -1,4 +1,4 @@
-import Container from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
 import NavigationBar from "./NavigationBar";
 import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
