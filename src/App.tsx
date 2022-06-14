@@ -1,18 +1,20 @@
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import Container from "react-bootstrap/Card";
+import NavigationBar from "./NavigationBar";
+import Card from "react-bootstrap/Card";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 function App() {
   return (
-      <Container className="p-3">
-        <Card>
-          <Card.Body>
-            <Card.Title>
-              Test
-            </Card.Title>
-          </Card.Body>
-        </Card>
+      <Container>
+          <NavigationBar></NavigationBar>
+          <Card>
+              <Card.Body>
+                  <Card.Title>
+                      Test
+                  </Card.Title>
+              </Card.Body>
+          </Card>
       </Container>
   );
 }
