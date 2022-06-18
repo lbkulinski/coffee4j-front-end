@@ -11,20 +11,24 @@ type Props = {
 }
 
 function RecordRow(props: Props) {
+    const tdWidth = {
+        width: "80%"
+    };
+
     return (
         <tr>
-            <td>
+            <td style={tdWidth}>
                 {props.name}
             </td>
             <td>
                 <Container>
-                    <Row className="row-cols-auto">
-                        <Col>
+                    <Row>
+                        <Col xs="1">
                             <a id="anchor_edit">
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>
-                        <Col>
+                        <Col xs="1">
                             <a id="anchor_delete">
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </a>
