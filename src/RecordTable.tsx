@@ -17,19 +17,14 @@ type Record = {
 
 type ReadResponse = {
     status: string,
-    content: {
-        pageCount: number,
-        records: Record[]
-    }
+    content: Record[]
 }
 
 function loadRecords(props: Props, page: number, setPageCount: React.Dispatch<React.SetStateAction<number>>,
                      setRecords: React.Dispatch<React.SetStateAction<Record[]>>): void {
     page++;
 
-    let limit = 25;
-
-    let requestUrl = `${props.requestUrl}?page=${page}&limit=${limit}`;
+    let requestUrl = `${props.requestUrl}?page=${page}`;
 
     fetch(requestUrl, {
         "method": "GET",
@@ -38,18 +33,28 @@ function loadRecords(props: Props, page: number, setPageCount: React.Dispatch<Re
         "headers": {
             "Content-Type": "application/x-www-form-urlencoded"
         }
-    }).then((response: Response) => response.json())
-      .then((readResponse: ReadResponse) => {
-          if (readResponse.status !== "SUCCESS") {
-              return;
-          } //end if
+    }).then((response: Response) => {
+        let pageCountString = response.headers.get("Page-Count");
 
-          let content = readResponse.content;
+        if (pageCountString === null) {
+            return;
+        } //end if
 
-          setPageCount(content.pageCount);
+        let pageCount = parseInt(pageCountString);
 
-          setRecords(content.records);
-      });
+        response.json()
+                .then((readResponse: ReadResponse) => {
+                    if (readResponse.status !== "SUCCESS") {
+                        return;
+                    } //end if
+
+                    setPageCount(pageCount);
+
+                    let content = readResponse.content;
+
+                    setRecords(content);
+                });
+    });
 } //loadRecords
 
 function RecordTable(props: Props) {
