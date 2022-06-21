@@ -20,14 +20,27 @@ fetch("/perform_login", {
     "body": "username=lbk&password=password"
 }).then((response: Response) => response.text());
 
+let CoffeeRoute = () => {
+    return (
+        <App element={
+            <ManageRecordCard name="Coffee" requestUrl="/api/coffee" />
+        } />
+    );
+};
+
+let WaterRoute = () => {
+    return (
+        <App element={
+            <ManageRecordCard name="Water" requestUrl="/api/water" />
+        } />
+    );
+};
+
 root.render(
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={
-                <App element={
-                    <ManageRecordCard name="Coffee" requestUrl="/api/coffee" />
-                } />
-            } />
+            <Route path="/coffee" element={<CoffeeRoute />} />
+            <Route path="/water" element={<WaterRoute />} />
         </Routes>
     </BrowserRouter>
 );
