@@ -4,15 +4,30 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
+import ManageRecordCard from "./ManageRecordCard";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+fetch("/perform_login", {
+    "method": "POST",
+    "mode": "no-cors",
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "body": "username=lbk&password=password"
+}).then((response: Response) => response.text());
+
 root.render(
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<App name="Coffee" />} />
+            <Route path="/" element={
+                <App element={
+                    <ManageRecordCard name="Coffee" requestUrl="/api/coffee" />
+                } />
+            } />
         </Routes>
     </BrowserRouter>
 );
