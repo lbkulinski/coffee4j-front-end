@@ -11,19 +11,30 @@ type Props = {
 }
 
 function App(props: Props) {
-  return (
-      <Container>
-          <NavigationBar></NavigationBar>
-          <Card>
-              <Card.Body>
-                  <Card.Title>
-                      {props.name}
-                  </Card.Title>
-                  <RecordTable requestUrl="https://api.thecatapi.com/v1/breeds" />
-              </Card.Body>
-          </Card>
-      </Container>
-  );
+    fetch("/perform_login", {
+        "method": "POST",
+        "mode": "no-cors",
+        "credentials": "include",
+        "headers": {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "username=lbk&password=password"
+    }).then((response: Response) => response.text())
+      .then((text: string) => console.log(text));
+
+    return (
+        <Container>
+            <NavigationBar></NavigationBar>
+            <Card>
+                <Card.Body>
+                    <Card.Title>
+                        {props.name}
+                    </Card.Title>
+                    <RecordTable requestUrl="/api/coffee" />
+                </Card.Body>
+            </Card>
+        </Container>
+    );
 }
 
 export default App;
