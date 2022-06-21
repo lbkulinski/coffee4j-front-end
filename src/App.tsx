@@ -19,8 +19,7 @@ function App(props: Props) {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": "username=lbk&password=password"
-    }).then((response: Response) => response.text())
-      .then((text: string) => console.log(text));
+    }).then((response: Response) => response.text());
 
     return (
         <Container>

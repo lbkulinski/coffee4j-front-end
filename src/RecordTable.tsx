@@ -18,7 +18,7 @@ type Record = {
 type ReadResponse = {
     status: string,
     content: {
-        count: number,
+        pageCount: number,
         records: Record[]
     }
 }
@@ -39,22 +39,16 @@ function loadRecords(props: Props, page: number, setPageCount: React.Dispatch<Re
             "Content-Type": "application/x-www-form-urlencoded"
         }
     }).then((response: Response) => response.json())
-      .then((response: ReadResponse) => {
-          if (response.status !== "SUCCESS") {
+      .then((readResponse: ReadResponse) => {
+          if (readResponse.status !== "SUCCESS") {
               return;
           } //end if
 
-          let content = response.content;
+          let content = readResponse.content;
 
-          let count = content.count;
+          setPageCount(content.pageCount);
 
-          let pageCount = Math.ceil(count / limit);
-
-          setPageCount(pageCount);
-
-          let records = content.records;
-
-          setRecords(records);
+          setRecords(content.records);
       });
 } //loadRecords
 
