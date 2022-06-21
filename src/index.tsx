@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import {Card} from "react-bootstrap";
+import Card from "react-bootstrap/Card";
 import reportWebVitals from "./reportWebVitals";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import ManageRecordCard from "./ManageRecordCard";
@@ -11,6 +11,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+/*
 fetch("/perform_login", {
     "method": "POST",
     "mode": "no-cors",
@@ -20,6 +21,7 @@ fetch("/perform_login", {
     },
     "body": "username=lbk&password=password"
 }).then((response: Response) => response.text());
+ */
 
 let HomeRoute = () => {
     return (
