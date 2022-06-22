@@ -5,9 +5,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import AddRecordModal from "./AddRecordModal";
+import RecordType from "./RecordType";
 
 type Props = {
-    name: string,
+    recordType: RecordType
     requestUrl: string
 };
 
@@ -20,7 +21,7 @@ function ManageRecordCard(props: Props) {
                 <Card.Body>
                     <Card.Title>
                         {
-                            props.name
+                            props.recordType
                         }
                     </Card.Title>
                     <Button className="float-end" variant="outline-primary" onClick={() => setAddShow(true)}>
@@ -29,7 +30,8 @@ function ManageRecordCard(props: Props) {
                     <RecordTable requestUrl={props.requestUrl} />
                 </Card.Body>
             </Card>
-            <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl} />
+            <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl}
+                            recordType={props.recordType} />
         </>
     );
 }

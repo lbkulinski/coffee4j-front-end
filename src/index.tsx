@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import Card from "react-bootstrap/Card";
 import reportWebVitals from "./reportWebVitals";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import ManageRecordCard from "./ManageRecordCard";
+import RecordType from "./RecordType";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-/*
 fetch("/perform_login", {
     "method": "POST",
     "mode": "no-cors",
@@ -21,7 +21,6 @@ fetch("/perform_login", {
     },
     "body": "username=lbk&password=password"
 }).then((response: Response) => response.text());
- */
 
 let HomeRoute = () => {
     return (
@@ -38,7 +37,7 @@ let HomeRoute = () => {
 let CoffeeRoute = () => {
     return (
         <App element={
-            <ManageRecordCard name="Coffee" requestUrl="/api/coffee" />
+            <ManageRecordCard recordType={RecordType.COFFEE} requestUrl="/api/coffee" />
         } />
     );
 };
@@ -46,7 +45,7 @@ let CoffeeRoute = () => {
 let WaterRoute = () => {
     return (
         <App element={
-            <ManageRecordCard name="Water" requestUrl="/api/water" />
+            <ManageRecordCard recordType={RecordType.WATER} requestUrl="/api/water" />
         } />
     );
 };
@@ -54,7 +53,7 @@ let WaterRoute = () => {
 let BrewerRoute = () => {
     return (
         <App element={
-            <ManageRecordCard name="Brewer" requestUrl="/api/brewer" />
+            <ManageRecordCard recordType={RecordType.BREWER} requestUrl="/api/brewer" />
         } />
     );
 };
@@ -62,7 +61,7 @@ let BrewerRoute = () => {
 let FilterRoute = () => {
     return (
         <App element={
-            <ManageRecordCard name="Filter" requestUrl="/api/filter" />
+            <ManageRecordCard recordType={RecordType.FILTER} requestUrl="/api/filter" />
         } />
     );
 };
@@ -70,7 +69,7 @@ let FilterRoute = () => {
 let VesselRoute = () => {
     return (
         <App element={
-            <ManageRecordCard name="Vessel" requestUrl="/api/vessel" />
+            <ManageRecordCard recordType={RecordType.VESSEL} requestUrl="/api/vessel" />
         } />
     );
 };
