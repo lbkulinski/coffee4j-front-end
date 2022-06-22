@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Button from "react-bootstrap/Button";
-import {Form, Modal} from "react-bootstrap";
+import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import {AxiosResponse} from "axios";
-import MessageModal from "./MessageModal";
 import RecordType from "./RecordType";
 
 type CreateResponse = {
@@ -19,7 +18,7 @@ type Props = {
     recordType: RecordType
 };
 
-function saveRecord(requestUrl: string, name: string): void {
+function saveRecord(requestUrl: string, name: string, setShowSuccess: Function, setShowError: Function): void {
     const axios = require("axios").default;
 
     let data = new URLSearchParams({
@@ -29,9 +28,13 @@ function saveRecord(requestUrl: string, name: string): void {
     axios.post(requestUrl, data)
          .then(function (response: AxiosResponse<CreateResponse>) {
              console.log(response.data);
+
+             setShowSuccess(true);
          })
          .catch(function (error: Error) {
              console.log(error);
+
+             setShowError(true);
          });
 } //saveRecord
 
@@ -47,6 +50,20 @@ function AddRecordModal(props: Props) {
 
         setName("");
     };
+
+    let saveOnClick = () => {
+        hideModal();
+
+        saveRecord(props.requestUrl, name, setShowSuccess, setShowError);
+    };
+
+    let recordTypeString = props.recordType.toString();
+
+    recordTypeString = recordTypeString.toLowerCase();
+
+    let successMessage: string = `The ${recordTypeString} was successfully added.`;
+
+    let errorMessage: string = `The ${recordTypeString} could not be added. Please try again later.`;
 
     return (
         <>
@@ -70,13 +87,38 @@ function AddRecordModal(props: Props) {
                     <Button variant="outline-secondary" onClick={hideModal}>
                         Cancel
                     </Button>
-                    <Button variant="outline-primary" onClick={() => saveRecord(props.requestUrl, name)}>
+                    <Button variant="outline-primary"
+                            onClick={saveOnClick}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <MessageModal show={showSuccess} setShow={setShowSuccess} header="Add" body="" />
-            <MessageModal show={showError} setShow={setShowError} header="Add" body="" />
+            <ToastContainer className="p-3" position="top-end">
+                <Toast autohide={true} show={showSuccess} onClose={() => setShowSuccess(false)}>
+                    <Toast.Header>
+                        <strong className="me-auto">
+                            Coffee4j
+                        </strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {
+                            successMessage
+                        }
+                    </Toast.Body>
+                </Toast>
+                <Toast autohide={true} show={showError} onClose={() => setShowError(false)}>
+                    <Toast.Header>
+                        <strong className="me-auto">
+                            Coffee4j
+                        </strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {
+                            errorMessage
+                        }
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
         </>
     );
 }
