@@ -7,7 +7,10 @@ import {faPenToSquare, faTrashCan} from "@fortawesome/free-regular-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
 
 type Props = {
-    name: string
+    id: number,
+    name: string,
+    setEditShow: Function,
+    setRecord: Function
 }
 
 function RecordRow(props: Props) {
@@ -24,7 +27,16 @@ function RecordRow(props: Props) {
                 <Container>
                     <Row>
                         <Col xs="1">
-                            <a id="anchor_edit">
+                            <a id="anchor_edit" onClick={() => {
+                                let record = {
+                                    "id": props.id,
+                                    "name": props.name
+                                };
+
+                                props.setRecord(record);
+
+                                props.setEditShow(true);
+                            }}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>
