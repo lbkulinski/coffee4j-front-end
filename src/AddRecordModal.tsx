@@ -1,15 +1,9 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {useState} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
-import {AxiosResponse} from "axios";
 import RecordType from "./RecordType";
-
-type CreateResponse = {
-    status: string,
-    content: string
-};
 
 type Props = {
     show: boolean,
@@ -19,23 +13,15 @@ type Props = {
 };
 
 function saveRecord(requestUrl: string, name: string, setShowSuccess: Function, setShowError: Function): void {
+    let formData = new FormData();
+
+    formData.append("name", name);
+
     const axios = require("axios").default;
 
-    let data = new URLSearchParams({
-        "name": name
-    });
-
-    axios.post(requestUrl, data)
-         .then(function (response: AxiosResponse<CreateResponse>) {
-             console.log(response.data);
-
-             setShowSuccess(true);
-         })
-         .catch(function (error: Error) {
-             console.log(error);
-
-             setShowError(true);
-         });
+    axios.post(requestUrl, formData)
+         .then(() => setShowSuccess(true))
+         .catch(() => setShowError(true));
 } //saveRecord
 
 function AddRecordModal(props: Props) {

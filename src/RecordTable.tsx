@@ -5,6 +5,7 @@ import RecordRow from "./RecordRow";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import ReactPaginate from "react-paginate";
+import {AxiosResponse} from "axios";
 
 type Props = {
     requestUrl: string
@@ -20,41 +21,39 @@ type ReadResponse = {
     content: Record[]
 }
 
-function loadRecords(props: Props, page: number, setPageCount: React.Dispatch<React.SetStateAction<number>>,
-                     setRecords: React.Dispatch<React.SetStateAction<Record[]>>): void {
+function loadRecords(props: Props, page: number, setPageCount: Function, setRecords: Function): void {
     page++;
 
     let requestUrl = `${props.requestUrl}?page=${page}`;
 
-    fetch(requestUrl, {
-        "method": "GET",
-        "mode": "no-cors",
-        "credentials": "include",
-        "headers": {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-    }).then((response: Response) => {
-        let pageCountString = response.headers.get("Page-Count");
+    let config = {
+        "withCredentials": true
+    };
 
-        if (pageCountString === null) {
-            return;
-        } //end if
+    const axios = require("axios").default;
 
-        let pageCount = parseInt(pageCountString);
+    axios.get(requestUrl, config)
+         .then((response: AxiosResponse<ReadResponse>) => {
+             if (response.data.status !== "SUCCESS") {
+                 return;
+             } //end if
 
-        response.json()
-                .then((readResponse: ReadResponse) => {
-                    if (readResponse.status !== "SUCCESS") {
-                        return;
-                    } //end if
+             console.log(response.headers);
 
-                    setPageCount(pageCount);
+             let pageCountString = response.headers["page-count"];
 
-                    let content = readResponse.content;
+             if (!pageCountString) {
+                 return;
+             } //end if
 
-                    setRecords(content);
-                });
-    });
+             let pageCount = parseInt(pageCountString);
+
+             setPageCount(pageCount);
+
+             let content = response.data.content;
+
+             setRecords(content);
+         });
 } //loadRecords
 
 function RecordTable(props: Props) {
