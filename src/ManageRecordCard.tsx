@@ -18,8 +18,6 @@ function ManageRecordCard(props: Props) {
 
     const [editShow, setEditShow] = useState(false);
 
-    const [deleteShow, setDeleteShow] = useState(false);
-
     const [record, setRecord] = useState({
         "id": 0,
         "name": ""

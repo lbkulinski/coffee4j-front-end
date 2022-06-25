@@ -82,7 +82,7 @@ function RecordTable(props: Props) {
                 <tbody id="tbody_records">
                     {
                         records.map((record: Record) => (
-                            <RecordRow key={record.id} record={record} setRecord={props.setRecord}
+                            <RecordRow key={record.id} id={record.id} name={record.name} setRecord={props.setRecord}
                                        setEditShow={props.setEditShow} />
                         ))
                     }

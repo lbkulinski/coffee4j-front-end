@@ -5,12 +5,6 @@ import Button from "react-bootstrap/Button";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Record from "./Record";
 import RecordType from "./RecordType";
-import {AxiosResponse, default as axios} from "axios";
-
-type UpdateResponse = {
-    status: string,
-    content: string
-};
 
 type Props = {
     show: boolean,
@@ -20,31 +14,6 @@ type Props = {
     record: Record
     setRecord: Function
 };
-
-function saveRecord(requestUrl: string, record: Record, setShowSuccess: Function,
-                    setShowError: Function): void {
-    const axios = require("axios").default;
-
-    let formData = new FormData();
-
-    let idString = String(record.id);
-
-    formData.append("id", idString);
-
-    formData.append("name", record.name);
-
-    axios.put(requestUrl, formData)
-         .then(function (response: AxiosResponse) {
-             console.log(response.data);
-
-             setShowSuccess(true);
-         })
-         .catch(function (error: Error) {
-             console.log(error);
-
-             setShowError(true);
-         });
-} //saveRecord
 
 function EditRecordModal(props: Props) {
     let [showSuccess, setShowSuccess] = useState(false);
@@ -57,8 +26,6 @@ function EditRecordModal(props: Props) {
 
     let saveOnClick = () => {
         hideModal();
-
-        saveRecord(props.requestUrl, props.record, setShowSuccess, setShowError);
     };
 
     let recordTypeString = props.recordType.toString();

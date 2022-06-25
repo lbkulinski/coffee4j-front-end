@@ -5,10 +5,10 @@ import Col from "react-bootstrap/Col"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare, faTrashCan} from "@fortawesome/free-regular-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
-import Record from "./Record";
 
 type Props = {
-    record: Record,
+    id: number,
+    name: string,
     setEditShow: Function,
     setRecord: Function
 }
@@ -21,16 +21,19 @@ function RecordRow(props: Props) {
     return (
         <tr>
             <td style={tdWidth}>
-                {
-                    props.record.name
-                }
+                {props.name}
             </td>
             <td>
                 <Container>
                     <Row>
                         <Col xs="1">
                             <a id="anchor_edit" onClick={() => {
-                                props.setRecord(props.record);
+                                let record = {
+                                    "id": props.id,
+                                    "name": props.name
+                                };
+
+                                props.setRecord(record);
 
                                 props.setEditShow(true);
                             }}>
