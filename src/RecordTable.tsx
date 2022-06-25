@@ -1,70 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
 import RecordRow from "./RecordRow";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import ReactPaginate from "react-paginate";
-import {AxiosResponse} from "axios";
+import Record from "./Record";
+import loadRecords from "./loadRecords";
 
 type Props = {
-    requestUrl: string
+    requestUrl: string,
+    pageCount: number,
+    setPageCount: Function,
+    setPage: Function,
+    records: Record[],
+    setRecords: Function
 }
-
-type Record = {
-    id: number,
-    name: string
-}
-
-type ReadResponse = {
-    status: string,
-    content: Record[]
-}
-
-function loadRecords(props: Props, page: number, setPageCount: Function, setRecords: Function): void {
-    page++;
-
-    let requestUrl = `${props.requestUrl}?page=${page}`;
-
-    let config = {
-        "withCredentials": true
-    };
-
-    const axios = require("axios").default;
-
-    axios.get(requestUrl, config)
-         .then((response: AxiosResponse<ReadResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 return;
-             } //end if
-
-             console.log(response.headers);
-
-             let pageCountString = response.headers["page-count"];
-
-             if (!pageCountString) {
-                 return;
-             } //end if
-
-             let pageCount = parseInt(pageCountString);
-
-             setPageCount(pageCount);
-
-             let content = response.data.content;
-
-             setRecords(content);
-         });
-} //loadRecords
 
 function RecordTable(props: Props) {
-    const [pageCount, setPageCount] = useState<number>(0);
-
-    const [records, setRecords] = useState<Record[]>([]);
-
     useEffect(() => {
         let page = 0;
 
-        loadRecords(props, page, setPageCount, setRecords);
+        loadRecords(props.requestUrl, page, props.setPageCount, props.setRecords);
     }, []);
 
     return (
@@ -82,7 +39,7 @@ function RecordTable(props: Props) {
                 </thead>
                 <tbody id="tbody_records">
                     {
-                        records.map((record: Record) => (
+                        props.records.map((record: Record) => (
                             <RecordRow key={record.id} name={record.name} />
                         ))
                     }
@@ -91,11 +48,15 @@ function RecordTable(props: Props) {
             <ReactPaginate
                 nextLabel={<FontAwesomeIcon icon={faAngleRight} />}
                 onPageChange={
-                    (page: {selected: number}) => loadRecords(props, page.selected, setPageCount, setRecords)
+                    (page: {selected: number}) => {
+                        props.setPage(page.selected);
+
+                        loadRecords(props.requestUrl, page.selected, props.setPageCount, props.setRecords);
+                    }
                 }
                 pageRangeDisplayed={3}
                 marginPagesDisplayed={2}
-                pageCount={pageCount}
+                pageCount={props.pageCount}
                 previousLabel={<FontAwesomeIcon icon={faAngleLeft} />}
                 pageClassName="page-item"
                 pageLinkClassName="page-link"

@@ -4,23 +4,31 @@ import "./App.css";
 import Button from "react-bootstrap/Button";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import RecordType from "./RecordType";
+import loadRecords from "./loadRecords";
 
 type Props = {
     show: boolean,
     setShow: Function,
     requestUrl: string,
-    recordType: RecordType
+    recordType: RecordType,
+    setPageCount: Function,
+    page: number,
+    setRecords: Function
 };
 
-function saveRecord(requestUrl: string, name: string, setShowSuccess: Function, setShowError: Function): void {
+function saveRecord(props: Props, name: string, setShowSuccess: Function, setShowError: Function): void {
     let formData = new FormData();
 
     formData.append("name", name);
 
     const axios = require("axios").default;
 
-    axios.post(requestUrl, formData)
-         .then(() => setShowSuccess(true))
+    axios.post(props.requestUrl, formData)
+         .then(() => {
+             setShowSuccess(true);
+
+             loadRecords(props.requestUrl, props.page, props.setPageCount, props.setRecords);
+         })
          .catch(() => setShowError(true));
 } //saveRecord
 
@@ -40,7 +48,7 @@ function AddRecordModal(props: Props) {
     let saveOnClick = () => {
         hideModal();
 
-        saveRecord(props.requestUrl, name, setShowSuccess, setShowError);
+        saveRecord(props, name, setShowSuccess, setShowError);
     };
 
     let recordTypeString = props.recordType.toString();
@@ -65,7 +73,9 @@ function AddRecordModal(props: Props) {
                             <Form.Label>
                                 Name
                             </Form.Label>
-                            <Form.Control type="text" value={name} onChange={(event) => setName(event.target.value)}/>
+                            <Form.Control type="text" value={name} onChange={
+                                (event) => setName(event.target.value)
+                            }/>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -80,7 +90,9 @@ function AddRecordModal(props: Props) {
                 </Modal.Footer>
             </Modal>
             <ToastContainer className="p-3" position="top-end">
-                <Toast autohide={true} show={showSuccess} onClose={() => setShowSuccess(false)}>
+                <Toast autohide={true} show={showSuccess} onClose={
+                    () => setShowSuccess(false)
+                }>
                     <Toast.Header>
                         <strong className="me-auto">
                             Coffee4j
@@ -92,7 +104,9 @@ function AddRecordModal(props: Props) {
                         }
                     </Toast.Body>
                 </Toast>
-                <Toast autohide={true} show={showError} onClose={() => setShowError(false)}>
+                <Toast autohide={true} show={showError} onClose={
+                    () => setShowError(false)
+                }>
                     <Toast.Header>
                         <strong className="me-auto">
                             Coffee4j
