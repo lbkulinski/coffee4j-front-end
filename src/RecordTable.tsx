@@ -5,12 +5,14 @@ import RecordRow from "./RecordRow";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import ReactPaginate from "react-paginate";
-import Record from "./Record";
 
 type Props = {
-    requestUrl: string,
-    setEditShow: Function,
-    setRecord: Function
+    requestUrl: string
+}
+
+type Record = {
+    id: number,
+    name: string
 }
 
 type ReadResponse = {
@@ -82,8 +84,7 @@ function RecordTable(props: Props) {
                 <tbody id="tbody_records">
                     {
                         records.map((record: Record) => (
-                            <RecordRow key={record.id} id={record.id} name={record.name} setRecord={props.setRecord}
-                                       setEditShow={props.setEditShow} />
+                            <RecordRow key={record.id} name={record.name} />
                         ))
                     }
                 </tbody>
