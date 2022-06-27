@@ -19,7 +19,7 @@ type Props = {
 
 function RecordTable(props: Props) {
     useEffect(() => {
-        let page = 0;
+        let page = 1;
 
         loadRecords(props.requestUrl, page, props.setPageCount, props.setRecords);
     }, []);
@@ -49,9 +49,11 @@ function RecordTable(props: Props) {
                 nextLabel={<FontAwesomeIcon icon={faAngleRight} />}
                 onPageChange={
                     (page: {selected: number}) => {
-                        props.setPage(page.selected);
+                        let pageNumber = page.selected + 1;
 
-                        loadRecords(props.requestUrl, page.selected, props.setPageCount, props.setRecords);
+                        props.setPage(pageNumber);
+
+                        loadRecords(props.requestUrl, pageNumber, props.setPageCount, props.setRecords);
                     }
                 }
                 pageRangeDisplayed={3}

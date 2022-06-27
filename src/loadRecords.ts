@@ -7,8 +7,6 @@ type ReadResponse = {
 }
 
 function loadRecords(requestUrl: string, page: number, setPageCount: Function, setRecords: Function): void {
-    page++;
-
     requestUrl = `${requestUrl}?page=${page}`;
 
     let config = {
