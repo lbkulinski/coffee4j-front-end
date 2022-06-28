@@ -7,6 +7,13 @@ import Button from "react-bootstrap/Button";
 import AddRecordModal from "./AddRecordModal";
 import RecordType from "./RecordType";
 import Record from "./Record";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import InputGroup from "react-bootstrap/InputGroup";
+import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 type Props = {
     recordType: RecordType
@@ -14,13 +21,13 @@ type Props = {
 };
 
 function ManageRecordCard(props: Props) {
-    const [pageCount, setPageCount] = useState<number>(0);
+    const [offsetIds, setOffsetIds] = useState<number[]>([0]);
 
-    const [page, setPage] = useState<number>(1);
+    const [nextDisabled, setNextDisabled] = useState(false);
 
     const [records, setRecords] = useState<Record[]>([]);
 
-    let [addShow, setAddShow] = useState(false);
+    const [addShow, setAddShow] = useState(false);
 
     return (
         <>
@@ -34,15 +41,16 @@ function ManageRecordCard(props: Props) {
                     <Button className="float-end" variant="outline-primary" onClick={
                         () => setAddShow(true)
                     }>
-                        Add
+                        <FontAwesomeIcon icon={faPlus} />
                     </Button>
-                    <RecordTable requestUrl={props.requestUrl} pageCount={pageCount} setPageCount={setPageCount}
-                                 setPage={setPage} records={records} setRecords={setRecords} />
+                    <RecordTable requestUrl={props.requestUrl} offsetIds={offsetIds} setOffsetIds={setOffsetIds}
+                                 nextDisabled={nextDisabled} setNextDisabled={setNextDisabled} records={records}
+                                 setRecords={setRecords} />
                 </Card.Body>
             </Card>
             <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl}
-                            recordType={props.recordType} setPageCount={setPageCount} page={page}
-                            setRecords={setRecords} />
+                            recordType={props.recordType} offsetIds={offsetIds} setOffsetIds={setOffsetIds}
+                            setNextDisabled={setNextDisabled} setRecords={setRecords} />
         </>
     );
 }

@@ -11,13 +11,14 @@ type Props = {
     setShow: Function,
     requestUrl: string,
     recordType: RecordType,
-    setPageCount: Function,
-    page: number,
+    offsetIds: number[],
+    setOffsetIds: Function,
+    setNextDisabled: Function,
     setRecords: Function
 };
 
 function saveRecord(props: Props, name: string, setShowSuccess: Function, setShowError: Function): void {
-    let formData = new FormData();
+    const formData = new FormData();
 
     formData.append("name", name);
 
@@ -27,37 +28,44 @@ function saveRecord(props: Props, name: string, setShowSuccess: Function, setSho
          .then(() => {
              setShowSuccess(true);
 
-             loadRecords(props.requestUrl, props.page, props.setPageCount, props.setRecords);
+             let offsetIds = [...props.offsetIds];
+
+             if (props.offsetIds.length > 1) {
+                 offsetIds.pop();
+
+                 props.setOffsetIds(offsetIds);
+             } //end if
+
+             loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
          })
          .catch(() => setShowError(true));
 } //saveRecord
 
 function AddRecordModal(props: Props) {
-    let [name, setName] = useState("");
+    const [name, setName] = useState("");
 
-    let [showSuccess, setShowSuccess] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
-    let [showError, setShowError] = useState(false);
+    const [showError, setShowError] = useState(false);
 
-    let hideModal = () => {
+    const hideModal = () => {
         props.setShow(false);
 
         setName("");
     };
 
-    let saveOnClick = () => {
+    const saveOnClick = () => {
         hideModal();
 
         saveRecord(props, name, setShowSuccess, setShowError);
     };
 
-    let recordTypeString = props.recordType.toString();
+    const recordTypeString = props.recordType.toString()
+                                             .toLowerCase();
 
-    recordTypeString = recordTypeString.toLowerCase();
+    const successMessage: string = `The ${recordTypeString} was successfully added.`;
 
-    let successMessage: string = `The ${recordTypeString} was successfully added.`;
-
-    let errorMessage: string = `The ${recordTypeString} could not be added. Please try again later.`;
+    const errorMessage: string = `The ${recordTypeString} could not be added. Please try again later.`;
 
     return (
         <>

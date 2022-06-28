@@ -1,28 +1,59 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
 import RecordRow from "./RecordRow";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
-import ReactPaginate from "react-paginate";
 import Record from "./Record";
 import loadRecords from "./loadRecords";
+import {Pagination} from "react-bootstrap";
 
 type Props = {
     requestUrl: string,
-    pageCount: number,
-    setPageCount: Function,
-    setPage: Function,
+    offsetIds: number[],
+    setOffsetIds: Function,
+    nextDisabled: boolean,
+    setNextDisabled: Function,
     records: Record[],
     setRecords: Function
 }
 
 function RecordTable(props: Props) {
-    useEffect(() => {
-        let page = 1;
+    const [previousDisabled, setPreviousDisabled] = useState(true);
 
-        loadRecords(props.requestUrl, page, props.setPageCount, props.setRecords);
+    useEffect(() => {
+        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
     }, []);
+
+    const loadPreviousRecords = () => {
+        if (props.offsetIds.length === 1) {
+            return;
+        } //end if
+
+        const offsetIds = [...props.offsetIds];
+
+        offsetIds.pop();
+
+        if (offsetIds.length > 1) {
+            offsetIds.pop();
+        } //end if
+
+        if (offsetIds.length === 1) {
+            setPreviousDisabled(true);
+        } //end if
+
+        props.setOffsetIds(offsetIds);
+
+        loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+    };
+
+    const loadNextRecords = () => {
+        if (props.offsetIds.length > 1) {
+            setPreviousDisabled(false);
+        } //end if
+
+        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+    };
 
     return (
         <>
@@ -45,33 +76,14 @@ function RecordTable(props: Props) {
                     }
                 </tbody>
             </Table>
-            <ReactPaginate
-                nextLabel={<FontAwesomeIcon icon={faAngleRight} />}
-                onPageChange={
-                    (page: {selected: number}) => {
-                        let pageNumber = page.selected + 1;
-
-                        props.setPage(pageNumber);
-
-                        loadRecords(props.requestUrl, pageNumber, props.setPageCount, props.setRecords);
-                    }
-                }
-                pageRangeDisplayed={3}
-                marginPagesDisplayed={2}
-                pageCount={props.pageCount}
-                previousLabel={<FontAwesomeIcon icon={faAngleLeft} />}
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousClassName="page-item"
-                previousLinkClassName="page-link"
-                nextClassName="page-item"
-                nextLinkClassName="page-link"
-                breakLabel="..."
-                breakClassName="page-item"
-                breakLinkClassName="page-link"
-                containerClassName="pagination justify-content-end"
-                activeClassName="active"
-            />
+            <Pagination className="justify-content-end">
+                <Pagination.Prev disabled={previousDisabled} onClick={loadPreviousRecords}>
+                    <FontAwesomeIcon icon={faAngleLeft} />
+                </Pagination.Prev>
+                <Pagination.Next disabled={props.nextDisabled} onClick={loadNextRecords}>
+                    <FontAwesomeIcon icon={faAngleRight} />
+                </Pagination.Next>
+            </Pagination>
         </>
     );
 }

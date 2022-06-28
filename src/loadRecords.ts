@@ -6,10 +6,21 @@ type ReadResponse = {
     content: Record[]
 }
 
-function loadRecords(requestUrl: string, page: number, setPageCount: Function, setRecords: Function): void {
-    requestUrl = `${requestUrl}?page=${page}`;
+function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Function, setNextDisabled: Function,
+                     setRecords: Function): void {
+    console.log(offsetIds);
 
-    let config = {
+    const lastIndex = offsetIds.length - 1;
+
+    if (lastIndex < 0) {
+        return;
+    } //end if
+
+    const lastOffsetId = offsetIds[lastIndex];
+
+    requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
+
+    const config = {
         "withCredentials": true
     };
 
@@ -21,17 +32,27 @@ function loadRecords(requestUrl: string, page: number, setPageCount: Function, s
                  return;
              } //end if
 
-             let pageCountString = response.headers["page-count"];
+             const content = response.data.content;
 
-             if (!pageCountString) {
-                 return;
+             const expectedLength = 10;
+
+             const recordCount = parseInt(response.headers["x-record-count"]);
+
+             const nextDisabled = (content.length !== expectedLength) || ((offsetIds.length * 10) === recordCount);
+
+             setNextDisabled(nextDisabled);
+
+             const lastIndex = content.length - 1;
+
+             const offsetIdsCopy = [...offsetIds];
+
+             if (lastIndex >= 0) {
+                 let offsetId = content[lastIndex].id;
+
+                 offsetIdsCopy.push(offsetId);
+
+                 setOffsetIds(offsetIdsCopy);
              } //end if
-
-             let pageCount = parseInt(pageCountString);
-
-             setPageCount(pageCount);
-
-             let content = response.data.content;
 
              setRecords(content);
          });
