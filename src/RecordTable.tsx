@@ -44,7 +44,9 @@ function RecordTable(props: Props) {
 
         props.setOffsetIds(offsetIds);
 
-        loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        useEffect(() => {
+            loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        }, [props.offsetIds]);
     };
 
     const loadNextRecords = () => {
@@ -71,7 +73,7 @@ function RecordTable(props: Props) {
                 <tbody id="tbody_records">
                     {
                         props.records.map((record: Record) => (
-                            <RecordRow key={record.id} name={record.name} />
+                            <RecordRow key={record.id} record={record} />
                         ))
                     }
                 </tbody>

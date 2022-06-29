@@ -8,8 +8,6 @@ type ReadResponse = {
 
 function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Function, setNextDisabled: Function,
                      setRecords: Function): void {
-    console.log(offsetIds);
-
     const lastIndex = offsetIds.length - 1;
 
     if (lastIndex < 0) {

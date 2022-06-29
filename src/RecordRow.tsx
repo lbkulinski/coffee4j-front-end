@@ -5,9 +5,10 @@ import Col from "react-bootstrap/Col"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare, faTrashCan} from "@fortawesome/free-regular-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
+import Record from "./Record";
 
 type Props = {
-    name: string
+    record: Record
 }
 
 function RecordRow(props: Props) {
@@ -18,7 +19,9 @@ function RecordRow(props: Props) {
     return (
         <tr>
             <td style={tdWidth}>
-                {props.name}
+                {
+                    props.record.name
+                }
             </td>
             <td>
                 <Container>
