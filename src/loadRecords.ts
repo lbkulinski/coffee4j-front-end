@@ -6,18 +6,8 @@ type ReadResponse = {
     content: Record[]
 }
 
-function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Function, setNextDisabled: Function,
+function loadRecords(requestUrl: string, offsetId: number | null, setOffsetId: Function, records: Record[],
                      setRecords: Function): void {
-    const lastIndex = offsetIds.length - 1;
-
-    if (lastIndex < 0) {
-        return;
-    } //end if
-
-    const lastOffsetId = offsetIds[lastIndex];
-
-    requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
-
     const config = {
         "withCredentials": true
     };
@@ -32,27 +22,21 @@ function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Func
 
              const content = response.data.content;
 
-             const expectedLength = 10;
+             if (content.length === 0) {
+                 setOffsetId(null);
+             } else {
+                 const lastIndex = content.length - 1;
 
-             const recordCount = parseInt(response.headers["x-record-count"]);
+                 const offsetId = content[lastIndex].id;
 
-             const nextDisabled = (content.length !== expectedLength) || ((offsetIds.length * 10) === recordCount);
-
-             setNextDisabled(nextDisabled);
-
-             const lastIndex = content.length - 1;
-
-             const offsetIdsCopy = [...offsetIds];
-
-             if (lastIndex >= 0) {
-                 let offsetId = content[lastIndex].id;
-
-                 offsetIdsCopy.push(offsetId);
-
-                 setOffsetIds(offsetIdsCopy);
+                 setOffsetId(offsetId);
              } //end if
 
-             setRecords(content);
+             let newRecords = [...records];
+
+             newRecords.push(...content);
+
+             setRecords(newRecords);
          });
 } //loadRecords
 

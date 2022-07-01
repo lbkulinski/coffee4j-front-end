@@ -12,19 +12,15 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-let formData = new FormData();
-
-formData.append("username", "lbk");
-
-formData.append("password", "password");
-
-let config = {
-    "withCredentials": false
-};
-
-const axios = require("axios").default;
-
-axios.post("/perform_login", formData, config);
+fetch("/perform_login", {
+    "method": "POST",
+    "mode": "no-cors",
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "body": "username=lbk&password=password"
+}).then((response: Response) => response.text());
 
 let HomeRoute = () => {
     return (

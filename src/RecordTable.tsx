@@ -7,85 +7,51 @@ import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import Record from "./Record";
 import loadRecords from "./loadRecords";
 import {Pagination} from "react-bootstrap";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 type Props = {
     requestUrl: string,
-    offsetIds: number[],
-    setOffsetIds: Function,
-    nextDisabled: boolean,
-    setNextDisabled: Function,
+    offsetId: number | null,
+    setOffsetId: Function,
     records: Record[],
     setRecords: Function
 }
 
 function RecordTable(props: Props) {
-    const [previousDisabled, setPreviousDisabled] = useState(true);
-
-    useEffect(() => {
-        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
-    }, []);
-
-    const loadPreviousRecords = () => {
-        if (props.offsetIds.length === 1) {
+    const fetchNewRecords = () => {
+        if (props.offsetId === null) {
             return;
         } //end if
 
-        const offsetIds = [...props.offsetIds];
+        let requestUrl = `${props.requestUrl}?offsetId=${props.offsetId}`;
 
-        offsetIds.pop();
-
-        if (offsetIds.length > 1) {
-            offsetIds.pop();
-        } //end if
-
-        if (offsetIds.length === 1) {
-            setPreviousDisabled(true);
-        } //end if
-
-        props.setOffsetIds(offsetIds);
-
-        useEffect(() => {
-            loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
-        }, [props.offsetIds]);
+        loadRecords(requestUrl, props.offsetId, props.setOffsetId, props.records, props.setRecords)
     };
 
-    const loadNextRecords = () => {
-        if (props.offsetIds.length > 1) {
-            setPreviousDisabled(false);
-        } //end if
-
-        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
-    };
+    useEffect(() => {
+        fetchNewRecords();
+    }, []);
 
     return (
         <>
-            <Table striped hover>
-                <thead>
-                <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <tbody id="tbody_records">
-                    {
-                        props.records.map((record: Record) => (
-                            <RecordRow key={record.id} record={record} />
-                        ))
-                    }
-                </tbody>
-            </Table>
-            <Pagination className="justify-content-end">
-                <Pagination.Prev disabled={previousDisabled} onClick={loadPreviousRecords}>
-                    <FontAwesomeIcon icon={faAngleLeft} />
-                </Pagination.Prev>
-                <Pagination.Next disabled={props.nextDisabled} onClick={loadNextRecords}>
-                    <FontAwesomeIcon icon={faAngleRight} />
-                </Pagination.Next>
-            </Pagination>
+            <div
+                id="div_scrollable"
+                style={{
+                    height: 300,
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column-reverse',
+                }}
+            />
+            <InfiniteScroll next={fetchNewRecords} hasMore={props.offsetId !== null}
+                            loader={<span>Loading...</span>} dataLength={props.records.length}
+                            scrollableTarget="div_scrollable">
+                {
+                    props.records.map((record: Record) => (
+                        <RecordRow key={record.id} record={record} />
+                    ))
+                }
+            </InfiniteScroll>
         </>
     );
 }
