@@ -8,8 +8,6 @@ import RecordType from "./RecordType";
 import Record from "./Record";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import InfiniteScroll from "react-infinite-scroll-component";
-import RecordRow from "./RecordRow";
 
 type Props = {
     recordType: RecordType
@@ -30,9 +28,11 @@ function ManageRecordCard(props: Props) {
                             props.recordType
                         }
                     </Card.Title>
+                    {/*
                     <Button className="float-end" variant="outline-primary">
                         <FontAwesomeIcon icon={faPlus} />
                     </Button>
+                    */}
                     <RecordTable requestUrl={props.requestUrl} offsetId={offsetId} setOffsetId={setOffsetId}
                                  records={records} setRecords={setRecords} />
                 </Card.Body>
