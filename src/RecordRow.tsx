@@ -12,34 +12,36 @@ type Props = {
 }
 
 function RecordRow(props: Props) {
-    const style = {
-        "width": "80%"
+    const tdWidth = {
+        width: "80%"
     };
 
     return (
-        <tr>
-            <td style={style}>
-                {
-                    props.record.name
-                }
-            </td>
-            <td>
-                <Container>
-                    <Row>
-                        <Col xs="1">
-                            <a id="anchor_edit">
-                                <FontAwesomeIcon icon={faPenToSquare} />
-                            </a>
-                        </Col>
-                        <Col xs="1">
-                            <a id="anchor_delete">
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </a>
-                        </Col>
-                    </Row>
-                </Container>
-            </td>
-        </tr>
+        <Container>
+            <Row>
+                <Col>
+                    {
+                        props.record.name
+                    }
+                </Col>
+                <Col>
+                    <Container>
+                        <Row>
+                            <Col xs="1">
+                                <a id="anchor_edit">
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                </a>
+                            </Col>
+                            <Col xs="1">
+                                <a id="anchor_delete">
+                                    <FontAwesomeIcon icon={faTrashCan} />
+                                </a>
+                            </Col>
+                        </Row>
+                    </Container>
+                </Col>
+            </Row>
+        </Container>
     );
 } //RecordRow
 
