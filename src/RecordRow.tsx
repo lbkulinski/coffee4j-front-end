@@ -17,31 +17,29 @@ function RecordRow(props: Props) {
     };
 
     return (
-        <Container>
-            <Row>
-                <Col>
-                    {
-                        props.record.name
-                    }
-                </Col>
-                <Col>
-                    <Container>
-                        <Row>
-                            <Col xs="1">
-                                <a id="anchor_edit">
-                                    <FontAwesomeIcon icon={faPenToSquare} />
-                                </a>
-                            </Col>
-                            <Col xs="1">
-                                <a id="anchor_delete">
-                                    <FontAwesomeIcon icon={faTrashCan} />
-                                </a>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Col>
-            </Row>
-        </Container>
+        <tr>
+            <td style={tdWidth}>
+                {
+                    props.record.name
+                }
+            </td>
+            <td>
+                <Container>
+                    <Row>
+                        <Col xs="1">
+                            <a id="anchor_edit">
+                                <FontAwesomeIcon icon={faPenToSquare} />
+                            </a>
+                        </Col>
+                        <Col xs="1">
+                            <a id="anchor_delete">
+                                <FontAwesomeIcon icon={faTrashCan} />
+                            </a>
+                        </Col>
+                    </Row>
+                </Container>
+            </td>
+        </tr>
     );
 } //RecordRow
 
