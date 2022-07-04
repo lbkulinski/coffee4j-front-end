@@ -15,7 +15,7 @@ type Props = {
 };
 
 function ManageRecordCard(props: Props) {
-    const [addShow, setAddShow] = useState(true);
+    const [addShow, setAddShow] = useState(false);
 
     const showAddModal = () => {
         setAddShow(true);
@@ -34,7 +34,8 @@ function ManageRecordCard(props: Props) {
                         <FontAwesomeIcon icon={faPlus} />
                     </Button>
                     <RecordTable requestUrl={props.requestUrl} />
-                    <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl} />
+                    <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl}
+                                    recordType={props.recordType} />
                 </Card.Body>
             </Card>
         </>
