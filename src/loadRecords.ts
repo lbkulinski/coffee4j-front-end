@@ -10,13 +10,11 @@ function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Func
                      setRecords: Function): void {
     const lastIndex = offsetIds.length - 1;
 
-    if (lastIndex < 0) {
-        return;
+    if (lastIndex >= 0) {
+        const lastOffsetId = offsetIds[lastIndex];
+
+        requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
     } //end if
-
-    const lastOffsetId = offsetIds[lastIndex];
-
-    requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
 
     const config = {
         "withCredentials": true

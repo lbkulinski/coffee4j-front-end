@@ -9,52 +9,50 @@ import loadRecords from "./loadRecords";
 import {Pagination} from "react-bootstrap";
 
 type Props = {
-    requestUrl: string,
-    offsetIds: number[],
-    setOffsetIds: Function,
-    nextDisabled: boolean,
-    setNextDisabled: Function,
-    records: Record[],
-    setRecords: Function
+    requestUrl: string
 }
 
 function RecordTable(props: Props) {
+    const [offsetIds, setOffsetIds] = useState<number[]>([]);
+
     const [previousDisabled, setPreviousDisabled] = useState(true);
 
+    const [nextDisabled, setNextDisabled] = useState(false);
+
+    const [records, setRecords] = useState<Record[]>([]);
+
     useEffect(() => {
-        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        loadRecords(props.requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
     }, []);
 
     const loadPreviousRecords = () => {
-        if (props.offsetIds.length === 1) {
+        if (offsetIds.length === 0) {
             return;
         } //end if
 
-        const offsetIds = [...props.offsetIds];
+        const offsetIdsCopy = [...offsetIds];
 
-        offsetIds.pop();
+        offsetIdsCopy.pop();
 
-        if (offsetIds.length > 1) {
-            offsetIds.pop();
+        if (offsetIdsCopy.length >= 1) {
+            offsetIdsCopy.pop();
         } //end if
 
-        if (offsetIds.length === 1) {
+        if (offsetIdsCopy.length === 0) {
             setPreviousDisabled(true);
         } //end if
 
-        props.setOffsetIds(offsetIds);
+        setOffsetIds(offsetIdsCopy);
 
-        useEffect(() => {
-            loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
-        }, [props.offsetIds]);
+        loadRecords(props.requestUrl, offsetIdsCopy, setOffsetIds, setNextDisabled, setRecords);
     };
 
     const loadNextRecords = () => {
-        if (props.offsetIds.length > 1) {
+        if (offsetIds.length >= 1) {
             setPreviousDisabled(false);
         } //end if
 
-        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        loadRecords(props.requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
     };
 
     return (
@@ -72,7 +70,7 @@ function RecordTable(props: Props) {
                 </thead>
                 <tbody id="tbody_records">
                     {
-                        props.records.map((record: Record) => (
+                        records.map((record: Record) => (
                             <RecordRow key={record.id} record={record} />
                         ))
                     }
@@ -82,7 +80,7 @@ function RecordTable(props: Props) {
                 <Pagination.Prev disabled={previousDisabled} onClick={loadPreviousRecords}>
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </Pagination.Prev>
-                <Pagination.Next disabled={props.nextDisabled} onClick={loadNextRecords}>
+                <Pagination.Next disabled={nextDisabled} onClick={loadNextRecords}>
                     <FontAwesomeIcon icon={faAngleRight} />
                 </Pagination.Next>
             </Pagination>
