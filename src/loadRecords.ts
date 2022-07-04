@@ -6,8 +6,8 @@ type ReadResponse = {
     content: Record[]
 }
 
-function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: Function, setNextDisabled: Function,
-                     setRecords: Function): void {
+function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: (offsetIds: number[]) => void,
+                     setNextDisabled: (nextDisabled: boolean) => void, setRecords: (records: Record[]) => void): void {
     const lastIndex = offsetIds.length - 1;
 
     if (lastIndex >= 0) {
