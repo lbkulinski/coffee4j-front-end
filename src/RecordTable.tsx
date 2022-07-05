@@ -15,7 +15,9 @@ type Props = {
     nextDisabled: boolean,
     setNextDisabled: (nextDisabled: boolean) => void,
     records: Record[],
-    setRecords: (records: Record[]) => void
+    setRecords: (records: Record[]) => void,
+    setRecord: (record: Record) => void,
+    setEditShow: (editShow: boolean) => void
 }
 
 function RecordTable(props: Props) {
@@ -71,7 +73,8 @@ function RecordTable(props: Props) {
                 <tbody id="tbody_records">
                     {
                         props.records.map((record: Record) => (
-                            <RecordRow key={record.id} record={record} />
+                            <RecordRow key={record.id} record={record} setRecord={props.setRecord}
+                                       setEditShow={props.setEditShow} />
                         ))
                     }
                 </tbody>
@@ -86,6 +89,6 @@ function RecordTable(props: Props) {
             </Pagination>
         </>
     );
-}
+} //RecordTable
 
 export default RecordTable;

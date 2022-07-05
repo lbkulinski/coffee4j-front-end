@@ -9,23 +9,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import AddRecordModal from "./AddRecordModal";
 import Record from "./Record";
+import EditRecordModal from "./EditRecordModal";
 
 type Props = {
     recordType: RecordType
     requestUrl: string
 };
 
-/*
-{
-    requestUrl: string,
-    offsetIds: number[],
-    setOffsetIds: (offsetIds: number[]) => void,
-    nextDisabled: boolean,
-    setNextDisabled: (nextDisabled: boolean) => void,
-    records: Record[],
-    setRecords: (records: Record[]) => void
-}
- */
 function ManageRecordCard(props: Props) {
     const [offsetIds, setOffsetIds] = useState<number[]>([]);
 
@@ -34,6 +24,13 @@ function ManageRecordCard(props: Props) {
     const [records, setRecords] = useState<Record[]>([]);
 
     const [addShow, setAddShow] = useState(false);
+
+    const [record, setRecord] = useState({
+        "id": 0,
+        "name": ""
+    });
+
+    const [editShow, setEditShow] = useState(false);
 
     const showAddModal = () => {
         setAddShow(true);
@@ -53,14 +50,17 @@ function ManageRecordCard(props: Props) {
                     </Button>
                     <RecordTable requestUrl={props.requestUrl} offsetIds={offsetIds} setOffsetIds={setOffsetIds}
                                  nextDisabled={nextDisabled} setNextDisabled={setNextDisabled} records={records}
-                                 setRecords={setRecords} />
+                                 setRecords={setRecords} setRecord={setRecord} setEditShow={setEditShow} />
                 </Card.Body>
             </Card>
             <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl}
                             recordType={props.recordType} setNextDisabled={setNextDisabled} setOffsetIds={setOffsetIds}
                             setRecords={setRecords}/>
+            <EditRecordModal record={record} show={editShow} setShow={setEditShow} requestUrl={props.requestUrl}
+                             setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}
+                             recordType={props.recordType} />
         </>
     );
-}
+} //ManageRecordCard
 
 export default ManageRecordCard;

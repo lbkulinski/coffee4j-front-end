@@ -13,6 +13,7 @@ type CreateResponse = {
 }
 
 type Props = {
+    record: Record,
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,
@@ -56,12 +57,8 @@ function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) =
          });
 } //saveRecord
 
-function AddRecordModal(props: Props) {
-    const [name, setName] = useState("");
-
-    const resetModal = () => {
-        setName("");
-    };
+function EditRecordModal(props: Props) {
+    const [name, setName] = useState(props.record.name);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setName(event.target.value)
@@ -84,7 +81,7 @@ function AddRecordModal(props: Props) {
 
     const recordTypeString = props.recordType.toLowerCase();
 
-    const successMessage = `The specified ${recordTypeString} was successfully added.`;
+    const successMessage = `The specified ${recordTypeString} was successfully edited.`;
 
     const [showError, setShowError] = useState(false);
 
@@ -92,19 +89,19 @@ function AddRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be added.`;
+    const errorMessage = `The specified ${recordTypeString} was could not be edited.`;
 
     return (
         <>
-            <Modal show={props.show} onShow={resetModal} onHide={hideModal}>
+            <Modal show={props.show} onHide={hideModal}>
                 <Modal.Header closeButton>
-                    Add
+                    Edit
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Label>
                         Name
                     </Form.Label>
-                    <Form.Control type="text" value={name} onChange={handleChange} />
+                    <Form.Control type="text" onChange={handleChange} value={props.record.name} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={hideModal}>
@@ -143,6 +140,6 @@ function AddRecordModal(props: Props) {
             </ToastContainer>
         </>
     );
-} //AddRecordModal
+} //EditRecordModal
 
-export default AddRecordModal;
+export default EditRecordModal;

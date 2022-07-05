@@ -8,12 +8,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Record from "./Record";
 
 type Props = {
-    record: Record
+    record: Record,
+    setRecord: (record: Record) => void,
+    setEditShow: (editShow: boolean) => void
 }
 
 function RecordRow(props: Props) {
     const tdWidth = {
         width: "80%"
+    };
+
+    const showEditModal = () => {
+        props.setRecord(props.record);
+
+        props.setEditShow(true);
     };
 
     return (
@@ -27,7 +35,7 @@ function RecordRow(props: Props) {
                 <Container>
                     <Row>
                         <Col xs="1">
-                            <a id="anchor_edit">
+                            <a id="anchor_edit" onClick={showEditModal}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>
