@@ -26,11 +26,11 @@ function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) =
                     setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
                     setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
                     setRecords: (records: Record[]) => void) {
-    let formData = new FormData();
+    const formData = new FormData();
 
     formData.append("name", name);
 
-    let config = {
+    const config = {
         "withCredentials": true,
     };
 
@@ -43,7 +43,7 @@ function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) =
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
 
-                 let offsetIds: number[] = [];
+                 const offsetIds: number[] = [];
 
                  setOffsetIds(offsetIds);
 
@@ -104,7 +104,7 @@ function AddRecordModal(props: Props) {
                     <Form.Label>
                         Name
                     </Form.Label>
-                    <Form.Control type="text" value={name} onChange={handleChange} />
+                    <Form.Control defaultValue={name} onChange={handleChange} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={hideModal}>

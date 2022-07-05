@@ -7,7 +7,7 @@ import {AxiosResponse} from "axios";
 import loadRecords from "./loadRecords";
 import Record from "./Record";
 
-type CreateResponse = {
+type UpdateResponse = {
     status: string,
     content: string
 }
@@ -23,28 +23,32 @@ type Props = {
     recordType: RecordType
 }
 
-function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) => void,
+function saveRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
                     setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
                     setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
                     setRecords: (records: Record[]) => void) {
-    let formData = new FormData();
+    const formData = new FormData();
+
+    const idString = String(id);
+
+    formData.append("id", idString);
 
     formData.append("name", name);
 
-    let config = {
+    const config = {
         "withCredentials": true,
     };
 
     const axios = require("axios").default;
 
-    axios.post(requestUrl, formData, config)
-         .then((response: AxiosResponse<CreateResponse>) => {
+    axios.put(requestUrl, formData, config)
+         .then((response: AxiosResponse<UpdateResponse>) => {
              setShow(false);
 
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
 
-                 let offsetIds: number[] = [];
+                 const offsetIds: number[] = [];
 
                  setOffsetIds(offsetIds);
 
@@ -69,8 +73,8 @@ function EditRecordModal(props: Props) {
     };
 
     const handleSave = () => {
-        saveRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
-                   props.setNextDisabled, props.setRecords);
+        saveRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
+                   props.setOffsetIds, props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -101,7 +105,7 @@ function EditRecordModal(props: Props) {
                     <Form.Label>
                         Name
                     </Form.Label>
-                    <Form.Control type="text" onChange={handleChange} value={props.record.name} />
+                    <Form.Control defaultValue={props.record.name} onChange={handleChange} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={hideModal}>

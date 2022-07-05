@@ -43,7 +43,7 @@ function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: (off
              const offsetIdsCopy = [...offsetIds];
 
              if (lastIndex >= 0) {
-                 let offsetId = content[lastIndex].id;
+                 const offsetId = content[lastIndex].id;
 
                  offsetIdsCopy.push(offsetId);
 
