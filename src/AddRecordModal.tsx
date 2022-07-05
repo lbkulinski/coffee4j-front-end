@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
-import {Form, Modal, Toast} from "react-bootstrap";
+import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import RecordType from "./RecordType";
 import {AxiosResponse} from "axios";
-import {useNavigate} from "react-router";
+import loadRecords from "./loadRecords";
+import Record from "./Record";
 
 type CreateResponse = {
     status: string,
@@ -15,11 +16,16 @@ type Props = {
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,
+    setOffsetIds: (offsetIds: number[]) => void,
+    setNextDisabled: (nextDisabled: boolean) => void,
+    setRecords: (records: Record[]) => void,
     recordType: RecordType
 }
 
 function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) => void,
-                    setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void) {
+                    setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
+                    setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
+                    setRecords: (records: Record[]) => void) {
     let formData = new FormData();
 
     formData.append("name", name);
@@ -36,6 +42,12 @@ function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) =
 
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
+
+                 let offsetIds: number[] = [];
+
+                 setOffsetIds(offsetIds);
+
+                 loadRecords(requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
 
                  return;
              } //end if
@@ -60,7 +72,8 @@ function AddRecordModal(props: Props) {
     };
 
     const handleSave = () => {
-        saveRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError);
+        saveRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
+                   props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -102,26 +115,32 @@ function AddRecordModal(props: Props) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Toast show={showSuccess} onClose={hideSuccessToast}>
-                <Toast.Header>
-                    Coffee4j
-                </Toast.Header>
-                <Toast.Body>
-                    {
-                        successMessage
-                    }
-                </Toast.Body>
-            </Toast>
-            <Toast show={showError} onClose={hideErrorToast}>
-                <Toast.Header>
-                    Coffee4j
-                </Toast.Header>
-                <Toast.Body>
-                    {
-                        errorMessage
-                    }
-                </Toast.Body>
-            </Toast>
+            <ToastContainer className="p-3" position="top-end">
+                <Toast show={showSuccess} onClose={hideSuccessToast} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="me-auto">
+                            Coffee4j
+                        </strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {
+                            successMessage
+                        }
+                    </Toast.Body>
+                </Toast>
+                <Toast show={showError} onClose={hideErrorToast} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="me-auto">
+                            Coffee4j
+                        </strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {
+                            errorMessage
+                        }
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
         </>
     );
 } //RecordRow

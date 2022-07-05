@@ -6,84 +6,31 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleLeft, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import Record from "./Record";
 import {Pagination} from "react-bootstrap";
-import {AxiosResponse} from "axios";
-
-type ReadResponse = {
-    status: string,
-    content: Record[]
-}
+import loadRecords from "./loadRecords";
 
 type Props = {
-    requestUrl: string
+    requestUrl: string,
+    offsetIds: number[],
+    setOffsetIds: (offsetIds: number[]) => void,
+    nextDisabled: boolean,
+    setNextDisabled: (nextDisabled: boolean) => void,
+    records: Record[],
+    setRecords: (records: Record[]) => void
 }
 
-function loadRecords(requestUrl: string, offsetIds: number[], setOffsetIds: (offsetIds: number[]) => void,
-                     setNextDisabled: (nextDisabled: boolean) => void, setRecords: (records: Record[]) => void): void {
-    const lastIndex = offsetIds.length - 1;
-
-    if (lastIndex >= 0) {
-        const lastOffsetId = offsetIds[lastIndex];
-
-        requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
-    } //end if
-
-    const config = {
-        "withCredentials": true
-    };
-
-    const axios = require("axios").default;
-
-    axios.get(requestUrl, config)
-         .then((response: AxiosResponse<ReadResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 return;
-             } //end if
-
-             const content = response.data.content;
-
-             const expectedLength = 10;
-
-             const recordCount = parseInt(response.headers["x-record-count"]);
-
-             const nextDisabled = (content.length !== expectedLength) || ((offsetIds.length * 10) === recordCount);
-
-             setNextDisabled(nextDisabled);
-
-             const lastIndex = content.length - 1;
-
-             const offsetIdsCopy = [...offsetIds];
-
-             if (lastIndex >= 0) {
-                 let offsetId = content[lastIndex].id;
-
-                 offsetIdsCopy.push(offsetId);
-
-                 setOffsetIds(offsetIdsCopy);
-             } //end if
-
-             setRecords(content);
-         });
-} //loadRecords
-
 function RecordTable(props: Props) {
-    const [offsetIds, setOffsetIds] = useState<number[]>([]);
-
     const [previousDisabled, setPreviousDisabled] = useState(true);
 
-    const [nextDisabled, setNextDisabled] = useState(false);
-
-    const [records, setRecords] = useState<Record[]>([]);
-
     useEffect(() => {
-        loadRecords(props.requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
+        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
     }, []);
 
     const loadPreviousRecords = () => {
-        if (offsetIds.length === 0) {
+        if (props.offsetIds.length === 0) {
             return;
         } //end if
 
-        const offsetIdsCopy = [...offsetIds];
+        const offsetIdsCopy = [...props.offsetIds];
 
         offsetIdsCopy.pop();
 
@@ -95,17 +42,17 @@ function RecordTable(props: Props) {
             setPreviousDisabled(true);
         } //end if
 
-        setOffsetIds(offsetIdsCopy);
+        props.setOffsetIds(offsetIdsCopy);
 
-        loadRecords(props.requestUrl, offsetIdsCopy, setOffsetIds, setNextDisabled, setRecords);
+        loadRecords(props.requestUrl, offsetIdsCopy, props.setOffsetIds, props.setNextDisabled, props.setRecords);
     };
 
     const loadNextRecords = () => {
-        if (offsetIds.length >= 1) {
+        if (props.offsetIds.length >= 1) {
             setPreviousDisabled(false);
         } //end if
 
-        loadRecords(props.requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
+        loadRecords(props.requestUrl, props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
     };
 
     return (
@@ -123,7 +70,7 @@ function RecordTable(props: Props) {
                 </thead>
                 <tbody id="tbody_records">
                     {
-                        records.map((record: Record) => (
+                        props.records.map((record: Record) => (
                             <RecordRow key={record.id} record={record} />
                         ))
                     }
@@ -133,7 +80,7 @@ function RecordTable(props: Props) {
                 <Pagination.Prev disabled={previousDisabled} onClick={loadPreviousRecords}>
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </Pagination.Prev>
-                <Pagination.Next disabled={nextDisabled} onClick={loadNextRecords}>
+                <Pagination.Next disabled={props.nextDisabled} onClick={loadNextRecords}>
                     <FontAwesomeIcon icon={faAngleRight} />
                 </Pagination.Next>
             </Pagination>
