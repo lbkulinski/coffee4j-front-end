@@ -14,6 +14,7 @@ type UpdateResponse = {
 
 type Props = {
     record: Record,
+    setRecord: (record: Record) => void,
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,
@@ -23,17 +24,17 @@ type Props = {
     recordType: RecordType
 }
 
-function updateRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
+function updateRecord(requestUrl: string, record: Record, setShow: (show: boolean) => void,
                       setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
                       setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
                       setRecords: (records: Record[]) => void) {
     const formData = new FormData();
 
-    const idString = String(id);
+    const idString = String(record.id);
 
     formData.append("id", idString);
 
-    formData.append("name", name);
+    formData.append("name", record.name);
 
     const config = {
         "withCredentials": true,
@@ -62,10 +63,11 @@ function updateRecord(requestUrl: string, id: number, name: string, setShow: (sh
 } //updateRecord
 
 function UpdateRecordModal(props: Props) {
-    const [name, setName] = useState(props.record.name);
-
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setName(event.target.value);
+        props.setRecord({
+            "id": props.record.id,
+            "name": event.target.value
+        });
     };
 
     const hideModal = () => {
@@ -73,8 +75,8 @@ function UpdateRecordModal(props: Props) {
     };
 
     const handleUpdate = () => {
-        updateRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
-                     props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        updateRecord(props.requestUrl, props.record, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
+                     props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
