@@ -65,7 +65,7 @@ function UpdateRecordModal(props: Props) {
     const [name, setName] = useState(props.record.name);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setName(event.target.value)
+        setName(event.target.value);
     };
 
     const hideModal = () => {
@@ -105,7 +105,7 @@ function UpdateRecordModal(props: Props) {
                     <Form.Label>
                         Name
                     </Form.Label>
-                    <Form.Control defaultValue={props.record.name} onChange={handleChange} />
+                    <Form.Control type="text" defaultValue={props.record.name} onChange={handleChange} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={hideModal}>

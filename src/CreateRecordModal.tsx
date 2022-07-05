@@ -104,7 +104,7 @@ function CreateRecordModal(props: Props) {
                     <Form.Label>
                         Name
                     </Form.Label>
-                    <Form.Control defaultValue={name} onChange={handleChange} />
+                    <Form.Control type="text" onChange={handleChange} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={hideModal}>
