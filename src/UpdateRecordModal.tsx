@@ -24,17 +24,17 @@ type Props = {
     recordType: RecordType
 }
 
-function updateRecord(requestUrl: string, record: Record, setShow: (show: boolean) => void,
+function updateRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
                       setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
                       setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
                       setRecords: (records: Record[]) => void) {
     const formData = new FormData();
 
-    const idString = String(record.id);
+    const idString = String(id);
 
     formData.append("id", idString);
 
-    formData.append("name", record.name);
+    formData.append("name", name);
 
     const config = {
         "withCredentials": true,
@@ -63,11 +63,10 @@ function updateRecord(requestUrl: string, record: Record, setShow: (show: boolea
 } //updateRecord
 
 function UpdateRecordModal(props: Props) {
+    const [name, setName] = useState("");
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        props.setRecord({
-            "id": props.record.id,
-            "name": event.target.value
-        });
+        setName(event.target.value);
     };
 
     const hideModal = () => {
@@ -75,8 +74,8 @@ function UpdateRecordModal(props: Props) {
     };
 
     const handleUpdate = () => {
-        updateRecord(props.requestUrl, props.record, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
-                     props.setNextDisabled, props.setRecords);
+        updateRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
+                     props.setOffsetIds, props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
