@@ -22,10 +22,10 @@ type Props = {
     recordType: RecordType
 }
 
-function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) => void,
-                    setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
-                    setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
-                    setRecords: (records: Record[]) => void) {
+function createRecord(requestUrl: string, name: string, setShow: (show: boolean) => void,
+                      setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
+                      setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
+                      setRecords: (records: Record[]) => void) {
     const formData = new FormData();
 
     formData.append("name", name);
@@ -54,9 +54,9 @@ function saveRecord(requestUrl: string, name: string, setShow: (show: boolean) =
 
              setShowError(true);
          });
-} //saveRecord
+} //createRecord
 
-function AddRecordModal(props: Props) {
+function CreateRecordModal(props: Props) {
     const [name, setName] = useState("");
 
     const resetModal = () => {
@@ -72,8 +72,8 @@ function AddRecordModal(props: Props) {
     };
 
     const handleSave = () => {
-        saveRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
-                   props.setNextDisabled, props.setRecords);
+        createRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
+                     props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -84,7 +84,7 @@ function AddRecordModal(props: Props) {
 
     const recordTypeString = props.recordType.toLowerCase();
 
-    const successMessage = `The specified ${recordTypeString} was successfully added.`;
+    const successMessage = `The specified ${recordTypeString} was successfully created.`;
 
     const [showError, setShowError] = useState(false);
 
@@ -92,13 +92,13 @@ function AddRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be added.`;
+    const errorMessage = `The specified ${recordTypeString} was could not be created.`;
 
     return (
         <>
             <Modal show={props.show} onShow={resetModal} onHide={hideModal}>
                 <Modal.Header closeButton>
-                    Add
+                    Create
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Label>
@@ -143,6 +143,6 @@ function AddRecordModal(props: Props) {
             </ToastContainer>
         </>
     );
-} //AddRecordModal
+} //CreateRecordModal
 
-export default AddRecordModal;
+export default CreateRecordModal;

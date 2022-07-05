@@ -17,7 +17,8 @@ type Props = {
     records: Record[],
     setRecords: (records: Record[]) => void,
     setRecord: (record: Record) => void,
-    setEditShow: (editShow: boolean) => void
+    setUpdateShow: (updateShow: boolean) => void,
+    setDeleteShow: (deleteShow: boolean) => void
 }
 
 function RecordTable(props: Props) {
@@ -74,7 +75,7 @@ function RecordTable(props: Props) {
                     {
                         props.records.map((record: Record) => (
                             <RecordRow key={record.id} record={record} setRecord={props.setRecord}
-                                       setEditShow={props.setEditShow} />
+                                       setUpdateShow={props.setUpdateShow} setDeleteShow={props.setDeleteShow} />
                         ))
                     }
                 </tbody>

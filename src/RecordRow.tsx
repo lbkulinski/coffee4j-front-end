@@ -10,7 +10,8 @@ import Record from "./Record";
 type Props = {
     record: Record,
     setRecord: (record: Record) => void,
-    setEditShow: (editShow: boolean) => void
+    setUpdateShow: (updateShow: boolean) => void,
+    setDeleteShow: (deleteShow: boolean) => void
 }
 
 function RecordRow(props: Props) {
@@ -18,10 +19,16 @@ function RecordRow(props: Props) {
         width: "80%"
     };
 
-    const showEditModal = () => {
+    const showUpdateModal = () => {
         props.setRecord(props.record);
 
-        props.setEditShow(true);
+        props.setUpdateShow(true);
+    };
+
+    const showDeleteModal = () => {
+        props.setRecord(props.record);
+
+        props.setDeleteShow(true);
     };
 
     return (
@@ -35,12 +42,12 @@ function RecordRow(props: Props) {
                 <Container>
                     <Row>
                         <Col xs="1">
-                            <a id="anchor_edit" onClick={showEditModal}>
+                            <a onClick={showUpdateModal}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>
                         <Col xs="1">
-                            <a id="anchor_delete">
+                            <a onClick={showDeleteModal}>
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </a>
                         </Col>

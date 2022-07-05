@@ -7,9 +7,10 @@ import Button from "react-bootstrap/Button";
 import RecordType from "./RecordType";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import AddRecordModal from "./AddRecordModal";
+import CreateRecordModal from "./CreateRecordModal";
 import Record from "./Record";
-import EditRecordModal from "./EditRecordModal";
+import UpdateRecordModal from "./UpdateRecordModal";
+import DeleteRecordModal from "./DeleteRecordModal";
 
 type Props = {
     recordType: RecordType
@@ -23,17 +24,19 @@ function ManageRecordCard(props: Props) {
 
     const [records, setRecords] = useState<Record[]>([]);
 
-    const [addShow, setAddShow] = useState(false);
+    const [createShow, setCreateShow] = useState(false);
 
     const [record, setRecord] = useState({
         "id": 0,
         "name": ""
     });
 
-    const [editShow, setEditShow] = useState(false);
+    const [updateShow, setUpdateShow] = useState(false);
 
-    const showAddModal = () => {
-        setAddShow(true);
+    const [deleteShow, setDeleteShow] = useState(false);
+
+    const showCreateModal = () => {
+        setCreateShow(true);
     };
 
     return (
@@ -45,20 +48,24 @@ function ManageRecordCard(props: Props) {
                             props.recordType
                         }
                     </Card.Title>
-                    <Button className="float-end" variant="outline-primary" onClick={showAddModal}>
+                    <Button className="float-end" variant="outline-primary" onClick={showCreateModal}>
                         <FontAwesomeIcon icon={faPlus} />
                     </Button>
                     <RecordTable requestUrl={props.requestUrl} offsetIds={offsetIds} setOffsetIds={setOffsetIds}
                                  nextDisabled={nextDisabled} setNextDisabled={setNextDisabled} records={records}
-                                 setRecords={setRecords} setRecord={setRecord} setEditShow={setEditShow} />
+                                 setRecords={setRecords} setRecord={setRecord} setUpdateShow={setUpdateShow}
+                                 setDeleteShow={setDeleteShow} />
                 </Card.Body>
             </Card>
-            <AddRecordModal show={addShow} setShow={setAddShow} requestUrl={props.requestUrl}
-                            recordType={props.recordType} setNextDisabled={setNextDisabled} setOffsetIds={setOffsetIds}
-                            setRecords={setRecords}/>
-            <EditRecordModal record={record} show={editShow} setShow={setEditShow} requestUrl={props.requestUrl}
-                             setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}
-                             recordType={props.recordType} />
+            <CreateRecordModal show={createShow} setShow={setCreateShow} requestUrl={props.requestUrl}
+                               recordType={props.recordType} setNextDisabled={setNextDisabled}
+                               setOffsetIds={setOffsetIds} setRecords={setRecords}/>
+            <UpdateRecordModal record={record} show={updateShow} setShow={setUpdateShow} requestUrl={props.requestUrl}
+                               setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}
+                               recordType={props.recordType} />
+            <DeleteRecordModal record={record} show={deleteShow} setShow={setDeleteShow} requestUrl={props.requestUrl}
+                               setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}
+                               recordType={props.recordType} />
         </>
     );
 } //ManageRecordCard

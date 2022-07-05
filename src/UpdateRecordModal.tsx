@@ -23,10 +23,10 @@ type Props = {
     recordType: RecordType
 }
 
-function saveRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
-                    setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
-                    setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
-                    setRecords: (records: Record[]) => void) {
+function updateRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
+                      setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
+                      setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
+                      setRecords: (records: Record[]) => void) {
     const formData = new FormData();
 
     const idString = String(id);
@@ -59,9 +59,9 @@ function saveRecord(requestUrl: string, id: number, name: string, setShow: (show
 
              setShowError(true);
          });
-} //saveRecord
+} //updateRecord
 
-function EditRecordModal(props: Props) {
+function UpdateRecordModal(props: Props) {
     const [name, setName] = useState(props.record.name);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -72,9 +72,9 @@ function EditRecordModal(props: Props) {
         props.setShow(false);
     };
 
-    const handleSave = () => {
-        saveRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
-                   props.setOffsetIds, props.setNextDisabled, props.setRecords);
+    const handleUpdate = () => {
+        updateRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
+                     props.setOffsetIds, props.setNextDisabled, props.setRecords);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -85,7 +85,7 @@ function EditRecordModal(props: Props) {
 
     const recordTypeString = props.recordType.toLowerCase();
 
-    const successMessage = `The specified ${recordTypeString} was successfully edited.`;
+    const successMessage = `The specified ${recordTypeString} was successfully updated.`;
 
     const [showError, setShowError] = useState(false);
 
@@ -93,13 +93,13 @@ function EditRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be edited.`;
+    const errorMessage = `The specified ${recordTypeString} was could not be updated.`;
 
     return (
         <>
             <Modal show={props.show} onHide={hideModal}>
                 <Modal.Header closeButton>
-                    Edit
+                    Update
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Label>
@@ -111,7 +111,7 @@ function EditRecordModal(props: Props) {
                     <Button variant="outline-secondary" onClick={hideModal}>
                         Close
                     </Button>
-                    <Button variant="outline-primary" onClick={handleSave}>
+                    <Button variant="outline-primary" onClick={handleUpdate}>
                         Save
                     </Button>
                 </Modal.Footer>
@@ -144,6 +144,6 @@ function EditRecordModal(props: Props) {
             </ToastContainer>
         </>
     );
-} //EditRecordModal
+} //UpdateRecordModal
 
-export default EditRecordModal;
+export default UpdateRecordModal;
