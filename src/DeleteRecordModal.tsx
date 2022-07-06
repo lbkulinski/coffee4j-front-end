@@ -23,11 +23,9 @@ type Props = {
     recordType: RecordType
 }
 
-function deleteRecord(requestUrl: string, id: number, setShow: (show: boolean) => void,
-                      setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
-                      setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
-                      setRecords: (records: Record[]) => void) {
-    const deleteRequestUrl = `${requestUrl}?id=${id}`;
+function deleteRecord(props: Props, setShowSuccess: (showSuccess: boolean) => void,
+                      setShowError: (showError: boolean) => void) {
+    const deleteRequestUrl = `${props.requestUrl}?id=${props.record.id}`;
 
     const config = {
         "withCredentials": true,
@@ -37,16 +35,16 @@ function deleteRecord(requestUrl: string, id: number, setShow: (show: boolean) =
 
     axios.delete(deleteRequestUrl, config)
          .then((response: AxiosResponse<DeleteResponse>) => {
-             setShow(false);
+             props.setShow(false);
 
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
 
                  const offsetIds: number[] = [];
 
-                 setOffsetIds(offsetIds);
+                 props.setOffsetIds(offsetIds);
 
-                 loadRecords(requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
+                 loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
 
                  return;
              } //end if
@@ -61,8 +59,7 @@ function DeleteRecordModal(props: Props) {
     };
 
     const handleDelete = () => {
-        deleteRecord(props.requestUrl, props.record.id, props.setShow, setShowSuccess, setShowError,
-                     props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        deleteRecord(props, setShowSuccess, setShowError);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);

@@ -24,13 +24,11 @@ type Props = {
     recordType: RecordType
 }
 
-function updateRecord(requestUrl: string, id: number, name: string, setShow: (show: boolean) => void,
-                      setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
-                      setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
-                      setRecords: (records: Record[]) => void) {
+function updateRecord(props: Props, name: string, setShowSuccess: (showSuccess: boolean) => void,
+                      setShowError: (showError: boolean) => void) {
     const formData = new FormData();
 
-    const idString = String(id);
+    const idString = String(props.record.id);
 
     formData.append("id", idString);
 
@@ -42,18 +40,18 @@ function updateRecord(requestUrl: string, id: number, name: string, setShow: (sh
 
     const axios = require("axios").default;
 
-    axios.put(requestUrl, formData, config)
+    axios.put(props.requestUrl, formData, config)
          .then((response: AxiosResponse<UpdateResponse>) => {
-             setShow(false);
+             props.setShow(false);
 
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
 
                  const offsetIds: number[] = [];
 
-                 setOffsetIds(offsetIds);
+                 props.setOffsetIds(offsetIds);
 
-                 loadRecords(requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
+                 loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
 
                  return;
              } //end if
@@ -74,8 +72,7 @@ function UpdateRecordModal(props: Props) {
     };
 
     const handleUpdate = () => {
-        updateRecord(props.requestUrl, props.record.id, name, props.setShow, setShowSuccess, setShowError,
-                     props.setOffsetIds, props.setNextDisabled, props.setRecords);
+        updateRecord(props, name, setShowSuccess, setShowError);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);

@@ -22,10 +22,8 @@ type Props = {
     recordType: RecordType
 }
 
-function createRecord(requestUrl: string, name: string, setShow: (show: boolean) => void,
-                      setShowSuccess: (showSuccess: boolean) => void, setShowError: (showError: boolean) => void,
-                      setOffsetIds: (offsetIds: number[]) => void, setNextDisabled: (nextDisabled: boolean) => void,
-                      setRecords: (records: Record[]) => void) {
+function createRecord(props: Props, name: string, setShowSuccess: (showSuccess: boolean) => void,
+                      setShowError: (showError: boolean) => void) {
     const formData = new FormData();
 
     formData.append("name", name);
@@ -36,18 +34,18 @@ function createRecord(requestUrl: string, name: string, setShow: (show: boolean)
 
     const axios = require("axios").default;
 
-    axios.post(requestUrl, formData, config)
+    axios.post(props.requestUrl, formData, config)
          .then((response: AxiosResponse<CreateResponse>) => {
-             setShow(false);
+             props.setShow(false);
 
              if (response.data.status === "SUCCESS") {
                  setShowSuccess(true);
 
                  const offsetIds: number[] = [];
 
-                 setOffsetIds(offsetIds);
+                 props.setOffsetIds(offsetIds);
 
-                 loadRecords(requestUrl, offsetIds, setOffsetIds, setNextDisabled, setRecords);
+                 loadRecords(props.requestUrl, offsetIds, props.setOffsetIds, props.setNextDisabled, props.setRecords);
 
                  return;
              } //end if
@@ -72,8 +70,7 @@ function CreateRecordModal(props: Props) {
     };
 
     const handleSave = () => {
-        createRecord(props.requestUrl, name, props.setShow, setShowSuccess, setShowError, props.setOffsetIds,
-                     props.setNextDisabled, props.setRecords);
+        createRecord(props, name, setShowSuccess, setShowError);
     };
 
     const [showSuccess, setShowSuccess] = useState(false);
