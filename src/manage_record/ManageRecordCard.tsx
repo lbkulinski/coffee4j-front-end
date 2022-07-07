@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Card from "react-bootstrap/Card";
 import RecordTable from "./RecordTable"
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
+import "../App.css";
 import Button from "react-bootstrap/Button";
 import RecordType from "./RecordType";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

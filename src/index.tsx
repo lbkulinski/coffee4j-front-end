@@ -5,20 +5,21 @@ import App from "./App";
 import Card from "react-bootstrap/Card";
 import reportWebVitals from "./reportWebVitals";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import ManageRecordCard from "./ManageRecordCard";
-import RecordType from "./RecordType";
+import ManageRecordCard from "./manage_record/ManageRecordCard";
+import RecordType from "./manage_record/RecordType";
+import BrewCard from "./manage_brew/BrewCard";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-let formData = new FormData();
+const formData = new FormData();
 
 formData.append("username", "lbk");
 
 formData.append("password", "password");
 
-let config = {
+const config = {
     "withCredentials": false
 };
 
@@ -26,7 +27,7 @@ const axios = require("axios").default;
 
 axios.post("/perform_login", formData, config);
 
-let HomeRoute = () => {
+const HomeRoute = () => {
     return (
         <App element={
             <Card>
@@ -38,7 +39,15 @@ let HomeRoute = () => {
     );
 };
 
-let CoffeeRoute = () => {
+const BrewRoute = () => {
+    return (
+        <App element={
+            <BrewCard />
+        } />
+    );
+};
+
+const CoffeeRoute = () => {
     return (
         <App element={
             <ManageRecordCard recordType={RecordType.COFFEE} requestUrl="/api/coffee" />
@@ -46,7 +55,7 @@ let CoffeeRoute = () => {
     );
 };
 
-let WaterRoute = () => {
+const WaterRoute = () => {
     return (
         <App element={
             <ManageRecordCard recordType={RecordType.WATER} requestUrl="/api/water" />
@@ -54,7 +63,7 @@ let WaterRoute = () => {
     );
 };
 
-let BrewerRoute = () => {
+const BrewerRoute = () => {
     return (
         <App element={
             <ManageRecordCard recordType={RecordType.BREWER} requestUrl="/api/brewer" />
@@ -62,7 +71,7 @@ let BrewerRoute = () => {
     );
 };
 
-let FilterRoute = () => {
+const FilterRoute = () => {
     return (
         <App element={
             <ManageRecordCard recordType={RecordType.FILTER} requestUrl="/api/filter" />
@@ -70,7 +79,7 @@ let FilterRoute = () => {
     );
 };
 
-let VesselRoute = () => {
+const VesselRoute = () => {
     return (
         <App element={
             <ManageRecordCard recordType={RecordType.VESSEL} requestUrl="/api/vessel" />
@@ -82,6 +91,7 @@ root.render(
     <BrowserRouter>
         <Routes>
             <Route path="/" element={<HomeRoute />} />
+            <Route path="/brew" element={<BrewRoute />} />
             <Route path="/coffee" element={<CoffeeRoute />} />
             <Route path="/water" element={<WaterRoute />} />
             <Route path="/brewer" element={<BrewerRoute />} />

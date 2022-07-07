@@ -20,6 +20,11 @@ function NavigationBar() {
                                 Home
                             </Nav.Link>
                         </LinkContainer>
+                        <LinkContainer to="/brew">
+                            <Nav.Link>
+                                Brew
+                            </Nav.Link>
+                        </LinkContainer>
                         <NavDropdown title="Manage">
                             <LinkContainer to="/coffee">
                                 <NavDropdown.Item>
