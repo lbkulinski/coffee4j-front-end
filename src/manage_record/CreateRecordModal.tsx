@@ -89,7 +89,7 @@ function CreateRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be created.`;
+    const errorMessage = `The specified ${recordTypeString} could not be created.`;
 
     return (
         <>

@@ -80,7 +80,7 @@ function DeleteRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be deleted.`;
+    const errorMessage = `The specified ${recordTypeString} could not be deleted.`;
 
     return (
         <>

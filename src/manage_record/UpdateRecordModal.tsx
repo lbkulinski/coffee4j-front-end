@@ -91,7 +91,7 @@ function UpdateRecordModal(props: Props) {
         setShowError(false);
     };
 
-    const errorMessage = `The specified ${recordTypeString} was could not be updated.`;
+    const errorMessage = `The specified ${recordTypeString} could not be updated.`;
 
     return (
         <>
