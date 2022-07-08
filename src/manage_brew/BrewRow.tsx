@@ -12,7 +12,13 @@ type Props = {
 }
 
 function BrewRow(props: Props) {
-    const date = new Date(props.brew.timestamp);
+    const utcTimestamp = new Date(props.brew.timestamp);
+
+    const offsetMilliseconds = utcTimestamp.getTimezoneOffset() * 60000;
+
+    const localTime = utcTimestamp.getTime() - offsetMilliseconds;
+
+    const localTimestamp = new Date(localTime);
 
     const locale = "en-US";
 
@@ -27,13 +33,13 @@ function BrewRow(props: Props) {
 
     const format = new Intl.DateTimeFormat(locale, options);
 
-    const dateString = format.format(date);
+    const localTimestampString = format.format(localTimestamp);
 
     return (
         <tr>
             <td>
                 {
-                    dateString
+                    localTimestampString
                 }
             </td>
             <td>
