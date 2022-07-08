@@ -85,7 +85,7 @@ function BrewTable(props: Props) {
                 <tbody>
                 {
                     props.brews.map((brew: Brew) => (
-                        <BrewRow brew={brew} />
+                        <BrewRow key={brew.id} brew={brew} />
                     ))
                 }
                 </tbody>

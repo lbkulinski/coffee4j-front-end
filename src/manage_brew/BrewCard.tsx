@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import Brew from "./Brew";
 import BrewTable from "./BrewTable";
+import CreateBrewModal from "./CreateBrewModal";
 
 function BrewCard() {
     const [offsetIds, setOffsetIds] = useState<number[]>([]);
@@ -46,6 +47,7 @@ function BrewCard() {
                                setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} />
                 </Card.Body>
             </Card>
+            <CreateBrewModal />
         </>
     );
 } //BrewCard
