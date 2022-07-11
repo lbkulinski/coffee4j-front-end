@@ -1,52 +1,89 @@
 import React, {useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import AsyncSelect from "react-select/async";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import {AxiosResponse} from "axios";
 
-type Option = {
+type Result = {
     id: number,
     name: string
+}
+
+type ReadResponse = {
+    status: string,
+    content: Result[]
+}
+
+type Option = {
+    value: number,
+    label: string
 }
 
 type Props = {
 
 }
 
-function loadOptions(requestUrl: string, inputValue: string, callback: (options: Option[]) => void): void {
+function loadOptions(requestUrl: string, callback: (options: Option[]) => void): void {
+    const config = {
+        "withCredentials": true
+    };
 
+    const axios = require("axios").default;
+
+    axios.get(requestUrl, config)
+         .then((response: AxiosResponse<ReadResponse>) => {
+             if (response.data.status !== "SUCCESS") {
+                 return;
+             } //end if
+
+             const results = response.data.content;
+
+             const options: Option[] = [];
+
+             results.forEach((result: Result) => {
+                 const option = {
+                     "value": result.id,
+                     "label": result.name
+                 };
+
+                 options.push(option);
+             });
+
+             callback(options);
+         });
+} //loadOptions
+
+function loadCoffeeOptions(inputValue: string, callback: (options: Option[]) => void): void {
+    const requestUrl = `/api/typeahead/coffee?searchTerm=${inputValue}`;
+
+    loadOptions(requestUrl, callback);
 } //loadCoffeeOptions
 
+function loadWaterOptions(inputValue: string, callback: (options: Option[]) => void): void {
+    const requestUrl = `/api/typeahead/water?searchTerm=${inputValue}`;
+
+    loadOptions(requestUrl, callback);
+} //loadWaterOptions
+
+function loadBrewerOptions(inputValue: string, callback: (options: Option[]) => void): void {
+    const requestUrl = `/api/typeahead/brewer?searchTerm=${inputValue}`;
+
+    loadOptions(requestUrl, callback);
+} //loadBrewerOptions
+
+function loadFilterOptions(inputValue: string, callback: (options: Option[]) => void): void {
+    const requestUrl = `/api/typeahead/filter?searchTerm=${inputValue}`;
+
+    loadOptions(requestUrl, callback);
+} //loadFilterOptions
+
+function loadVesselOptions(inputValue: string, callback: (options: Option[]) => void): void {
+    const requestUrl = `/api/typeahead/vessel?searchTerm=${inputValue}`;
+
+    loadOptions(requestUrl, callback);
+} //loadVesselOptions
+
 function CreateRecordModal(props: Props) {
-    const loadCoffeeOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-        const requestUrl = "api/typeahead/coffee";
-
-        loadOptions(requestUrl, inputValue, callback);
-    };
-
-    const loadWaterOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-        const requestUrl = "api/typeahead/water";
-
-        loadOptions(requestUrl, inputValue, callback);
-    };
-
-    const loadBrewerOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-        const requestUrl = "api/typeahead/brewer";
-
-        loadOptions(requestUrl, inputValue, callback);
-    };
-
-    const loadFilterOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-        const requestUrl = "api/typeahead/filter";
-
-        loadOptions(requestUrl, inputValue, callback);
-    };
-
-    const loadVesselOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-        const requestUrl = "api/typeahead/vessel";
-
-        loadOptions(requestUrl, inputValue, callback);
-    };
-
     return (
         <>
             <Modal show>
@@ -58,31 +95,31 @@ function CreateRecordModal(props: Props) {
                         <Form.Label>
                             Coffee
                         </Form.Label>
-                        <AsyncSelect cacheOptions loadOptions={loadCoffeeOptions} onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water
                         </Form.Label>
-                        <AsyncSelect cacheOptions loadOptions={loadWaterOptions} onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Brewer
                         </Form.Label>
-                        <AsyncSelect cacheOptions loadOptions={loadBrewerOptions} onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Filter
                         </Form.Label>
-                        <AsyncSelect cacheOptions loadOptions={loadFilterOptions} onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Vessel
                         </Form.Label>
-                        <AsyncSelect cacheOptions loadOptions={loadVesselOptions} onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
