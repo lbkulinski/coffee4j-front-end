@@ -2,7 +2,8 @@ import React, {useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import {AxiosResponse} from "axios";
+import {AxiosResponse, default as axios} from "axios";
+import {SingleValue} from "react-select";
 
 type Result = {
     id: number,
@@ -15,7 +16,7 @@ type ReadResponse = {
 }
 
 type Option = {
-    value: number,
+    value: string,
     label: string
 }
 
@@ -23,67 +24,151 @@ type Props = {
 
 }
 
-function loadOptions(requestUrl: string, callback: (options: Option[]) => void): void {
+function loadOptions(requestUrl: string): Promise<Option[]> {
     const config = {
         "withCredentials": true
     };
 
     const axios = require("axios").default;
 
-    axios.get(requestUrl, config)
-         .then((response: AxiosResponse<ReadResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 return;
-             } //end if
+    return new Promise<Option[]>((resolve) => {
+        axios.get(requestUrl, config)
+             .then((response: AxiosResponse<ReadResponse>) => {
+                 if (response.data.status !== "SUCCESS") {
+                     return;
+                 } //end if
 
-             const results = response.data.content;
+                 const results = response.data.content;
 
-             const options: Option[] = [];
+                 const options: Option[] = [];
 
-             results.forEach((result: Result) => {
-                 const option = {
-                     "value": result.id,
-                     "label": result.name
-                 };
+                 results.forEach((result: Result) => {
+                     let value = String(result.id);
 
-                 options.push(option);
+                     const option = {
+                         "value": value,
+                         "label": result.name
+                     };
+
+                     options.push(option);
+                 });
+
+                 resolve(options);
              });
-
-             callback(options);
-         });
+    });
 } //loadOptions
 
-function loadCoffeeOptions(inputValue: string, callback: (options: Option[]) => void): void {
+function loadCoffeeOptions(inputValue: string): Promise<Option[]> {
     const requestUrl = `/api/typeahead/coffee?searchTerm=${inputValue}`;
 
-    loadOptions(requestUrl, callback);
+    return loadOptions(requestUrl);
 } //loadCoffeeOptions
 
-function loadWaterOptions(inputValue: string, callback: (options: Option[]) => void): void {
+function loadWaterOptions(inputValue: string): Promise<Option[]> {
     const requestUrl = `/api/typeahead/water?searchTerm=${inputValue}`;
 
-    loadOptions(requestUrl, callback);
+    return loadOptions(requestUrl);
 } //loadWaterOptions
 
-function loadBrewerOptions(inputValue: string, callback: (options: Option[]) => void): void {
+function loadBrewerOptions(inputValue: string): Promise<Option[]> {
     const requestUrl = `/api/typeahead/brewer?searchTerm=${inputValue}`;
 
-    loadOptions(requestUrl, callback);
+    return loadOptions(requestUrl);
 } //loadBrewerOptions
 
-function loadFilterOptions(inputValue: string, callback: (options: Option[]) => void): void {
+function loadFilterOptions(inputValue: string): Promise<Option[]> {
     const requestUrl = `/api/typeahead/filter?searchTerm=${inputValue}`;
 
-    loadOptions(requestUrl, callback);
+    return loadOptions(requestUrl);
 } //loadFilterOptions
 
-function loadVesselOptions(inputValue: string, callback: (options: Option[]) => void): void {
+function loadVesselOptions(inputValue: string): Promise<Option[]> {
     const requestUrl = `/api/typeahead/vessel?searchTerm=${inputValue}`;
 
-    loadOptions(requestUrl, callback);
+    return loadOptions(requestUrl);
 } //loadVesselOptions
 
 function CreateRecordModal(props: Props) {
+    const [coffeeId, setCoffeeId] = useState(0);
+
+    const handleCoffeeChange = (newValue: SingleValue<Option>) => {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        const coffeeId = parseInt(newValue.value);
+
+        if (isNaN(coffeeId)) {
+            return;
+        } //end if
+
+        setCoffeeId(coffeeId);
+    };
+
+    const [waterId, setWaterId] = useState(0);
+
+    const handleWaterChange = (newValue: SingleValue<Option>) => {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        const waterId = parseInt(newValue.value);
+
+        if (isNaN(waterId)) {
+            return;
+        } //end if
+
+        setWaterId(waterId);
+    };
+
+    const [brewerId, setBrewerId] = useState(0);
+
+    const handleBrewerChange = (newValue: SingleValue<Option>) => {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        const brewerId = parseInt(newValue.value);
+
+        if (isNaN(brewerId)) {
+            return;
+        } //end if
+
+        setBrewerId(brewerId);
+    };
+
+    const [filterId, setFilterId] = useState(0);
+
+    const handleFilterChange = (newValue: SingleValue<Option>) => {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        const filterId = parseInt(newValue.value);
+
+        if (isNaN(filterId)) {
+            return;
+        } //end if
+
+        setFilterId(filterId);
+    };
+
+    const [vesselId, setVesselId] = useState(0);
+
+    const handleVesselChange = (newValue: SingleValue<Option>) => {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        const vesselId = parseInt(newValue.value);
+
+        if (isNaN(vesselId)) {
+            return;
+        } //end if
+
+        setVesselId(vesselId);
+    };
+
     return (
         <>
             <Modal show>
@@ -96,35 +181,35 @@ function CreateRecordModal(props: Props) {
                             Coffee
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                                              onChange={handleCoffeeChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                                              onChange={handleWaterChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Brewer
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                                              onChange={handleBrewerChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Filter
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                                              onChange={handleFilterChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Vessel
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                                              onChange={handleVesselChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
