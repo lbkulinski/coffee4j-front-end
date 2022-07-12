@@ -105,6 +105,8 @@ function CreateRecordModal(props: Props) {
         setCoffeeId(coffeeId);
     };
 
+    const [newCoffee, setNewCoffee] = useState<string | null>(null);
+
     const [waterId, setWaterId] = useState(0);
 
     const handleWaterChange = (newValue: SingleValue<Option>) => {
@@ -120,6 +122,8 @@ function CreateRecordModal(props: Props) {
 
         setWaterId(waterId);
     };
+
+    const [newWater, setNewWater] = useState<string | null>(null);
 
     const [brewerId, setBrewerId] = useState(0);
 
@@ -137,6 +141,8 @@ function CreateRecordModal(props: Props) {
         setBrewerId(brewerId);
     };
 
+    const [newBrewer, setNewBrewer] = useState<string | null>(null);
+
     const [filterId, setFilterId] = useState(0);
 
     const handleFilterChange = (newValue: SingleValue<Option>) => {
@@ -152,6 +158,8 @@ function CreateRecordModal(props: Props) {
 
         setFilterId(filterId);
     };
+
+    const [newFilter, setNewFilter] = useState<string | null>(null);
 
     const [vesselId, setVesselId] = useState(0);
 
@@ -169,6 +177,8 @@ function CreateRecordModal(props: Props) {
         setVesselId(vesselId);
     };
 
+    const [newVessel, setNewVessel] = useState<string | null>(null);
+
     return (
         <>
             <Modal show>
@@ -181,35 +191,35 @@ function CreateRecordModal(props: Props) {
                             Coffee
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onChange={handleCoffeeChange} />
+                                              onChange={handleCoffeeChange} onCreateOption={setNewCoffee} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onChange={handleWaterChange} />
+                                              onChange={handleWaterChange} onCreateOption={setNewWater} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Brewer
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onChange={handleBrewerChange} />
+                                              onChange={handleBrewerChange} onCreateOption={setNewBrewer} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Filter
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onChange={handleFilterChange} />
+                                              onChange={handleFilterChange} onCreateOption={setNewFilter} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Vessel
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onChange={handleVesselChange} />
+                                              onChange={handleVesselChange} onCreateOption={setNewVessel} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
