@@ -95,36 +95,31 @@ function CreateRecordModal(props: Props) {
                         <Form.Label>
                             Coffee
                         </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water
                         </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Brewer
                         </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Filter
                         </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Vessel
                         </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onInputChange={() => {}} />
+                        <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} onInputChange={() => {}} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
@@ -136,7 +131,7 @@ function CreateRecordModal(props: Props) {
                         <Form.Label>
                             Water Mass
                         </Form.Label>
-                        <Form.Control type="number" defaultValue="300" />
+                        <Form.Control type="number" defaultValue="300 "/>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
