@@ -89,6 +89,8 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 } //loadVesselOptions
 
 function CreateRecordModal(props: Props) {
+    // {label: "hello", value: "hello", __isNew__: true}
+
     const [coffeeId, setCoffeeId] = useState(0);
 
     const handleCoffeeChange = (newValue: SingleValue<Option>) => {
