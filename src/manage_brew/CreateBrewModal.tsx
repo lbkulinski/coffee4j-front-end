@@ -112,7 +112,6 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setCoffee(newValue);
-
     };
 
     const [water, setWater] = useState<Option | null>(null);
