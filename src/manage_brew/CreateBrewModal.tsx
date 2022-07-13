@@ -17,7 +17,8 @@ type ReadResponse = {
 
 type Option = {
     value: string,
-    label: string
+    label: string,
+    __isNew__: boolean
 }
 
 type Props = {
@@ -47,7 +48,8 @@ function loadOptions(requestUrl: string): Promise<Option[]> {
 
                      const option = {
                          "value": value,
-                         "label": result.name
+                         "label": result.name,
+                         "__isNew__": false
                      };
 
                      options.push(option);
@@ -91,84 +93,54 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 function CreateRecordModal(props: Props) {
     // {label: "hello", value: "hello", __isNew__: true}
 
-    const [coffeeId, setCoffeeId] = useState(0);
+    const [coffee, setCoffee] = useState<Option | null>(null);
 
     const handleCoffeeChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
         } //end if
 
-        const coffeeId = parseInt(newValue.value);
-
-        if (isNaN(coffeeId)) {
-            return;
-        } //end if
-
-        setCoffeeId(coffeeId);
+        setCoffee(newValue);
     };
 
-    const [waterId, setWaterId] = useState(0);
+    const [water, setWater] = useState<Option | null>(null);
 
     const handleWaterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
         } //end if
 
-        const waterId = parseInt(newValue.value);
-
-        if (isNaN(waterId)) {
-            return;
-        } //end if
-
-        setWaterId(waterId);
+       setWater(newValue);
     };
 
-    const [brewerId, setBrewerId] = useState(0);
+    const [brewer, setBrewer] = useState<Option | null>(null);
 
     const handleBrewerChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
         } //end if
 
-        const brewerId = parseInt(newValue.value);
-
-        if (isNaN(brewerId)) {
-            return;
-        } //end if
-
-        setBrewerId(brewerId);
+        setBrewer(newValue);
     };
 
-    const [filterId, setFilterId] = useState(0);
+    const [filter, setFilter] = useState<Option | null>(null);
 
     const handleFilterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
         } //end if
 
-        const filterId = parseInt(newValue.value);
-
-        if (isNaN(filterId)) {
-            return;
-        } //end if
-
-        setFilterId(filterId);
+        setFilter(newValue);
     };
 
-    const [vesselId, setVesselId] = useState(0);
+    const [vessel, setVessel] = useState<Option | null>(null);
 
     const handleVesselChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
         } //end if
 
-        const vesselId = parseInt(newValue.value);
-
-        if (isNaN(vesselId)) {
-            return;
-        } //end if
-
-        setVesselId(vesselId);
+        setVessel(newValue);
     };
 
     return (
@@ -217,13 +189,25 @@ function CreateRecordModal(props: Props) {
                         <Form.Label>
                             Coffee Mass
                         </Form.Label>
-                        <Form.Control type="number" defaultValue="18" />
+                        <Form.Control type="text" defaultValue="18" onKeyDown={(event) => {
+                            const regex = /\d/;
+
+                            if (!regex.test(event.key)) {
+                                event.preventDefault();
+                            } //end if
+                        }} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water Mass
                         </Form.Label>
-                        <Form.Control type="number" defaultValue="300" />
+                        <Form.Control type="text" defaultValue="300" onKeyDown={(event) => {
+                            const regex = /\d/;
+
+                            if (!regex.test(event.key)) {
+                                event.preventDefault();
+                            } //end if
+                        }} />
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
