@@ -193,6 +193,9 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
                                               onChange={handleCoffeeChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please select a coffee.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
@@ -200,6 +203,9 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
                                               onChange={handleWaterChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please select a water.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
@@ -207,6 +213,9 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
                                               onChange={handleBrewerChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please select a brewer.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
@@ -214,6 +223,9 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
                                               onChange={handleFilterChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please select a filter.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
@@ -221,18 +233,27 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
                                               onChange={handleVesselChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please select a vessel.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Coffee Mass
                         </Form.Label>
                         <Form.Control type="text" defaultValue="18" onChange={handleCoffeeMassChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please enter a valid coffee mass.
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water Mass
                         </Form.Label>
                         <Form.Control type="text" defaultValue="300" onChange={handleWaterMassChange} />
+                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                            Please enter a valid water mass.
+                        </Form.Control.Feedback>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
