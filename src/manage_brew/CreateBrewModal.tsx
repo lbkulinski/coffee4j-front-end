@@ -112,6 +112,7 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setCoffee(newValue);
+
     };
 
     const [water, setWater] = useState<Option | null>(null);
@@ -153,6 +154,32 @@ function CreateRecordModal(props: Props) {
 
         setVessel(newValue);
     };
+
+    const [coffeeMass, setCoffeeMass] = useState(0.0);
+
+    const handleCoffeeMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const newValue = parseInt(event.target.value);
+
+        if (isNaN(newValue)) {
+            return;
+        } //end if
+
+        setCoffeeMass(newValue);
+    };
+
+    const [waterMass, setWaterMass] = useState(0.0);
+
+    const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const newValue = parseInt(event.target.value);
+
+        if (isNaN(newValue)) {
+            return;
+        } //end if
+
+        setWaterMass(newValue);
+    };
+
+    const [saveDisabled, setSaveDisabled] = useState(true);
 
     return (
         <>
@@ -200,32 +227,20 @@ function CreateRecordModal(props: Props) {
                         <Form.Label>
                             Coffee Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue="18" onKeyDown={(event) => {
-                            const regex = /\d/;
-
-                            if (!regex.test(event.key)) {
-                                event.preventDefault();
-                            } //end if
-                        }} />
+                        <Form.Control type="text" defaultValue="18" onChange={handleCoffeeMassChange} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Water Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue="300" onKeyDown={(event) => {
-                            const regex = /\d/;
-
-                            if (!regex.test(event.key)) {
-                                event.preventDefault();
-                            } //end if
-                        }} />
+                        <Form.Control type="text" defaultValue="300" onChange={handleWaterMassChange} />
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary">
                         Close
                     </Button>
-                    <Button variant="outline-primary" onClick={() => {
+                    <Button variant="outline-primary" disabled={saveDisabled} onClick={() => {
                         const brew: Brew = {
                             "coffee": coffee,
                             "water": water,
