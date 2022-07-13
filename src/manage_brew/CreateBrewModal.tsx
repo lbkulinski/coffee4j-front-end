@@ -21,6 +21,14 @@ type Option = {
     __isNew__: boolean
 }
 
+type Brew = {
+    coffee: Option | null,
+    water: Option | null,
+    brewer: Option | null,
+    filter: Option | null,
+    vessel: Option | null
+}
+
 type Props = {
 
 }
@@ -46,7 +54,7 @@ function loadOptions(requestUrl: string): Promise<Option[]> {
                  results.forEach((result: Result) => {
                      let value = String(result.id);
 
-                     const option = {
+                     const option: Option = {
                          "value": value,
                          "label": result.name,
                          "__isNew__": false
@@ -89,6 +97,9 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 
     return loadOptions(requestUrl);
 } //loadVesselOptions
+
+function saveBrew(brew: Brew): void {
+} //saveBrew
 
 function CreateRecordModal(props: Props) {
     // {label: "hello", value: "hello", __isNew__: true}
@@ -214,7 +225,17 @@ function CreateRecordModal(props: Props) {
                     <Button variant="outline-secondary">
                         Close
                     </Button>
-                    <Button variant="outline-primary">
+                    <Button variant="outline-primary" onClick={() => {
+                        const brew: Brew = {
+                            "coffee": coffee,
+                            "water": water,
+                            "brewer": brewer,
+                            "filter": filter,
+                            "vessel": vessel
+                        };
+
+                        saveBrew(brew);
+                    }}>
                         Save
                     </Button>
                 </Modal.Footer>
