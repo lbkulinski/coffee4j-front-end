@@ -114,6 +114,10 @@ function CreateRecordModal(props: Props) {
         setCoffee(newValue);
     };
 
+    const [showCoffeeError, setShowCoffeeError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
+
     const [water, setWater] = useState<Option | null>(null);
 
     const handleWaterChange = (newValue: SingleValue<Option>) => {
@@ -123,6 +127,10 @@ function CreateRecordModal(props: Props) {
 
        setWater(newValue);
     };
+
+    const [showWaterError, setShowWaterError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
 
     const [brewer, setBrewer] = useState<Option | null>(null);
 
@@ -134,6 +142,10 @@ function CreateRecordModal(props: Props) {
         setBrewer(newValue);
     };
 
+    const [showBrewerError, setShowBrewerError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
+
     const [filter, setFilter] = useState<Option | null>(null);
 
     const handleFilterChange = (newValue: SingleValue<Option>) => {
@@ -144,6 +156,10 @@ function CreateRecordModal(props: Props) {
         setFilter(newValue);
     };
 
+    const [showFilterError, setShowFilterError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
+
     const [vessel, setVessel] = useState<Option | null>(null);
 
     const handleVesselChange = (newValue: SingleValue<Option>) => {
@@ -153,6 +169,10 @@ function CreateRecordModal(props: Props) {
 
         setVessel(newValue);
     };
+
+    const [showVesselError, setShowVesselError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
 
     const [coffeeMass, setCoffeeMass] = useState(0.0);
 
@@ -166,6 +186,10 @@ function CreateRecordModal(props: Props) {
         setCoffeeMass(newValue);
     };
 
+    const [showCoffeeMassError, setShowCoffeeMassError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
+
     const [waterMass, setWaterMass] = useState(0.0);
 
     const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -177,6 +201,10 @@ function CreateRecordModal(props: Props) {
 
         setWaterMass(newValue);
     };
+
+    const [showWaterMassError, setShowWaterMassError] = useState<React.CSSProperties>({
+        "display": "none"
+    });
 
     const [saveDisabled, setSaveDisabled] = useState(true);
 
@@ -193,7 +221,7 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
                                               onChange={handleCoffeeChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showCoffeeError}>
                             Please select a coffee.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -203,7 +231,7 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
                                               onChange={handleWaterChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showWaterError}>
                             Please select a water.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -213,7 +241,7 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
                                               onChange={handleBrewerChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showBrewerError}>
                             Please select a brewer.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -223,7 +251,7 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
                                               onChange={handleFilterChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showFilterError}>
                             Please select a filter.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -233,7 +261,7 @@ function CreateRecordModal(props: Props) {
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
                                               onChange={handleVesselChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showVesselError}>
                             Please select a vessel.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -242,7 +270,7 @@ function CreateRecordModal(props: Props) {
                             Coffee Mass
                         </Form.Label>
                         <Form.Control type="text" defaultValue="18" onChange={handleCoffeeMassChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showCoffeeMassError}>
                             Please enter a valid coffee mass.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -251,7 +279,7 @@ function CreateRecordModal(props: Props) {
                             Water Mass
                         </Form.Label>
                         <Form.Control type="text" defaultValue="300" onChange={handleWaterMassChange} />
-                        <Form.Control.Feedback type="invalid" style={{"display": "block"}}>
+                        <Form.Control.Feedback type="invalid" style={showWaterMassError}>
                             Please enter a valid water mass.
                         </Form.Control.Feedback>
                     </Form.Group>
