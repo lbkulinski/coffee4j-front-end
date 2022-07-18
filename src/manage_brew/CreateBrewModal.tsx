@@ -182,12 +182,8 @@ function saveBrew(brew: Brew): void {
     } //end if
 
     if (!dataValid) {
-        console.log("Invalid");
-
         return;
     } //end if
-
-    console.log("Valid");
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
