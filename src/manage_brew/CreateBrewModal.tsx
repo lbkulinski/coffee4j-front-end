@@ -122,6 +122,20 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
     return loadOptions(requestUrl);
 } //loadVesselOptions
 
+function getRecordId(option: Option, requestUrl: string): number {
+    let recordId;
+
+    if (option.__isNew__) {
+        //TODO: Create new coffee
+
+        recordId = 0;
+    } else {
+        recordId = Number(option.value);
+    } //end if
+
+    return recordId;
+} //getRecordId
+
 function saveBrew(brew: Brew): void {
     let dataValid = true;
 
@@ -184,6 +198,16 @@ function saveBrew(brew: Brew): void {
     if (!dataValid) {
         return;
     } //end if
+
+    const coffeeOption = brew.coffee.value;
+
+    if (coffeeOption === null) {
+        return;
+    } //end if
+
+    const coffeeRequestUrl = '/api/coffee';
+
+    const coffeeId = getRecordId(coffeeOption, coffeeRequestUrl);
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
