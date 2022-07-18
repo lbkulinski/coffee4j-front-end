@@ -123,35 +123,71 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 } //loadVesselOptions
 
 function saveBrew(brew: Brew): void {
+    let dataValid = true;
+
     if (brew.coffee.value === null) {
         brew.coffee.setShowError({
             "display": "block"
         });
+
+        dataValid = false;
     } //end if
 
     if (brew.water.value === null) {
         brew.water.setShowError({
             "display": "block"
         });
+
+        dataValid = false;
     } //end if
 
     if (brew.brewer.value === null) {
         brew.brewer.setShowError({
             "display": "block"
         });
+
+        dataValid = false;
     } //end if
 
     if (brew.filter.value === null) {
         brew.filter.setShowError({
             "display": "block"
         });
+
+        dataValid = false;
     } //end if
 
     if (brew.vessel.value === null) {
         brew.vessel.setShowError({
             "display": "block"
         });
+
+        dataValid = false;
     } //end if
+
+    if (isNaN(brew.coffeeMass.value)) {
+        brew.coffeeMass.setShowError({
+            "display": "block"
+        });
+
+        dataValid = false;
+    } //end if
+
+    if (isNaN(brew.waterMass.value)) {
+        brew.waterMass.setShowError({
+            "display": "block"
+        });
+
+        dataValid = false;
+    } //end if
+
+    if (!dataValid) {
+        console.log("Invalid");
+
+        return;
+    } //end if
+
+    console.log("Valid");
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
@@ -260,6 +296,8 @@ function CreateRecordModal(props: Props) {
     const handleCoffeeMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newValue = Number(event.target.value);
 
+        setCoffeeMass(newValue);
+
         if (isNaN(newValue)) {
             setShowCoffeeMassError({
                 "display": "block"
@@ -267,8 +305,6 @@ function CreateRecordModal(props: Props) {
 
             return;
         } //end if
-
-        setCoffeeMass(newValue);
 
         setShowCoffeeMassError({
             "display": "none"
@@ -284,6 +320,8 @@ function CreateRecordModal(props: Props) {
     const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newValue = Number(event.target.value);
 
+        setWaterMass(newValue);
+
         if (isNaN(newValue)) {
             setShowWaterMassError({
                 "display": "block"
@@ -291,8 +329,6 @@ function CreateRecordModal(props: Props) {
 
             return;
         } //end if
-
-        setWaterMass(newValue);
         
         setShowWaterMassError({
             "display": "none"
