@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {CSSProperties, useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
@@ -22,15 +22,39 @@ type Option = {
 }
 
 type Brew = {
-    coffee: Option | null,
-    water: Option | null,
-    brewer: Option | null,
-    filter: Option | null,
-    vessel: Option | null
+    coffee: {
+        value: Option | null,
+        setShowError: (showError: CSSProperties) => void
+    },
+    water: {
+        value: Option | null,
+        setShowError: (showError: CSSProperties) => void
+    },
+    brewer: {
+        value: Option | null,
+        setShowError: (showError: CSSProperties) => void
+    },
+    filter: {
+        value: Option | null,
+        setShowError: (showError: CSSProperties) => void
+    },
+    vessel: {
+        value: Option | null,
+        setShowError: (showError: CSSProperties) => void
+    },
+    coffeeMass: {
+        value: number,
+        setShowError: (showError: CSSProperties) => void
+    },
+    waterMass: {
+        value: number,
+        setShowError: (showError: CSSProperties) => void
+    }
 }
 
 type Props = {
-
+    show: boolean,
+    setShow: (show: boolean) => void
 }
 
 function loadOptions(requestUrl: string): Promise<Option[]> {
@@ -99,12 +123,49 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 } //loadVesselOptions
 
 function saveBrew(brew: Brew): void {
+    if (brew.coffee.value === null) {
+        brew.coffee.setShowError({
+            "display": "block"
+        });
+    } //end if
+
+    if (brew.water.value === null) {
+        brew.water.setShowError({
+            "display": "block"
+        });
+    } //end if
+
+    if (brew.brewer.value === null) {
+        brew.brewer.setShowError({
+            "display": "block"
+        });
+    } //end if
+
+    if (brew.filter.value === null) {
+        brew.filter.setShowError({
+            "display": "block"
+        });
+    } //end if
+
+    if (brew.vessel.value === null) {
+        brew.vessel.setShowError({
+            "display": "block"
+        });
+    } //end if
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
     // {label: "hello", value: "hello", __isNew__: true}
 
+    const hideModal = () => {
+        props.setShow(false);
+    };
+
     const [coffee, setCoffee] = useState<Option | null>(null);
+
+    const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
+        "display": "none"
+    });
 
     const handleCoffeeChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -112,13 +173,17 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setCoffee(newValue);
+        
+        setShowCoffeeError({
+            "display": "none"
+        });
     };
 
-    const [showCoffeeError, setShowCoffeeError] = useState<React.CSSProperties>({
+    const [water, setWater] = useState<Option | null>(null);
+
+    const [showWaterError, setShowWaterError] = useState<CSSProperties>({
         "display": "none"
     });
-
-    const [water, setWater] = useState<Option | null>(null);
 
     const handleWaterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -126,13 +191,17 @@ function CreateRecordModal(props: Props) {
         } //end if
 
        setWater(newValue);
+        
+        setShowWaterError({
+            "display": "none"
+        });
     };
 
-    const [showWaterError, setShowWaterError] = useState<React.CSSProperties>({
+    const [brewer, setBrewer] = useState<Option | null>(null);
+
+    const [showBrewerError, setShowBrewerError] = useState<CSSProperties>({
         "display": "none"
     });
-
-    const [brewer, setBrewer] = useState<Option | null>(null);
 
     const handleBrewerChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -140,13 +209,17 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setBrewer(newValue);
+        
+        setShowBrewerError({
+            "display": "none"
+        });
     };
 
-    const [showBrewerError, setShowBrewerError] = useState<React.CSSProperties>({
+    const [filter, setFilter] = useState<Option | null>(null);
+
+    const [showFilterError, setShowFilterError] = useState<CSSProperties>({
         "display": "none"
     });
-
-    const [filter, setFilter] = useState<Option | null>(null);
 
     const handleFilterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -154,13 +227,17 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setFilter(newValue);
+        
+        setShowFilterError({
+            "display": "none"
+        });
     };
 
-    const [showFilterError, setShowFilterError] = useState<React.CSSProperties>({
+    const [vessel, setVessel] = useState<Option | null>(null);
+
+    const [showVesselError, setShowVesselError] = useState<CSSProperties>({
         "display": "none"
     });
-
-    const [vessel, setVessel] = useState<Option | null>(null);
 
     const handleVesselChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -168,49 +245,63 @@ function CreateRecordModal(props: Props) {
         } //end if
 
         setVessel(newValue);
-    };
 
-    const [showVesselError, setShowVesselError] = useState<React.CSSProperties>({
-        "display": "none"
-    });
+        setShowVesselError({
+            "display": "none"
+        });
+    };
 
     const [coffeeMass, setCoffeeMass] = useState(0.0);
 
+    const [showCoffeeMassError, setShowCoffeeMassError] = useState<CSSProperties>({
+        "display": "none"
+    });
+
     const handleCoffeeMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = parseInt(event.target.value);
+        const newValue = Number(event.target.value);
 
         if (isNaN(newValue)) {
+            setShowCoffeeMassError({
+                "display": "block"
+            });
+
             return;
         } //end if
 
         setCoffeeMass(newValue);
-    };
 
-    const [showCoffeeMassError, setShowCoffeeMassError] = useState<React.CSSProperties>({
-        "display": "none"
-    });
+        setShowCoffeeMassError({
+            "display": "none"
+        });
+    };
 
     const [waterMass, setWaterMass] = useState(0.0);
 
+    const [showWaterMassError, setShowWaterMassError] = useState<CSSProperties>({
+        "display": "none"
+    });
+
     const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = parseInt(event.target.value);
+        const newValue = Number(event.target.value);
 
         if (isNaN(newValue)) {
+            setShowWaterMassError({
+                "display": "block"
+            });
+
             return;
         } //end if
 
         setWaterMass(newValue);
+        
+        setShowWaterMassError({
+            "display": "none"
+        });
     };
-
-    const [showWaterMassError, setShowWaterMassError] = useState<React.CSSProperties>({
-        "display": "none"
-    });
-
-    const [saveDisabled, setSaveDisabled] = useState(true);
 
     return (
         <>
-            <Modal show>
+            <Modal show={props.show} onHide={hideModal}>
                 <Modal.Header closeButton>
                     Create
                 </Modal.Header>
@@ -288,13 +379,36 @@ function CreateRecordModal(props: Props) {
                     <Button variant="outline-secondary">
                         Close
                     </Button>
-                    <Button variant="outline-primary" disabled={saveDisabled} onClick={() => {
+                    <Button variant="outline-primary" onClick={() => {
                         const brew: Brew = {
-                            "coffee": coffee,
-                            "water": water,
-                            "brewer": brewer,
-                            "filter": filter,
-                            "vessel": vessel
+                            "coffee": {
+                                "value": coffee,
+                                "setShowError": setShowCoffeeError
+                            },
+                            "water": {
+                                "value": water,
+                                "setShowError": setShowWaterError
+                            },
+                            "brewer": {
+                                "value": brewer,
+                                "setShowError": setShowBrewerError
+                            },
+                            "filter": {
+                                "value": filter,
+                                "setShowError": setShowFilterError
+                            },
+                            "vessel": {
+                                "value": vessel,
+                                "setShowError": setShowVesselError
+                            },
+                            "coffeeMass": {
+                                "value": coffeeMass,
+                                "setShowError": setShowCoffeeMassError
+                            },
+                            "waterMass": {
+                                "value": waterMass,
+                                "setShowError": setShowWaterMassError
+                            }
                         };
 
                         saveBrew(brew);

@@ -16,9 +16,9 @@ function BrewCard() {
 
     const [brews, setBrews] = useState<Brew[]>([]);
 
-    /*
-    const [createShow, setCreateShow] = useState(false);
+    const [createShow, setCreateShow] = useState(true);
 
+    /*
     const [record, setRecord] = useState({
                                              "id": 0,
                                              "name": ""
@@ -47,7 +47,7 @@ function BrewCard() {
                                setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} />
                 </Card.Body>
             </Card>
-            <CreateBrewModal />
+            <CreateBrewModal show={createShow} setShow={setCreateShow} />
         </>
     );
 } //BrewCard
