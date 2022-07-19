@@ -132,6 +132,8 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
 
 function getRecordPromise(option: Option, type: RecordType): Promise<number | null> {
     return new Promise<number | null>((resolve) => {
+        console.log(option);
+
         if (!option.__isNew__) {
             const id = Number(option.value);
 
@@ -373,13 +375,37 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
 
-    const waterPromise = getRecordPromise(coffeeOption, RecordType.WATER);
+    const waterOption = brew.water.value;
 
-    const brewerPromise = getRecordPromise(coffeeOption, RecordType.BREWER);
+    if (waterOption === null) {
+        return;
+    } //end if
 
-    const filterPromise = getRecordPromise(coffeeOption, RecordType.FILTER);
+    const waterPromise = getRecordPromise(waterOption, RecordType.WATER);
 
-    const vesselPromise = getRecordPromise(coffeeOption, RecordType.VESSEL);
+    const brewerOption = brew.brewer.value;
+
+    if (brewerOption === null) {
+        return;
+    } //end if
+
+    const brewerPromise = getRecordPromise(brewerOption, RecordType.BREWER);
+
+    const filterOption = brew.filter.value;
+
+    if (filterOption === null) {
+        return;
+    } //end if
+
+    const filterPromise = getRecordPromise(filterOption, RecordType.FILTER);
+
+    const vesselOption = brew.vessel.value;
+
+    if (vesselOption === null) {
+        return;
+    } //end if
+
+    const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
 
     const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
 
