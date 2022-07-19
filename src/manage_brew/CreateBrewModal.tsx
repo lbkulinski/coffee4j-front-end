@@ -2,8 +2,9 @@ import React, {CSSProperties, useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import {AxiosResponse, default as axios} from "axios";
+import {AxiosResponse} from "axios";
 import {SingleValue} from "react-select";
+import RecordType from "../manage_record/RecordType";
 
 type Result = {
     id: number,
@@ -19,6 +20,11 @@ type Option = {
     value: string,
     label: string,
     __isNew__: boolean
+}
+
+type CreateResponse = {
+    status: string,
+    content: string
 }
 
 type Brew = {
@@ -68,6 +74,8 @@ function loadOptions(requestUrl: string): Promise<Option[]> {
         axios.get(requestUrl, config)
              .then((response: AxiosResponse<ReadResponse>) => {
                  if (response.data.status !== "SUCCESS") {
+                     resolve([]);
+
                      return;
                  } //end if
 
@@ -122,21 +130,179 @@ function loadVesselOptions(inputValue: string): Promise<Option[]> {
     return loadOptions(requestUrl);
 } //loadVesselOptions
 
-function getRecordId(option: Option, requestUrl: string): number {
-    let recordId;
+function getRecordPromise(option: Option, type: RecordType): Promise<number | null> {
+    return new Promise<number | null>((resolve) => {
+        if (!option.__isNew__) {
+            const id = Number(option.value);
 
-    if (option.__isNew__) {
-        //TODO: Create new coffee
+            if (isNaN(id)) {
+                resolve(null);
 
-        recordId = 0;
-    } else {
-        recordId = Number(option.value);
+                return;
+            } //end if
+
+            resolve(id);
+
+            return;
+        } //end if
+
+        let requestUrl;
+
+        switch (type) {
+            case RecordType.COFFEE:
+                requestUrl = "/api/coffee";
+                break;
+            case RecordType.WATER:
+                requestUrl = "/api/water";
+                break;
+            case RecordType.BREWER:
+                requestUrl = "/api/brewer";
+                break;
+            case RecordType.FILTER:
+                requestUrl = "/api/filter";
+                break;
+            case RecordType.VESSEL:
+                requestUrl = "/api/vessel";
+                break;
+            default:
+                resolve(null);
+                return;
+        } //end switch
+
+        const formData = new FormData();
+
+        formData.append("name", option.value);
+
+        const config = {
+            "withCredentials": true,
+        };
+
+        const axios = require("axios").default;
+
+        axios.post(requestUrl, formData, config)
+             .then((response: AxiosResponse<CreateResponse>) => {
+                 if (response.data.status !== "SUCCESS") {
+                     resolve(null);
+
+                     return;
+                 } //end if
+
+                 const location = response.headers["location"];
+
+                 const url = new URL(location);
+
+                 const searchParameters = new URLSearchParams(url.search);
+
+                 if (!searchParameters.has("id")) {
+                     resolve(null);
+
+                     return;
+                 } //end if
+
+                 const idString = searchParameters.get("id");
+
+                 const id = Number(idString);
+
+                 if (isNaN(id)) {
+                     resolve(null);
+
+                     return;
+                 } //end if
+
+                 resolve(id);
+             });
+    });
+} //getRecordPromise
+
+function processResults(results: (number | null)[], setShowSuccess: (showSuccess: boolean) => void,
+                        setShowError: (showError: boolean) => void): void {
+    const coffeeId = results[0];
+
+    if (coffeeId === null) {
+        setShowError(true);
+
+        return;
     } //end if
 
-    return recordId;
-} //getRecordId
+    const waterId = results[1];
 
-function saveBrew(brew: Brew): void {
+    if (waterId === null) {
+        setShowError(true);
+
+        return;
+    } //end if
+
+    const brewerId = results[2];
+
+    if (brewerId === null) {
+        setShowError(true);
+
+        return;
+    } //end if
+
+    const filterId = results[3];
+
+    if (filterId === null) {
+        setShowError(true);
+
+        return;
+    } //end if
+
+    const vesselId = results[4];
+
+    if (vesselId === null) {
+        setShowError(true);
+
+        return;
+    } //end if
+
+    const requestUrl = "/api/brew";
+
+    const formData = new FormData();
+
+    const coffeeIdString = String(coffeeId);
+
+    formData.append("coffeeId", coffeeIdString);
+
+    const waterIdString = String(waterId);
+
+    formData.append("waterId", waterIdString);
+
+    const brewerIdString = String(brewerId);
+
+    formData.append("brewerId", brewerIdString);
+
+    const filterIdString = String(filterId);
+
+    formData.append("filterId", filterIdString);
+
+    const vesselIdString = String(vesselId);
+
+    formData.append("vesselId", vesselIdString);
+
+    const config = {
+        "withCredentials": true,
+    };
+
+    const axios = require("axios").default;
+
+    axios.post(requestUrl, formData, config)
+         .then((response: AxiosResponse<CreateResponse>) => {
+             if (response.data.status !== "SUCCESS") {
+                 setShowError(true);
+
+                 return;
+             } //end if
+
+             setShowSuccess(true);
+         })
+         .catch(() => {
+             setShowError(true);
+         });
+} //processResults
+
+function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
+                  setShowError: (showError: boolean) => void): void {
     let dataValid = true;
 
     if (brew.coffee.value === null) {
@@ -205,14 +371,23 @@ function saveBrew(brew: Brew): void {
         return;
     } //end if
 
-    const coffeeRequestUrl = '/api/coffee';
+    const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
 
-    const coffeeId = getRecordId(coffeeOption, coffeeRequestUrl);
+    const waterPromise = getRecordPromise(coffeeOption, RecordType.WATER);
+
+    const brewerPromise = getRecordPromise(coffeeOption, RecordType.BREWER);
+
+    const filterPromise = getRecordPromise(coffeeOption, RecordType.FILTER);
+
+    const vesselPromise = getRecordPromise(coffeeOption, RecordType.VESSEL);
+
+    const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
+
+    Promise.all(promises)
+           .then((results) => processResults(results, setShowSuccess, setShowError));
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
-    // {label: "hello", value: "hello", __isNew__: true}
-
     const hideModal = () => {
         props.setShow(false);
     };
@@ -355,6 +530,22 @@ function CreateRecordModal(props: Props) {
         });
     };
 
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    const hideSuccessToast = () => {
+        setShowSuccess(false);
+    };
+
+    const successMessage = "The specified brew was successfully created.";
+
+    const [showError, setShowError] = useState(false);
+
+    const hideErrorToast = () => {
+        setShowError(false);
+    };
+
+    const errorMessage = "The specified brew could not be created.";
+
     return (
         <>
             <Modal show={props.show} onHide={hideModal}>
@@ -467,13 +658,14 @@ function CreateRecordModal(props: Props) {
                             }
                         };
 
-                        saveBrew(brew);
+                        props.setShow(false);
+
+                        saveBrew(brew, setShowSuccess, setShowError);
                     }}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
-            {/*
             <ToastContainer className="p-3" position="top-end">
                 <Toast show={showSuccess} onClose={hideSuccessToast} delay={3000} autohide>
                     <Toast.Header>
@@ -500,7 +692,6 @@ function CreateRecordModal(props: Props) {
                     </Toast.Body>
                 </Toast>
             </ToastContainer>
-            */}
         </>
     );
 } //CreateRecordModal
