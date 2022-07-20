@@ -23,12 +23,12 @@ function BrewRow(props: Props) {
     const locale = "en-US";
 
     const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        hour12: true,
-        minute: "2-digit"
+        "year": "numeric",
+        "month": "long",
+        "day": "numeric",
+        "hour": "numeric",
+        "minute": "numeric",
+        "hour12": true,
     };
 
     const format = new Intl.DateTimeFormat(locale, options);
