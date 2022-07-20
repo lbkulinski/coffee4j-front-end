@@ -41,17 +41,12 @@ function RecordRow(props: Props) {
             <td>
                 <Container>
                     <Row>
-                        <Col xs="1">
+                        <Col>
                             <a onClick={showUpdateModal}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>
-                        <Col xs="1">
-                            <a>
-                                <FontAwesomeIcon icon={faBoxArchive} />
-                            </a>
-                        </Col>
-                        <Col xs="1">
+                        <Col>
                             <a onClick={showDeleteModal}>
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </a>
