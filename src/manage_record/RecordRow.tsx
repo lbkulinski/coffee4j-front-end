@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare, faTrashCan} from "@fortawesome/free-regular-svg-icons"
+import {faPenToSquare, faTrashCan, faBoxArchive} from "@fortawesome/free-solid-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
 import Record from "./Record";
 
@@ -44,6 +44,11 @@ function RecordRow(props: Props) {
                         <Col xs="1">
                             <a onClick={showUpdateModal}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
+                            </a>
+                        </Col>
+                        <Col xs="1">
+                            <a>
+                                <FontAwesomeIcon icon={faBoxArchive} />
                             </a>
                         </Col>
                         <Col xs="1">

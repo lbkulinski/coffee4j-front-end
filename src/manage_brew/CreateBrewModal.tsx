@@ -216,7 +216,8 @@ function getRecordPromise(option: Option, type: RecordType): Promise<number | nu
     });
 } //getRecordPromise
 
-function processResults(results: (number | null)[], setShowSuccess: (showSuccess: boolean) => void,
+function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
+                        setShowSuccess: (showSuccess: boolean) => void,
                         setShowError: (showError: boolean) => void): void {
     const coffeeId = results[0];
 
@@ -281,6 +282,14 @@ function processResults(results: (number | null)[], setShowSuccess: (showSuccess
     const vesselIdString = String(vesselId);
 
     formData.append("vesselId", vesselIdString);
+
+    const coffeeMassString = String(coffeeMass);
+
+    formData.append("coffeeMass", coffeeMassString);
+
+    const waterMassString = String(waterMass);
+
+    formData.append("waterMass", waterMassString);
 
     const config = {
         "withCredentials": true,
@@ -407,10 +416,14 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
 
+    const coffeeMass = brew.coffeeMass.value;
+
+    const waterMass = brew.waterMass.value;
+
     const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
 
     Promise.all(promises)
-           .then((results) => processResults(results, setShowSuccess, setShowError));
+           .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError));
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
@@ -508,7 +521,7 @@ function CreateRecordModal(props: Props) {
         });
     };
 
-    const [coffeeMass, setCoffeeMass] = useState(0.0);
+    const [coffeeMass, setCoffeeMass] = useState(18.0);
 
     const [showCoffeeMassError, setShowCoffeeMassError] = useState<CSSProperties>({
         "display": "none"
@@ -532,7 +545,7 @@ function CreateRecordModal(props: Props) {
         });
     };
 
-    const [waterMass, setWaterMass] = useState(0.0);
+    const [waterMass, setWaterMass] = useState(300.0);
 
     const [showWaterMassError, setShowWaterMassError] = useState<CSSProperties>({
         "display": "none"
