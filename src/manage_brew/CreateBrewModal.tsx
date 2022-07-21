@@ -451,10 +451,6 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
-    const hideModal = () => {
-        props.setShow(false);
-    };
-
     const [coffee, setCoffee] = useState<Option | null>(null);
 
     const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
@@ -588,6 +584,38 @@ function CreateRecordModal(props: Props) {
             return;
         } //end if
         
+        setShowWaterMassError({
+            "display": "none"
+        });
+    };
+
+    const hideModal = () => {
+        props.setShow(false);
+
+        setShowCoffeeError({
+            "display": "none"
+        });
+
+        setShowWaterError({
+            "display": "none"
+        });
+
+        setShowBrewerError({
+            "display": "none"
+        });
+
+        setShowFilterError({
+            "display": "none"
+        });
+
+        setShowVesselError({
+            "display": "none"
+        });
+
+        setShowCoffeeMassError({
+            "display": "none"
+        });
+
         setShowWaterMassError({
             "display": "none"
         });
