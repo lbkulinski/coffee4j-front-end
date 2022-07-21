@@ -5,6 +5,8 @@ import AsyncCreatableSelect from "react-select/async-creatable";
 import {AxiosResponse} from "axios";
 import {SingleValue} from "react-select";
 import RecordType from "../manage_record/RecordType";
+import Brew from "./Brew";
+import loadBrews from "./loadBrews";
 
 type Result = {
     id: number,
@@ -27,7 +29,7 @@ type CreateResponse = {
     content: string
 }
 
-type Brew = {
+type CreateBrewValues = {
     coffee: {
         value: Option | null,
         setShowError: (showError: CSSProperties) => void
@@ -60,7 +62,10 @@ type Brew = {
 
 type Props = {
     show: boolean,
-    setShow: (show: boolean) => void
+    setShow: (show: boolean) => void,
+    setOffsetIds: (offsetIds: number[]) => void,
+    setNextDisabled: (nextDisabled: boolean) => void,
+    setBrews: (brews: Brew[]) => void
 }
 
 function loadOptions(requestUrl: string): Promise<Option[]> {
@@ -218,7 +223,8 @@ function getRecordPromise(option: Option, type: RecordType): Promise<number | nu
 
 function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
                         setShowSuccess: (showSuccess: boolean) => void,
-                        setShowError: (showError: boolean) => void): void {
+                        setShowError: (showError: boolean) => void, setOffsetIds: (offsetIds: number[]) => void,
+                        setNextDisabled: (nextDisabled: boolean) => void, setBrews: (brews: Brew[]) => void): void {
     const coffeeId = results[0];
 
     if (coffeeId === null) {
@@ -305,6 +311,10 @@ function processResults(results: (number | null)[], coffeeMass: number, waterMas
                  return;
              } //end if
 
+             const offsetIds: number[] = [];
+
+             loadBrews(offsetIds, setOffsetIds, setNextDisabled, setBrews);
+
              setShowSuccess(true);
          })
          .catch(() => {
@@ -312,60 +322,60 @@ function processResults(results: (number | null)[], coffeeMass: number, waterMas
          });
 } //processResults
 
-function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
-                  setShowError: (showError: boolean) => void): void {
+function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSuccess: boolean) => void,
+                  setShowError: (showError: boolean) => void, props: Props): void {
     let dataValid = true;
 
-    if (brew.coffee.value === null) {
-        brew.coffee.setShowError({
+    if (createBrewValues.coffee.value === null) {
+        createBrewValues.coffee.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (brew.water.value === null) {
-        brew.water.setShowError({
+    if (createBrewValues.water.value === null) {
+        createBrewValues.water.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (brew.brewer.value === null) {
-        brew.brewer.setShowError({
+    if (createBrewValues.brewer.value === null) {
+        createBrewValues.brewer.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (brew.filter.value === null) {
-        brew.filter.setShowError({
+    if (createBrewValues.filter.value === null) {
+        createBrewValues.filter.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (brew.vessel.value === null) {
-        brew.vessel.setShowError({
+    if (createBrewValues.vessel.value === null) {
+        createBrewValues.vessel.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (isNaN(brew.coffeeMass.value)) {
-        brew.coffeeMass.setShowError({
+    if (isNaN(createBrewValues.coffeeMass.value)) {
+        createBrewValues.coffeeMass.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (isNaN(brew.waterMass.value)) {
-        brew.waterMass.setShowError({
+    if (isNaN(createBrewValues.waterMass.value)) {
+        createBrewValues.waterMass.setShowError({
             "display": "block"
         });
 
@@ -376,7 +386,7 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
         return;
     } //end if
 
-    const coffeeOption = brew.coffee.value;
+    const coffeeOption = createBrewValues.coffee.value;
 
     if (coffeeOption === null) {
         return;
@@ -384,7 +394,7 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
 
-    const waterOption = brew.water.value;
+    const waterOption = createBrewValues.water.value;
 
     if (waterOption === null) {
         return;
@@ -392,7 +402,7 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const waterPromise = getRecordPromise(waterOption, RecordType.WATER);
 
-    const brewerOption = brew.brewer.value;
+    const brewerOption = createBrewValues.brewer.value;
 
     if (brewerOption === null) {
         return;
@@ -400,7 +410,7 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const brewerPromise = getRecordPromise(brewerOption, RecordType.BREWER);
 
-    const filterOption = brew.filter.value;
+    const filterOption = createBrewValues.filter.value;
 
     if (filterOption === null) {
         return;
@@ -408,7 +418,7 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const filterPromise = getRecordPromise(filterOption, RecordType.FILTER);
 
-    const vesselOption = brew.vessel.value;
+    const vesselOption = createBrewValues.vessel.value;
 
     if (vesselOption === null) {
         return;
@@ -416,14 +426,15 @@ function saveBrew(brew: Brew, setShowSuccess: (showSuccess: boolean) => void,
 
     const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
 
-    const coffeeMass = brew.coffeeMass.value;
+    const coffeeMass = createBrewValues.coffeeMass.value;
 
-    const waterMass = brew.waterMass.value;
+    const waterMass = createBrewValues.waterMass.value;
 
     const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
 
     Promise.all(promises)
-           .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError));
+           .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError,
+                                             props.setOffsetIds, props.setNextDisabled, props.setBrews));
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
@@ -666,7 +677,7 @@ function CreateRecordModal(props: Props) {
                         Close
                     </Button>
                     <Button variant="outline-primary" onClick={() => {
-                        const brew: Brew = {
+                        const createBrewValues: CreateBrewValues = {
                             "coffee": {
                                 "value": coffee,
                                 "setShowError": setShowCoffeeError
@@ -699,7 +710,7 @@ function CreateRecordModal(props: Props) {
 
                         props.setShow(false);
 
-                        saveBrew(brew, setShowSuccess, setShowError);
+                        saveBrew(createBrewValues, setShowSuccess, setShowError, props);
                     }}>
                         Save
                     </Button>

@@ -47,7 +47,8 @@ function BrewCard() {
                                setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} />
                 </Card.Body>
             </Card>
-            <CreateBrewModal show={createShow} setShow={setCreateShow} />
+            <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
+                             setNextDisabled={setNextDisabled} setBrews={setBrews} />
         </>
     );
 } //BrewCard
