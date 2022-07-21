@@ -450,7 +450,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
                                                  props.setOffsetIds, props.setNextDisabled, props.setBrews));
 } //saveBrew
 
-function CreateRecordModal(props: Props) {
+function CreateBrewModal(props: Props) {
     const [coffee, setCoffee] = useState<Option | null>(null);
 
     const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
@@ -789,6 +789,6 @@ function CreateRecordModal(props: Props) {
             </ToastContainer>
         </>
     );
-} //CreateRecordModal
+} //CreateBrewModal
 
-export default CreateRecordModal;
+export default CreateBrewModal;
