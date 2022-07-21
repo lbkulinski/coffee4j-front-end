@@ -592,29 +592,47 @@ function CreateBrewModal(props: Props) {
     const hideModal = () => {
         props.setShow(false);
 
+        setCoffee(null);
+
         setShowCoffeeError({
             "display": "none"
         });
+
+        setWater(null);
 
         setShowWaterError({
             "display": "none"
         });
 
+        setBrewer(null);
+
         setShowBrewerError({
             "display": "none"
         });
+
+        setFilter(null);
 
         setShowFilterError({
             "display": "none"
         });
 
+        setVessel(null);
+
         setShowVesselError({
             "display": "none"
         });
 
+        const defaultCoffeeMass = 18;
+
+        setCoffeeMass(defaultCoffeeMass);
+
         setShowCoffeeMassError({
             "display": "none"
         });
+
+        const defaultWaterMass = 300;
+
+        setWaterMass(defaultWaterMass);
 
         setShowWaterMassError({
             "display": "none"
