@@ -44,9 +44,11 @@ function BrewCard() {
                     <Card.Title>
                         Brew
                     </Card.Title>
-                    <Button className="float-end" variant="outline-primary" onClick={handleClick}>
-                        <FontAwesomeIcon icon={faPlus} />
-                    </Button>
+                    <div className="d-flex justify-content-end">
+                        <Button variant="outline-primary" onClick={handleClick}>
+                            <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                    </div>
                     <BrewTable offsetIds={offsetIds} setOffsetIds={setOffsetIds} nextDisabled={nextDisabled}
                                setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} />
                 </Card.Body>

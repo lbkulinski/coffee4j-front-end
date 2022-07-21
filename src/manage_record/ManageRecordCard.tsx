@@ -48,9 +48,11 @@ function ManageRecordCard(props: Props) {
                             props.recordType
                         }
                     </Card.Title>
-                    <Button className="float-end" variant="outline-primary" onClick={showCreateModal}>
-                        <FontAwesomeIcon icon={faPlus} />
-                    </Button>
+                    <div className="d-flex justify-content-end">
+                        <Button variant="outline-primary" onClick={showCreateModal}>
+                            <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                    </div>
                     <RecordTable requestUrl={props.requestUrl} offsetIds={offsetIds} setOffsetIds={setOffsetIds}
                                  nextDisabled={nextDisabled} setNextDisabled={setNextDisabled} records={records}
                                  setRecords={setRecords} setRecord={setRecord} setUpdateShow={setUpdateShow}

@@ -60,7 +60,7 @@ function RecordTable(props: Props) {
 
     return (
         <>
-            <Table striped hover>
+            <Table striped hover responsive>
                 <thead>
                 <tr>
                     <th>
