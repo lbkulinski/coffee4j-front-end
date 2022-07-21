@@ -16,7 +16,11 @@ function BrewCard() {
 
     const [brews, setBrews] = useState<Brew[]>([]);
 
-    const [createShow, setCreateShow] = useState(true);
+    const [createShow, setCreateShow] = useState(false);
+
+    const handleClick = () => {
+        setCreateShow(true);
+    };
 
     /*
     const [record, setRecord] = useState({
@@ -40,7 +44,7 @@ function BrewCard() {
                     <Card.Title>
                         Brew
                     </Card.Title>
-                    <Button className="float-end" variant="outline-primary">
+                    <Button className="float-end" variant="outline-primary" onClick={handleClick}>
                         <FontAwesomeIcon icon={faPlus} />
                     </Button>
                     <BrewTable offsetIds={offsetIds} setOffsetIds={setOffsetIds} nextDisabled={nextDisabled}
