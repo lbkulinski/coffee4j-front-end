@@ -322,7 +322,8 @@ function processResults(results: (number | null)[], coffeeMass: number, waterMas
          });
 } //processResults
 
-function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSuccess: boolean) => void,
+function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) => void,
+                  setShowSuccess: (showSuccess: boolean) => void,
                   setShowError: (showError: boolean) => void, props: Props): void {
     let dataValid = true;
 
@@ -386,9 +387,13 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
         return;
     } //end if
 
+    setShow(false);
+
     const coffeeOption = createBrewValues.coffee.value;
 
     if (coffeeOption === null) {
+        setShowError(true);
+
         return;
     } //end if
 
@@ -397,6 +402,8 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
     const waterOption = createBrewValues.water.value;
 
     if (waterOption === null) {
+        setShowError(true);
+
         return;
     } //end if
 
@@ -405,6 +412,8 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
     const brewerOption = createBrewValues.brewer.value;
 
     if (brewerOption === null) {
+        setShowError(true);
+
         return;
     } //end if
 
@@ -413,6 +422,8 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
     const filterOption = createBrewValues.filter.value;
 
     if (filterOption === null) {
+        setShowError(true);
+
         return;
     } //end if
 
@@ -421,6 +432,8 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
     const vesselOption = createBrewValues.vessel.value;
 
     if (vesselOption === null) {
+        setShowError(true);
+
         return;
     } //end if
 
@@ -434,7 +447,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShowSuccess: (showSucce
 
     Promise.all(promises)
            .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError,
-                                             props.setOffsetIds, props.setNextDisabled, props.setBrews));
+                                                 props.setOffsetIds, props.setNextDisabled, props.setBrews));
 } //saveBrew
 
 function CreateRecordModal(props: Props) {
@@ -596,6 +609,45 @@ function CreateRecordModal(props: Props) {
 
     const errorMessage = "The specified brew could not be created.";
 
+    const handleClose = () => {
+        props.setShow(false);
+    };
+
+    const handleSave = () => {
+        const createBrewValues: CreateBrewValues = {
+            "coffee": {
+                "value": coffee,
+                "setShowError": setShowCoffeeError
+            },
+            "water": {
+                "value": water,
+                "setShowError": setShowWaterError
+            },
+            "brewer": {
+                "value": brewer,
+                "setShowError": setShowBrewerError
+            },
+            "filter": {
+                "value": filter,
+                "setShowError": setShowFilterError
+            },
+            "vessel": {
+                "value": vessel,
+                "setShowError": setShowVesselError
+            },
+            "coffeeMass": {
+                "value": coffeeMass,
+                "setShowError": setShowCoffeeMassError
+            },
+            "waterMass": {
+                "value": waterMass,
+                "setShowError": setShowWaterMassError
+            }
+        };
+
+        saveBrew(createBrewValues, props.setShow, setShowSuccess, setShowError, props);
+    };
+
     return (
         <>
             <Modal show={props.show} onHide={hideModal}>
@@ -673,45 +725,10 @@ function CreateRecordModal(props: Props) {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-secondary">
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="outline-primary" onClick={() => {
-                        const createBrewValues: CreateBrewValues = {
-                            "coffee": {
-                                "value": coffee,
-                                "setShowError": setShowCoffeeError
-                            },
-                            "water": {
-                                "value": water,
-                                "setShowError": setShowWaterError
-                            },
-                            "brewer": {
-                                "value": brewer,
-                                "setShowError": setShowBrewerError
-                            },
-                            "filter": {
-                                "value": filter,
-                                "setShowError": setShowFilterError
-                            },
-                            "vessel": {
-                                "value": vessel,
-                                "setShowError": setShowVesselError
-                            },
-                            "coffeeMass": {
-                                "value": coffeeMass,
-                                "setShowError": setShowCoffeeMassError
-                            },
-                            "waterMass": {
-                                "value": waterMass,
-                                "setShowError": setShowWaterMassError
-                            }
-                        };
-
-                        props.setShow(false);
-
-                        saveBrew(createBrewValues, setShowSuccess, setShowError, props);
-                    }}>
+                    <Button variant="outline-primary" onClick={handleSave}>
                         Save
                     </Button>
                 </Modal.Footer>

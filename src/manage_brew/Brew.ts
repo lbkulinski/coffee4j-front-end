@@ -20,7 +20,9 @@ type Brew = {
     vessel: {
         id: number,
         name: string
-    }
+    },
+    coffeeMass: number,
+    waterMass: number
 }
 
 export default Brew;

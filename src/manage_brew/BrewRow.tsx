@@ -68,6 +68,20 @@ function BrewRow(props: Props) {
                 }
             </td>
             <td>
+                {
+                    props.brew.coffeeMass.toLocaleString(undefined, {
+                        "maximumFractionDigits": 2
+                    })
+                }
+            </td>
+            <td>
+                {
+                    props.brew.waterMass.toLocaleString(undefined, {
+                        "maximumFractionDigits": 2
+                    })
+                }
+            </td>
+            <td>
                 <Container>
                     <Row>
                         <Col xs="1">

@@ -78,6 +78,12 @@ function BrewTable(props: Props) {
                         Vessel
                     </th>
                     <th>
+                        Coffee Mass
+                    </th>
+                    <th>
+                        Water Mass
+                    </th>
+                    <th>
                         Actions
                     </th>
                 </tr>
