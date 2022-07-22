@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
 import Brew from "./Brew";
+import {LinkContainer} from "react-router-bootstrap";
 
 type Props = {
     brew: Brew
@@ -108,9 +109,11 @@ function BrewRow(props: Props) {
                 <Container>
                     <Row>
                         <Col xs="1">
-                            <a>
-                                <FontAwesomeIcon icon={faEye} />
-                            </a>
+                            <LinkContainer to="/detail">
+                                <a>
+                                    <FontAwesomeIcon icon={faEye} />
+                                </a>
+                            </LinkContainer>
                         </Col>
                         <Col xs="1">
                             <a>
