@@ -109,11 +109,9 @@ function BrewRow(props: Props) {
                 <Container>
                     <Row>
                         <Col xs="1">
-                            <LinkContainer to="/detail">
-                                <a>
-                                    <FontAwesomeIcon icon={faEye} />
-                                </a>
-                            </LinkContainer>
+                            <a>
+                                <FontAwesomeIcon icon={faEye} />
+                            </a>
                         </Col>
                         <Col xs="1">
                             <a>
