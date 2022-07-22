@@ -24,74 +24,60 @@ function BrewDetailCard(props: Props) {
                 </Card.Title>
                 <ListGroup variant="flush">
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Coffee
-                            </div>
-                            {
-                                props.brew.coffee.name
-                            }
+                        <div className="fw-bold">
+                            Coffee
                         </div>
+                        {
+                            props.brew.coffee.name
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Water
-                            </div>
-                            {
-                                props.brew.water.name
-                            }
+                        <div className="fw-bold">
+                            Water
                         </div>
+                        {
+                            props.brew.water.name
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Brewer
-                            </div>
-                            {
-                                props.brew.brewer.name
-                            }
+                        <div className="fw-bold">
+                            Brewer
                         </div>
+                        {
+                            props.brew.brewer.name
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Filter
-                            </div>
-                            {
-                                props.brew.filter.name
-                            }
+                        <div className="fw-bold">
+                            Filter
                         </div>
+                        {
+                            props.brew.filter.name
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Vessel
-                            </div>
-                            {
-                                props.brew.vessel.name
-                            }
+                        <div className="fw-bold">
+                            Vessel
                         </div>
+                        {
+                            props.brew.vessel.name
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Coffee Mass
-                            </div>
-                            {
-                                coffeeMassString
-                            }
+                        <div className="fw-bold">
+                            Coffee Mass
                         </div>
+                        {
+                            coffeeMassString
+                        }
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <div className="ms-2 me-auto">
-                            <div className="fw-bold">
-                                Water Mass
-                            </div>
-                            {
-                                waterMassString
-                            }
+                        <div className="fw-bold">
+                            Water Mass
                         </div>
+                        {
+                            waterMassString
+                        }
                     </ListGroup.Item>
                 </ListGroup>
             </Card.Body>
