@@ -62,6 +62,7 @@ function BrewTable(props: Props) {
                     <th>
                         Timestamp
                     </th>
+                    {/*}
                     <th>
                         Coffee
                     </th>
@@ -83,6 +84,7 @@ function BrewTable(props: Props) {
                     <th>
                         Water Mass
                     </th>
+                    */}
                     <th>
                         Actions
                     </th>

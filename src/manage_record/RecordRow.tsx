@@ -15,10 +15,6 @@ type Props = {
 }
 
 function RecordRow(props: Props) {
-    const tdWidth = {
-        width: "80%"
-    };
-
     const showUpdateModal = () => {
         props.setRecord(props.record);
 
@@ -33,7 +29,7 @@ function RecordRow(props: Props) {
 
     return (
         <tr>
-            <td style={tdWidth}>
+            <td>
                 {
                     props.record.name
                 }

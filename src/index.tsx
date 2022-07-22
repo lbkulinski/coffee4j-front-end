@@ -8,6 +8,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import ManageRecordCard from "./manage_record/ManageRecordCard";
 import RecordType from "./manage_record/RecordType";
 import BrewCard from "./manage_brew/BrewCard";
+import BrewDetailCard from "./manage_brew/BrewDetailCard";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -87,6 +88,39 @@ const VesselRoute = () => {
     );
 };
 
+const DetailRoute = () => {
+    return (
+        <App element={
+            <BrewDetailCard brew={{
+                "id": 255,
+                "brewer": {
+                    "id": 2,
+                    "name": "Clever Coffee Dripper"
+                },
+                "coffeeMass": 60,
+                "filter": {
+                    "id": 2,
+                    "name": "Filtropa #4"
+                },
+                "water": {
+                    "id": 1,
+                    "name": "Third Wave Water"
+                },
+                "vessel": {
+                    "id": 9,
+                    "name": "Ember Mug"
+                },
+                "timestamp": "2022-07-22T13:17:09.762879",
+                "waterMass": 1000,
+                "coffee": {
+                    "id": 41,
+                    "name": "Nansebo"
+                }
+            }} />
+        } />
+    );
+};
+
 root.render(
     <BrowserRouter>
         <Routes>
@@ -97,6 +131,7 @@ root.render(
             <Route path="/brewer" element={<BrewerRoute />} />
             <Route path="/filter" element={<FilterRoute />} />
             <Route path="/vessel" element={<VesselRoute />} />
+            <Route path="/detail" element={<DetailRoute />} />
         </Routes>
     </BrowserRouter>
 );

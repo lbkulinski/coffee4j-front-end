@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons"
+import {faEye, faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
 import Brew from "./Brew";
 
@@ -11,29 +11,50 @@ type Props = {
     brew: Brew
 }
 
-function BrewRow(props: Props) {
-    const utcTimestamp = new Date(props.brew.timestamp);
+function getLocalTimestampString(date: Date): string {
+    const offsetMilliseconds = date.getTimezoneOffset() * 60000;
 
-    const offsetMilliseconds = utcTimestamp.getTimezoneOffset() * 60000;
-
-    const localTime = utcTimestamp.getTime() - offsetMilliseconds;
+    const localTime = date.getTime() - offsetMilliseconds;
 
     const localTimestamp = new Date(localTime);
 
-    const locale = "en-US";
+    const month = localTimestamp.getMonth() + 1;
 
-    const options: Intl.DateTimeFormatOptions = {
-        "year": "numeric",
-        "month": "long",
-        "day": "numeric",
-        "hour": "numeric",
-        "minute": "numeric",
-        "hour12": true,
-    };
+    const maxLength = 2;
 
-    const format = new Intl.DateTimeFormat(locale, options);
+    const fillString = "0";
 
-    const localTimestampString = format.format(localTimestamp);
+    const monthString = String(month).padStart(maxLength, fillString);
+
+    const day = localTimestamp.getDate();
+
+    const dayString = String(day).padStart(maxLength, fillString);
+
+    const year = localTimestamp.getFullYear();
+
+    const yearMaxLength = 4;
+
+    const yearString = String(year).padStart(yearMaxLength, fillString);
+
+    const hours = localTimestamp.getHours();
+
+    const amPm = (hours < 12) ? "AM" : "PM";
+
+    const amPmHours = (hours <= 12) ? hours : (hours - 12);
+
+    const hoursString = String(amPmHours).padStart(maxLength, fillString);
+
+    const minutes = localTimestamp.getMinutes();
+
+    const minutesString = String(minutes).padStart(maxLength, fillString);
+
+    return `${monthString}/${dayString}/${yearString} ${hoursString}:${minutesString} ${amPm}`;
+} //getDateString
+
+function BrewRow(props: Props) {
+    const utcTimestamp = new Date(props.brew.timestamp);
+
+    const localTimestampString = getLocalTimestampString(utcTimestamp);
 
     return (
         <tr>
@@ -42,6 +63,7 @@ function BrewRow(props: Props) {
                     localTimestampString
                 }
             </td>
+            {/*
             <td>
                 {
                     props.brew.coffee.name
@@ -81,9 +103,15 @@ function BrewRow(props: Props) {
                     })
                 }
             </td>
+            */}
             <td>
                 <Container>
                     <Row>
+                        <Col xs="1">
+                            <a>
+                                <FontAwesomeIcon icon={faEye} />
+                            </a>
+                        </Col>
                         <Col xs="1">
                             <a>
                                 <FontAwesomeIcon icon={faPenToSquare} />
