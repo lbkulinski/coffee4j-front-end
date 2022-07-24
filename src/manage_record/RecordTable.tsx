@@ -8,7 +8,7 @@ import Record from "./Record";
 import {Pagination} from "react-bootstrap";
 import loadRecords from "./loadRecords";
 
-type Props = {
+interface Props {
     requestUrl: string,
     offsetIds: number[],
     setOffsetIds: (offsetIds: number[]) => void,

@@ -12,7 +12,7 @@ import Record from "./Record";
 import UpdateRecordModal from "./UpdateRecordModal";
 import DeleteRecordModal from "./DeleteRecordModal";
 
-type Props = {
+interface Props {
     recordType: RecordType
     requestUrl: string
 };

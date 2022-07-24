@@ -7,7 +7,7 @@ import {faPenToSquare, faTrashCan, faBoxArchive} from "@fortawesome/free-solid-s
 import "bootstrap/dist/css/bootstrap.min.css";
 import Record from "./Record";
 
-type Props = {
+interface Props {
     record: Record,
     setRecord: (record: Record) => void,
     setUpdateShow: (updateShow: boolean) => void,

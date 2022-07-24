@@ -1,7 +1,7 @@
 import Record from "./Record";
 import {AxiosResponse} from "axios";
 
-type ReadResponse = {
+interface ReadResponse {
     status: string,
     content: Record[]
 }

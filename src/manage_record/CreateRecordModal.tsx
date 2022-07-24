@@ -7,12 +7,12 @@ import {AxiosResponse} from "axios";
 import loadRecords from "./loadRecords";
 import Record from "./Record";
 
-type CreateResponse = {
+interface CreateResponse {
     status: string,
     content: string
 }
 
-type Props = {
+interface Props {
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,

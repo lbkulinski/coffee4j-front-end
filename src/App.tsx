@@ -4,7 +4,7 @@ import NavigationBar from "./NavigationBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-type Props = {
+interface Props {
     element: ReactElement
 };
 

@@ -1,4 +1,4 @@
-type Record = {
+interface Record {
     id: number,
     name: string
 }

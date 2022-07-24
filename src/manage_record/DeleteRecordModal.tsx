@@ -7,12 +7,12 @@ import {AxiosResponse} from "axios";
 import loadRecords from "./loadRecords";
 import Record from "./Record";
 
-type DeleteResponse = {
+interface DeleteResponse {
     status: string,
     content: string
 }
 
-type Props = {
+interface Props {
     record: Record,
     show: boolean,
     setShow: (show: boolean) => void,
