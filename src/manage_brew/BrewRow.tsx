@@ -9,7 +9,7 @@ import Brew from "./Brew";
 import {LinkContainer} from "react-router-bootstrap";
 import getLocalTimestampString from "../utilities";
 
-type Props = {
+interface Props {
     brew: Brew,
     setBrew: (brew: Brew) => void,
     setReadShow: (show: boolean) => void

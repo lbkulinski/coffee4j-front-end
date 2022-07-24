@@ -8,7 +8,7 @@ import Brew from "./Brew";
 import loadBrews from "./loadBrews";
 import BrewRow from "./BrewRow";
 
-type Props = {
+interface Props {
     offsetIds: number[],
     setOffsetIds: (offsetIds: number[]) => void,
     nextDisabled: boolean,
@@ -64,29 +64,6 @@ function BrewTable(props: Props) {
                     <th>
                         Timestamp
                     </th>
-                    {/*}
-                    <th>
-                        Coffee
-                    </th>
-                    <th>
-                        Water
-                    </th>
-                    <th>
-                        Brewer
-                    </th>
-                    <th>
-                        Filter
-                    </th>
-                    <th>
-                        Vessel
-                    </th>
-                    <th>
-                        Coffee Mass
-                    </th>
-                    <th>
-                        Water Mass
-                    </th>
-                    */}
                     <th>
                         Actions
                     </th>

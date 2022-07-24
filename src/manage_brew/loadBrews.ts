@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import Brew from "./Brew";
 
-type ReadResponse = {
+interface ReadResponse {
     status: string,
     content: Brew[]
 }

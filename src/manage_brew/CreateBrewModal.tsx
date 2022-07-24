@@ -8,28 +8,28 @@ import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
 import loadBrews from "./loadBrews";
 
-type Result = {
+interface Result {
     id: number,
     name: string
 }
 
-type ReadResponse = {
+interface ReadResponse {
     status: string,
     content: Result[]
 }
 
-type Option = {
+interface Option {
     value: string,
     label: string,
     __isNew__: boolean
 }
 
-type CreateResponse = {
+interface CreateResponse {
     status: string,
     content: string
 }
 
-type CreateBrewValues = {
+interface CreateBrewValues {
     coffee: {
         value: Option | null,
         setShowError: (showError: CSSProperties) => void
@@ -60,7 +60,7 @@ type CreateBrewValues = {
     }
 }
 
-type Props = {
+interface Props {
     show: boolean,
     setShow: (show: boolean) => void,
     setOffsetIds: (offsetIds: number[]) => void,

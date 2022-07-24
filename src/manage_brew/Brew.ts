@@ -1,4 +1,4 @@
-type Brew = {
+interface Brew {
     id: number,
     timestamp: string,
     coffee: {
