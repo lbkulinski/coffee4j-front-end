@@ -698,7 +698,9 @@ function CreateBrewModal(props: Props) {
         <>
             <Modal show={props.show} onHide={hideModal}>
                 <Modal.Header closeButton>
-                    Create
+                    <Modal.Title>
+                        Create
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group className="mb-3">

@@ -8,6 +8,7 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import Brew from "./Brew";
 import BrewTable from "./BrewTable";
 import CreateBrewModal from "./CreateBrewModal";
+import ReadBrewModal from "./ReadBrewModal";
 
 function BrewCard() {
     const [offsetIds, setOffsetIds] = useState<number[]>([]);
@@ -18,9 +19,38 @@ function BrewCard() {
 
     const [createShow, setCreateShow] = useState(false);
 
-    const handleClick = () => {
+    const handleCreateClick = () => {
         setCreateShow(true);
     };
+
+    const [readShow, setReadShow] = useState(false);
+
+    const [brew, setBrew] = useState<Brew>({
+        "id": 0,
+        "timestamp": "",
+        "coffee": {
+            "id": 0,
+            "name": ""
+        },
+        "water": {
+            "id": 0,
+            "name": ""
+        },
+        "brewer": {
+            "id": 0,
+            "name": ""
+        },
+        "filter": {
+            "id": 0,
+            "name": ""
+        },
+        "vessel": {
+            "id": 0,
+            "name": ""
+        },
+        "coffeeMass": 0,
+        "waterMass": 0
+    });
 
     /*
     const [record, setRecord] = useState({
@@ -45,16 +75,18 @@ function BrewCard() {
                         Brew
                     </Card.Title>
                     <div className="d-flex justify-content-end">
-                        <Button variant="outline-primary" onClick={handleClick}>
+                        <Button variant="outline-primary" onClick={handleCreateClick}>
                             <FontAwesomeIcon icon={faPlus} />
                         </Button>
                     </div>
                     <BrewTable offsetIds={offsetIds} setOffsetIds={setOffsetIds} nextDisabled={nextDisabled}
-                               setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} />
+                               setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} setBrew={setBrew}
+                               setReadShow={setReadShow} />
                 </Card.Body>
             </Card>
             <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
                              setNextDisabled={setNextDisabled} setBrews={setBrews} />
+            <ReadBrewModal show={readShow} setShow={setReadShow} brew={brew} />
         </>
     );
 } //BrewCard

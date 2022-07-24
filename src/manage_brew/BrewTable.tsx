@@ -15,6 +15,8 @@ type Props = {
     setNextDisabled: (nextDisabled: boolean) => void,
     brews: Brew[],
     setBrews: (brews: Brew[]) => void,
+    setBrew: (brew: Brew) => void,
+    setReadShow: (show: boolean) => void
 }
 
 function BrewTable(props: Props) {
@@ -93,7 +95,7 @@ function BrewTable(props: Props) {
                 <tbody>
                 {
                     props.brews.map((brew: Brew) => (
-                        <BrewRow key={brew.id} brew={brew} />
+                        <BrewRow key={brew.id} brew={brew} setBrew={props.setBrew} setReadShow={props.setReadShow} />
                     ))
                 }
                 </tbody>

@@ -2,6 +2,7 @@ import React from "react";
 import {ReactElement} from "react";
 import {ListGroup, Modal} from "react-bootstrap";
 import Brew from "./Brew";
+import getLocalTimestampString from "../utilities";
 
 interface Props {
     show: boolean,
@@ -14,6 +15,10 @@ function ReadBrewModal(props: Props): ReactElement {
         props.setShow(false);
     };
 
+    const utcTimestamp = new Date(props.brew.timestamp);
+
+    const localTimestampString = getLocalTimestampString(utcTimestamp);
+
     const coffeeMassString = props.brew.coffeeMass.toLocaleString();
 
     const waterMassString = props.brew.waterMass.toLocaleString();
@@ -21,7 +26,7 @@ function ReadBrewModal(props: Props): ReactElement {
     return (
         <>
             <Modal show={props.show} onHide={handleHide}>
-                <Modal.Header>
+                <Modal.Header closeButton>
                     <Modal.Title>
                         Brew Detail
                     </Modal.Title>
@@ -30,59 +35,83 @@ function ReadBrewModal(props: Props): ReactElement {
                     <ListGroup variant="flush">
                         <ListGroup.Item>
                             <div className="fw-bold">
+                                Timestamp
+                            </div>
+                            <div>
+                                {
+                                    localTimestampString
+                                }
+                            </div>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <div className="fw-bold">
                                 Coffee
                             </div>
-                            {
-                                props.brew.coffee.name
-                            }
+                            <div>
+                                {
+                                    props.brew.coffee.name
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Water
                             </div>
-                            {
-                                props.brew.water.name
-                            }
+                            <div>
+                                {
+                                    props.brew.water.name
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Brewer
                             </div>
-                            {
-                                props.brew.brewer.name
-                            }
+                            <div>
+                                {
+                                    props.brew!.brewer.name
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Filter
                             </div>
-                            {
-                                props.brew.filter.name
-                            }
+                            <div>
+                                {
+                                    props.brew.filter.name
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Vessel
                             </div>
-                            {
-                                props.brew.vessel.name
-                            }
+                            <div>
+                                {
+                                    props.brew.vessel.name
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Coffee Mass
                             </div>
-                            {
-                                coffeeMassString
-                            }
+                            <div>
+                                {
+                                    coffeeMassString
+                                }
+                            </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="fw-bold">
                                 Water Mass
                             </div>
-                            {
-                                waterMassString
-                            }
+                            <div>
+                                {
+                                    waterMassString
+                                }
+                            </div>
                         </ListGroup.Item>
                     </ListGroup>
                 </Modal.Body>
