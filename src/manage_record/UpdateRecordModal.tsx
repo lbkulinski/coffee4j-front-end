@@ -14,7 +14,6 @@ interface UpdateResponse {
 
 interface Props {
     record: Record,
-    setRecord: (record: Record) => void,
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,

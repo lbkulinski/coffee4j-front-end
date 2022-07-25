@@ -9,6 +9,7 @@ import Brew from "./Brew";
 import BrewTable from "./BrewTable";
 import CreateBrewModal from "./CreateBrewModal";
 import ReadBrewModal from "./ReadBrewModal";
+import UpdateBrewModal from "./UpdateBrewModal";
 
 function BrewCard() {
     const [offsetIds, setOffsetIds] = useState<number[]>([]);
@@ -24,6 +25,8 @@ function BrewCard() {
     };
 
     const [readShow, setReadShow] = useState(false);
+
+    const [updateShow, setUpdateShow] = useState(false);
 
     const [brew, setBrew] = useState<Brew>({
         "id": 0,
@@ -81,12 +84,14 @@ function BrewCard() {
                     </div>
                     <BrewTable offsetIds={offsetIds} setOffsetIds={setOffsetIds} nextDisabled={nextDisabled}
                                setNextDisabled={setNextDisabled} brews={brews} setBrews={setBrews} setBrew={setBrew}
-                               setReadShow={setReadShow} />
+                               setReadShow={setReadShow} setUpdateShow={setUpdateShow} />
                 </Card.Body>
             </Card>
             <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
                              setNextDisabled={setNextDisabled} setBrews={setBrews} />
-            <ReadBrewModal show={readShow} setShow={setReadShow} brew={brew} />
+            <ReadBrewModal brew={brew} show={readShow} setShow={setReadShow} />
+            <UpdateBrewModal brew={brew} show={updateShow} setShow={setUpdateShow} setOffsetIds={setOffsetIds}
+                             setNextDisabled={setNextDisabled} setBrews={setBrews} />
         </>
     );
 } //BrewCard

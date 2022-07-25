@@ -13,7 +13,8 @@ import Utilities from "../utilities";
 interface Props {
     brew: Brew,
     setBrew: (brew: Brew) => void,
-    setReadShow: (show: boolean) => void
+    setReadShow: (show: boolean) => void,
+    setUpdateShow: (show: boolean) => void
 }
 
 function BrewRow(props: Props) {
@@ -25,6 +26,12 @@ function BrewRow(props: Props) {
         props.setBrew(props.brew);
 
         props.setReadShow(true);
+    };
+
+    const handleUpdateClick = () => {
+        props.setBrew(props.brew);
+
+        props.setUpdateShow(true);
     };
 
     return (
@@ -43,7 +50,7 @@ function BrewRow(props: Props) {
                             </a>
                         </Col>
                         <Col xs="1">
-                            <a>
+                            <a onClick={handleUpdateClick}>
                                 <FontAwesomeIcon icon={faPenToSquare} />
                             </a>
                         </Col>

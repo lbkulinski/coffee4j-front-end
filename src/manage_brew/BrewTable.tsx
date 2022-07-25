@@ -16,7 +16,8 @@ interface Props {
     brews: Brew[],
     setBrews: (brews: Brew[]) => void,
     setBrew: (brew: Brew) => void,
-    setReadShow: (show: boolean) => void
+    setReadShow: (show: boolean) => void,
+    setUpdateShow: (show: boolean) => void
 }
 
 function BrewTable(props: Props) {
@@ -72,7 +73,8 @@ function BrewTable(props: Props) {
                 <tbody>
                 {
                     props.brews.map((brew: Brew) => (
-                        <BrewRow key={brew.id} brew={brew} setBrew={props.setBrew} setReadShow={props.setReadShow} />
+                        <BrewRow key={brew.id} brew={brew} setBrew={props.setBrew} setReadShow={props.setReadShow}
+                                 setUpdateShow={props.setUpdateShow} />
                     ))
                 }
                 </tbody>

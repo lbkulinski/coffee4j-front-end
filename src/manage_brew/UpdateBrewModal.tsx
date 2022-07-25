@@ -14,7 +14,7 @@ interface CreateResponse {
     content: string
 }
 
-interface CreateBrewValues {
+interface UpdateBrewValues {
     coffee: {
         value: Option | null,
         setShowError: (showError: CSSProperties) => void
@@ -46,6 +46,7 @@ interface CreateBrewValues {
 }
 
 interface Props {
+    brew: Brew,
     show: boolean,
     setShow: (show: boolean) => void,
     setOffsetIds: (offsetIds: number[]) => void,
@@ -154,61 +155,61 @@ function processResults(results: (number | null)[], coffeeMass: number, waterMas
          });
 } //processResults
 
-function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) => void,
+function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) => void,
                   setShowSuccess: (showSuccess: boolean) => void,
                   setShowError: (showError: boolean) => void, props: Props): void {
     let dataValid = true;
 
-    if (createBrewValues.coffee.value === null) {
-        createBrewValues.coffee.setShowError({
+    if (updateBrewValues.coffee.value === null) {
+        updateBrewValues.coffee.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (createBrewValues.water.value === null) {
-        createBrewValues.water.setShowError({
+    if (updateBrewValues.water.value === null) {
+        updateBrewValues.water.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (createBrewValues.brewer.value === null) {
-        createBrewValues.brewer.setShowError({
+    if (updateBrewValues.brewer.value === null) {
+        updateBrewValues.brewer.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (createBrewValues.filter.value === null) {
-        createBrewValues.filter.setShowError({
+    if (updateBrewValues.filter.value === null) {
+        updateBrewValues.filter.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (createBrewValues.vessel.value === null) {
-        createBrewValues.vessel.setShowError({
+    if (updateBrewValues.vessel.value === null) {
+        updateBrewValues.vessel.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (isNaN(createBrewValues.coffeeMass.value)) {
-        createBrewValues.coffeeMass.setShowError({
+    if (isNaN(updateBrewValues.coffeeMass.value)) {
+        updateBrewValues.coffeeMass.setShowError({
             "display": "block"
         });
 
         dataValid = false;
     } //end if
 
-    if (isNaN(createBrewValues.waterMass.value)) {
-        createBrewValues.waterMass.setShowError({
+    if (isNaN(updateBrewValues.waterMass.value)) {
+        updateBrewValues.waterMass.setShowError({
             "display": "block"
         });
 
@@ -221,7 +222,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     setShow(false);
 
-    const coffeeOption = createBrewValues.coffee.value;
+    const coffeeOption = updateBrewValues.coffee.value;
 
     if (coffeeOption === null) {
         setShowError(true);
@@ -231,7 +232,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
 
-    const waterOption = createBrewValues.water.value;
+    const waterOption = updateBrewValues.water.value;
 
     if (waterOption === null) {
         setShowError(true);
@@ -241,7 +242,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     const waterPromise = getRecordPromise(waterOption, RecordType.WATER);
 
-    const brewerOption = createBrewValues.brewer.value;
+    const brewerOption = updateBrewValues.brewer.value;
 
     if (brewerOption === null) {
         setShowError(true);
@@ -251,7 +252,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     const brewerPromise = getRecordPromise(brewerOption, RecordType.BREWER);
 
-    const filterOption = createBrewValues.filter.value;
+    const filterOption = updateBrewValues.filter.value;
 
     if (filterOption === null) {
         setShowError(true);
@@ -261,7 +262,7 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     const filterPromise = getRecordPromise(filterOption, RecordType.FILTER);
 
-    const vesselOption = createBrewValues.vessel.value;
+    const vesselOption = updateBrewValues.vessel.value;
 
     if (vesselOption === null) {
         setShowError(true);
@@ -271,9 +272,9 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
 
     const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
 
-    const coffeeMass = createBrewValues.coffeeMass.value;
+    const coffeeMass = updateBrewValues.coffeeMass.value;
 
-    const waterMass = createBrewValues.waterMass.value;
+    const waterMass = updateBrewValues.waterMass.value;
 
     const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
 
@@ -282,8 +283,14 @@ function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) =
                                                  props.setOffsetIds, props.setNextDisabled, props.setBrews));
 } //saveBrew
 
-function CreateBrewModal(props: Props) {
-    const [coffee, setCoffee] = useState<Option | null>(null);
+function UpdateBrewModal(props: Props) {
+    const coffeeValue = String(props.brew.coffee.id);
+
+    const [coffee, setCoffee] = useState<Option | null>({
+        "value": coffeeValue,
+        "label": props.brew.coffee.name,
+        "__isNew__": false
+    });
 
     const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
         "display": "none"
@@ -303,7 +310,13 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [water, setWater] = useState<Option | null>(null);
+    const waterValue = String(props.brew.water.id);
+
+    const [water, setWater] = useState<Option | null>({
+        "value": waterValue,
+        "label": props.brew.coffee.name,
+        "__isNew__": false
+    });
 
     const [showWaterError, setShowWaterError] = useState<CSSProperties>({
         "display": "none"
@@ -323,7 +336,13 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [brewer, setBrewer] = useState<Option | null>(null);
+    const brewerValue = String(props.brew.brewer.id);
+
+    const [brewer, setBrewer] = useState<Option | null>({
+        "value": brewerValue,
+        "label": props.brew.coffee.name,
+        "__isNew__": false
+    });
 
     const [showBrewerError, setShowBrewerError] = useState<CSSProperties>({
         "display": "none"
@@ -343,7 +362,13 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [filter, setFilter] = useState<Option | null>(null);
+    const filterValue = String(props.brew.filter.id);
+
+    const [filter, setFilter] = useState<Option | null>({
+        "value": filterValue,
+        "label": props.brew.coffee.name,
+        "__isNew__": false
+    });
 
     const [showFilterError, setShowFilterError] = useState<CSSProperties>({
         "display": "none"
@@ -363,7 +388,13 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [vessel, setVessel] = useState<Option | null>(null);
+    const vesselValue = String(props.brew.vessel.id);
+
+    const [vessel, setVessel] = useState<Option | null>({
+        "value": vesselValue,
+        "label": props.brew.coffee.name,
+        "__isNew__": false
+    });
 
     const [showVesselError, setShowVesselError] = useState<CSSProperties>({
         "display": "none"
@@ -383,7 +414,7 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [coffeeMass, setCoffeeMass] = useState(18.0);
+    const [coffeeMass, setCoffeeMass] = useState(props.brew.coffeeMass);
 
     const [showCoffeeMassError, setShowCoffeeMassError] = useState<CSSProperties>({
         "display": "none"
@@ -407,7 +438,7 @@ function CreateBrewModal(props: Props) {
         });
     };
 
-    const [waterMass, setWaterMass] = useState(300.0);
+    const [waterMass, setWaterMass] = useState(props.brew.waterMass);
 
     const [showWaterMassError, setShowWaterMassError] = useState<CSSProperties>({
         "display": "none"
@@ -485,18 +516,18 @@ function CreateBrewModal(props: Props) {
 
     const hideSuccessToast = () => setShowSuccess(false);
 
-    const successMessage = "The specified brew was successfully created.";
+    const successMessage = "The specified brew was successfully updated.";
 
     const [showError, setShowError] = useState(false);
 
     const hideErrorToast = () => setShowError(false);
 
-    const errorMessage = "The specified brew could not be created.";
+    const errorMessage = "The specified brew could not be updated.";
 
     const handleClose = () => props.setShow(false);
 
     const handleSave = () => {
-        const createBrewValues: CreateBrewValues = {
+        const updateBrewValues: UpdateBrewValues = {
             "coffee": {
                 "value": coffee,
                 "setShowError": setShowCoffeeError
@@ -527,7 +558,7 @@ function CreateBrewModal(props: Props) {
             }
         };
 
-        saveBrew(createBrewValues, props.setShow, setShowSuccess, setShowError, props);
+        saveBrew(updateBrewValues, props.setShow, setShowSuccess, setShowError, props);
     };
 
     return (
@@ -535,10 +566,19 @@ function CreateBrewModal(props: Props) {
             <Modal show={props.show} onHide={hideModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        Create
+                        Update
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <Form.Group className="mb-3">
+                        <Form.Label>
+                            Timestamp
+                        </Form.Label>
+                        <Form.Control type="datetime-local" />
+                        <Form.Control.Feedback type="invalid" style={showCoffeeError}>
+                            Please enter a valid timestamp.
+                        </Form.Control.Feedback>
+                    </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Coffee
@@ -645,6 +685,6 @@ function CreateBrewModal(props: Props) {
             </ToastContainer>
         </>
     );
-} //CreateBrewModal
+} //UpdateBrewModal
 
-export default CreateBrewModal;
+export default UpdateBrewModal;

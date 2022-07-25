@@ -62,9 +62,8 @@ function ManageRecordCard(props: Props) {
             <CreateRecordModal show={createShow} setShow={setCreateShow} requestUrl={props.requestUrl}
                                recordType={props.recordType} setNextDisabled={setNextDisabled}
                                setOffsetIds={setOffsetIds} setRecords={setRecords}/>
-            <UpdateRecordModal record={record} setRecord={setRecord} show={updateShow}
-                               setShow={setUpdateShow} requestUrl={props.requestUrl} setOffsetIds={setOffsetIds}
-                               setNextDisabled={setNextDisabled} setRecords={setRecords}
+            <UpdateRecordModal record={record} show={updateShow} setShow={setUpdateShow} requestUrl={props.requestUrl}
+                               setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}
                                recordType={props.recordType} />
             <DeleteRecordModal record={record} show={deleteShow} setShow={setDeleteShow} requestUrl={props.requestUrl}
                                setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled} setRecords={setRecords}

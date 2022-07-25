@@ -6,9 +6,9 @@ import getLocalTimestampString from "../utilities";
 import Utilities from "../utilities";
 
 interface Props {
+    brew: Brew,
     show: boolean,
-    setShow: (show: boolean) => void,
-    brew: Brew
+    setShow: (show: boolean) => void
 }
 
 function ReadBrewModal(props: Props): ReactElement {
