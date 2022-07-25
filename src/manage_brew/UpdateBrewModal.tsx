@@ -46,13 +46,49 @@ interface UpdateBrewValues {
 }
 
 interface Props {
-    brew: Brew,
+    brew: Brew | null,
     show: boolean,
     setShow: (show: boolean) => void,
     setOffsetIds: (offsetIds: number[]) => void,
     setNextDisabled: (nextDisabled: boolean) => void,
     setBrews: (brews: Brew[]) => void
 }
+
+function getDefaultTimestamp(date: Date): string {
+    const offsetMilliseconds = date.getTimezoneOffset() * 60000;
+
+    const localTime = date.getTime() - offsetMilliseconds;
+
+    const localTimestamp = new Date(localTime);
+
+    const year = localTimestamp.getFullYear();
+
+    const yearMaxLength = 4;
+
+    const fillString = "0";
+
+    const yearString = String(year).padStart(yearMaxLength, fillString);
+
+    const month = localTimestamp.getMonth() + 1;
+
+    const maxLength = 2;
+
+    const monthString = String(month).padStart(maxLength, fillString);
+
+    const day = localTimestamp.getDate();
+
+    const dayString = String(day).padStart(maxLength, fillString);
+
+    const hours = localTimestamp.getHours();
+
+    const hoursString = String(hours).padStart(maxLength, fillString);
+
+    const minutes = localTimestamp.getMinutes();
+
+    const minutesString = String(minutes).padStart(maxLength, fillString);
+
+    return `${yearString}-${monthString}-${dayString}T${hoursString}:${minutesString}`
+} //getDefaultTimestamp
 
 function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
                         setShowSuccess: (showSuccess: boolean) => void,
@@ -284,6 +320,17 @@ function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) =
 } //saveBrew
 
 function UpdateBrewModal(props: Props) {
+    if (props.brew === null) {
+        return (
+            <>
+            </>
+        );
+    } //endif
+
+    const timestamp = new Date(props.brew.timestamp);
+
+    const defaultTimestamp = getDefaultTimestamp(timestamp);
+
     const coffeeValue = String(props.brew.coffee.id);
 
     const defaultCoffee = {
@@ -584,7 +631,7 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Timestamp
                         </Form.Label>
-                        <Form.Control type="datetime-local" defaultValue={props.brew.timestamp} />
+                        <Form.Control type="datetime-local" defaultValue={defaultTimestamp} />
                         <Form.Control.Feedback type="invalid" style={showCoffeeError}>
                             Please enter a valid timestamp.
                         </Form.Control.Feedback>

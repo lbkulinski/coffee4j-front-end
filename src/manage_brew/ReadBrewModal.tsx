@@ -6,12 +6,19 @@ import getLocalTimestampString from "../utilities";
 import Utilities from "../utilities";
 
 interface Props {
-    brew: Brew,
+    brew: Brew | null,
     show: boolean,
     setShow: (show: boolean) => void
 }
 
 function ReadBrewModal(props: Props): ReactElement {
+    if (props.brew === null) {
+        return (
+            <>
+            </>
+        );
+    } //endif
+
     const handleHide = () => {
         props.setShow(false);
     };

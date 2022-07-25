@@ -37,7 +37,7 @@ namespace Utilities {
         const minutesString = String(minutes).padStart(maxLength, fillString);
 
         return `${monthString}/${dayString}/${yearString} ${hoursString}:${minutesString} ${amPm}`;
-    } //getDateString
+    } //getLocalTimestampString
 }
 
 export default Utilities;

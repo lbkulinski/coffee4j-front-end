@@ -28,47 +28,7 @@ function BrewCard() {
 
     const [updateShow, setUpdateShow] = useState(false);
 
-    const [brew, setBrew] = useState<Brew>({
-        "id": 0,
-        "timestamp": "",
-        "coffee": {
-            "id": 0,
-            "name": ""
-        },
-        "water": {
-            "id": 0,
-            "name": ""
-        },
-        "brewer": {
-            "id": 0,
-            "name": ""
-        },
-        "filter": {
-            "id": 0,
-            "name": ""
-        },
-        "vessel": {
-            "id": 0,
-            "name": ""
-        },
-        "coffeeMass": 0,
-        "waterMass": 0
-    });
-
-    /*
-    const [record, setRecord] = useState({
-                                             "id": 0,
-                                             "name": ""
-                                         });
-
-    const [updateShow, setUpdateShow] = useState(false);
-
-    const [deleteShow, setDeleteShow] = useState(false);
-
-    const showCreateModal = () => {
-        setCreateShow(true);
-    };
-     */
+    const [brew, setBrew] = useState<Brew | null>(null);
 
     return (
         <>
