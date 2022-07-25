@@ -65,8 +65,6 @@ export function loadOptions(type: RecordType, searchTerm: string): Promise<Optio
 
 export function getRecordPromise(option: Option, type: RecordType): Promise<number | null> {
     return new Promise<number | null>((resolve) => {
-        console.log(option);
-
         if (!option.__isNew__) {
             const id = Number(option.value);
 

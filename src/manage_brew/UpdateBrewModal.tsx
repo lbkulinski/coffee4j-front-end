@@ -286,11 +286,13 @@ function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) =
 function UpdateBrewModal(props: Props) {
     const coffeeValue = String(props.brew.coffee.id);
 
-    const [coffee, setCoffee] = useState<Option | null>({
+    const defaultCoffee = {
         "value": coffeeValue,
         "label": props.brew.coffee.name,
         "__isNew__": false
-    });
+    };
+
+    const [coffee, setCoffee] = useState<Option | null>(defaultCoffee);
 
     const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
         "display": "none"
@@ -312,11 +314,13 @@ function UpdateBrewModal(props: Props) {
 
     const waterValue = String(props.brew.water.id);
 
-    const [water, setWater] = useState<Option | null>({
+    const defaultWater = {
         "value": waterValue,
-        "label": props.brew.coffee.name,
+        "label": props.brew.water.name,
         "__isNew__": false
-    });
+    };
+
+    const [water, setWater] = useState<Option | null>(defaultWater);
 
     const [showWaterError, setShowWaterError] = useState<CSSProperties>({
         "display": "none"
@@ -338,11 +342,13 @@ function UpdateBrewModal(props: Props) {
 
     const brewerValue = String(props.brew.brewer.id);
 
-    const [brewer, setBrewer] = useState<Option | null>({
+    const defaultBrewer = {
         "value": brewerValue,
-        "label": props.brew.coffee.name,
+        "label": props.brew.brewer.name,
         "__isNew__": false
-    });
+    };
+
+    const [brewer, setBrewer] = useState<Option | null>(defaultBrewer);
 
     const [showBrewerError, setShowBrewerError] = useState<CSSProperties>({
         "display": "none"
@@ -364,11 +370,13 @@ function UpdateBrewModal(props: Props) {
 
     const filterValue = String(props.brew.filter.id);
 
-    const [filter, setFilter] = useState<Option | null>({
+    const defaultFilter = {
         "value": filterValue,
-        "label": props.brew.coffee.name,
+        "label": props.brew.filter.name,
         "__isNew__": false
-    });
+    };
+
+    const [filter, setFilter] = useState<Option | null>(defaultFilter);
 
     const [showFilterError, setShowFilterError] = useState<CSSProperties>({
         "display": "none"
@@ -390,11 +398,13 @@ function UpdateBrewModal(props: Props) {
 
     const vesselValue = String(props.brew.vessel.id);
 
-    const [vessel, setVessel] = useState<Option | null>({
+    const defaultVessel = {
         "value": vesselValue,
-        "label": props.brew.coffee.name,
+        "label": props.brew.vessel.name,
         "__isNew__": false
-    });
+    };
+
+    const [vessel, setVessel] = useState<Option | null>(defaultVessel);
 
     const [showVesselError, setShowVesselError] = useState<CSSProperties>({
         "display": "none"
@@ -574,7 +584,7 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Timestamp
                         </Form.Label>
-                        <Form.Control type="datetime-local" />
+                        <Form.Control type="datetime-local" defaultValue={props.brew.timestamp} />
                         <Form.Control.Feedback type="invalid" style={showCoffeeError}>
                             Please enter a valid timestamp.
                         </Form.Control.Feedback>
@@ -584,7 +594,7 @@ function UpdateBrewModal(props: Props) {
                             Coffee
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onChange={handleCoffeeChange} />
+                                              onChange={handleCoffeeChange} defaultValue={defaultCoffee} />
                         <Form.Control.Feedback type="invalid" style={showCoffeeError}>
                             Please select a coffee.
                         </Form.Control.Feedback>
@@ -594,7 +604,7 @@ function UpdateBrewModal(props: Props) {
                             Water
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onChange={handleWaterChange} />
+                                              onChange={handleWaterChange} defaultValue={defaultWater} />
                         <Form.Control.Feedback type="invalid" style={showWaterError}>
                             Please select a water.
                         </Form.Control.Feedback>
@@ -604,7 +614,7 @@ function UpdateBrewModal(props: Props) {
                             Brewer
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onChange={handleBrewerChange} />
+                                              onChange={handleBrewerChange} defaultValue={defaultBrewer} />
                         <Form.Control.Feedback type="invalid" style={showBrewerError}>
                             Please select a brewer.
                         </Form.Control.Feedback>
@@ -614,7 +624,7 @@ function UpdateBrewModal(props: Props) {
                             Filter
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onChange={handleFilterChange} />
+                                              onChange={handleFilterChange} defaultValue={defaultFilter} />
                         <Form.Control.Feedback type="invalid" style={showFilterError}>
                             Please select a filter.
                         </Form.Control.Feedback>
@@ -624,7 +634,7 @@ function UpdateBrewModal(props: Props) {
                             Vessel
                         </Form.Label>
                         <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onChange={handleVesselChange} />
+                                              onChange={handleVesselChange} defaultValue={defaultVessel} />
                         <Form.Control.Feedback type="invalid" style={showVesselError}>
                             Please select a vessel.
                         </Form.Control.Feedback>
@@ -633,7 +643,8 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Coffee Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue="18" onChange={handleCoffeeMassChange} />
+                        <Form.Control type="text" defaultValue={props.brew.coffeeMass}
+                                      onChange={handleCoffeeMassChange} />
                         <Form.Control.Feedback type="invalid" style={showCoffeeMassError}>
                             Please enter a valid coffee mass.
                         </Form.Control.Feedback>
@@ -642,7 +653,8 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Water Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue="300" onChange={handleWaterMassChange} />
+                        <Form.Control type="text" defaultValue={props.brew.waterMass}
+                                      onChange={handleWaterMassChange} />
                         <Form.Control.Feedback type="invalid" style={showWaterMassError}>
                             Please enter a valid water mass.
                         </Form.Control.Feedback>
