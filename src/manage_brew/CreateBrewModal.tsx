@@ -7,23 +7,7 @@ import {SingleValue} from "react-select";
 import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
 import loadBrews from "./loadBrews";
-import loadOptions from "./loadOptions";
-
-interface Result {
-    id: number,
-    name: string
-}
-
-interface ReadResponse {
-    status: string,
-    content: Result[]
-}
-
-interface Option {
-    value: string,
-    label: string,
-    __isNew__: boolean
-}
+import {Option, loadOptions} from "./loadOptions";
 
 interface CreateResponse {
     status: string,

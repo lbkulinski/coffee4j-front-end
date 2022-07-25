@@ -1,7 +1,7 @@
 import {AxiosResponse, default as axios} from "axios";
 import RecordType from "../manage_record/RecordType";
 
-interface Option {
+export interface Option {
     value: string,
     label: string,
     __isNew__: boolean
@@ -17,7 +17,7 @@ interface ReadResponse {
     content: Result[]
 }
 
-function loadOptions(type: RecordType, searchTerm: string): Promise<Option[]> {
+export function loadOptions(type: RecordType, searchTerm: string): Promise<Option[]> {
     const typeString = type.toLowerCase();
 
     let requestUrl = `/api/typeahead/${typeString}?searchTerm=${searchTerm}`;
@@ -57,5 +57,3 @@ function loadOptions(type: RecordType, searchTerm: string): Promise<Option[]> {
              });
     });
 } //loadOptions
-
-export default loadOptions;
