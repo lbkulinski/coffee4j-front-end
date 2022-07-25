@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Brew from "./Brew";
 import {LinkContainer} from "react-router-bootstrap";
 import getLocalTimestampString from "../utilities";
+import Utilities from "../utilities";
 
 interface Props {
     brew: Brew,
@@ -18,7 +19,7 @@ interface Props {
 function BrewRow(props: Props) {
     const utcTimestamp = new Date(props.brew.timestamp);
 
-    const localTimestampString = getLocalTimestampString(utcTimestamp);
+    const localTimestampString = Utilities.getLocalTimestampString(utcTimestamp);
 
     const handleReadClick = () => {
         props.setBrew(props.brew);

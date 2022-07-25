@@ -3,6 +3,7 @@ import {ReactElement} from "react";
 import {ListGroup, Modal} from "react-bootstrap";
 import Brew from "./Brew";
 import getLocalTimestampString from "../utilities";
+import Utilities from "../utilities";
 
 interface Props {
     show: boolean,
@@ -17,7 +18,7 @@ function ReadBrewModal(props: Props): ReactElement {
 
     const utcTimestamp = new Date(props.brew.timestamp);
 
-    const localTimestampString = getLocalTimestampString(utcTimestamp);
+    const localTimestampString = Utilities.getLocalTimestampString(utcTimestamp);
 
     const coffeeMassString = props.brew.coffeeMass.toLocaleString();
 

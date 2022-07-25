@@ -7,6 +7,7 @@ import {SingleValue} from "react-select";
 import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
 import loadBrews from "./loadBrews";
+import loadOptions from "./loadOptions";
 
 interface Result {
     id: number,
@@ -67,73 +68,6 @@ interface Props {
     setNextDisabled: (nextDisabled: boolean) => void,
     setBrews: (brews: Brew[]) => void
 }
-
-function loadOptions(requestUrl: string): Promise<Option[]> {
-    const config = {
-        "withCredentials": true
-    };
-
-    const axios = require("axios").default;
-
-    return new Promise<Option[]>((resolve) => {
-        axios.get(requestUrl, config)
-             .then((response: AxiosResponse<ReadResponse>) => {
-                 if (response.data.status !== "SUCCESS") {
-                     resolve([]);
-
-                     return;
-                 } //end if
-
-                 const results = response.data.content;
-
-                 const options: Option[] = [];
-
-                 results.forEach((result: Result) => {
-                     let value = String(result.id);
-
-                     const option: Option = {
-                         "value": value,
-                         "label": result.name,
-                         "__isNew__": false
-                     };
-
-                     options.push(option);
-                 });
-
-                 resolve(options);
-             });
-    });
-} //loadOptions
-
-function loadCoffeeOptions(inputValue: string): Promise<Option[]> {
-    const requestUrl = `/api/typeahead/coffee?searchTerm=${inputValue}`;
-
-    return loadOptions(requestUrl);
-} //loadCoffeeOptions
-
-function loadWaterOptions(inputValue: string): Promise<Option[]> {
-    const requestUrl = `/api/typeahead/water?searchTerm=${inputValue}`;
-
-    return loadOptions(requestUrl);
-} //loadWaterOptions
-
-function loadBrewerOptions(inputValue: string): Promise<Option[]> {
-    const requestUrl = `/api/typeahead/brewer?searchTerm=${inputValue}`;
-
-    return loadOptions(requestUrl);
-} //loadBrewerOptions
-
-function loadFilterOptions(inputValue: string): Promise<Option[]> {
-    const requestUrl = `/api/typeahead/filter?searchTerm=${inputValue}`;
-
-    return loadOptions(requestUrl);
-} //loadFilterOptions
-
-function loadVesselOptions(inputValue: string): Promise<Option[]> {
-    const requestUrl = `/api/typeahead/vessel?searchTerm=${inputValue}`;
-
-    return loadOptions(requestUrl);
-} //loadVesselOptions
 
 function getRecordPromise(option: Option, type: RecordType): Promise<number | null> {
     return new Promise<number | null>((resolve) => {
@@ -457,6 +391,8 @@ function CreateBrewModal(props: Props) {
         "display": "none"
     });
 
+    const loadCoffeeOptions = (searchTerm: string) => loadOptions(RecordType.COFFEE, searchTerm);
+
     const handleCoffeeChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
@@ -474,6 +410,8 @@ function CreateBrewModal(props: Props) {
     const [showWaterError, setShowWaterError] = useState<CSSProperties>({
         "display": "none"
     });
+
+    const loadWaterOptions = (searchTerm: string) => loadOptions(RecordType.WATER, searchTerm);
 
     const handleWaterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -493,6 +431,8 @@ function CreateBrewModal(props: Props) {
         "display": "none"
     });
 
+    const loadBrewerOptions = (searchTerm: string) => loadOptions(RecordType.BREWER, searchTerm);
+
     const handleBrewerChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
@@ -511,6 +451,8 @@ function CreateBrewModal(props: Props) {
         "display": "none"
     });
 
+    const loadFilterOptions = (searchTerm: string) => loadOptions(RecordType.FILTER, searchTerm);
+
     const handleFilterChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
             return;
@@ -528,6 +470,8 @@ function CreateBrewModal(props: Props) {
     const [showVesselError, setShowVesselError] = useState<CSSProperties>({
         "display": "none"
     });
+
+    const loadVesselOptions = (searchTerm: string) => loadOptions(RecordType.VESSEL, searchTerm);
 
     const handleVesselChange = (newValue: SingleValue<Option>) => {
         if (newValue === null) {
@@ -641,23 +585,17 @@ function CreateBrewModal(props: Props) {
 
     const [showSuccess, setShowSuccess] = useState(false);
 
-    const hideSuccessToast = () => {
-        setShowSuccess(false);
-    };
+    const hideSuccessToast = () => setShowSuccess(false);
 
     const successMessage = "The specified brew was successfully created.";
 
     const [showError, setShowError] = useState(false);
 
-    const hideErrorToast = () => {
-        setShowError(false);
-    };
+    const hideErrorToast = () => setShowError(false);
 
     const errorMessage = "The specified brew could not be created.";
 
-    const handleClose = () => {
-        props.setShow(false);
-    };
+    const handleClose = () => props.setShow(false);
 
     const handleSave = () => {
         const createBrewValues: CreateBrewValues = {
