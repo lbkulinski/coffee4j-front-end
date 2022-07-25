@@ -13,7 +13,7 @@ interface UpdateResponse {
 }
 
 interface Props {
-    record: Record,
+    record: Record | null,
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,
@@ -24,7 +24,11 @@ interface Props {
 }
 
 function updateRecord(props: Props, name: string, setShowSuccess: (showSuccess: boolean) => void,
-                      setShowError: (showError: boolean) => void) {
+                      setShowError: (showError: boolean) => void): void {
+    if (props.record === null) {
+        return;
+    } //end if
+
     const formData = new FormData();
 
     const idString = String(props.record.id);
@@ -60,6 +64,13 @@ function updateRecord(props: Props, name: string, setShowSuccess: (showSuccess: 
 } //updateRecord
 
 function UpdateRecordModal(props: Props) {
+    if (props.record === null) {
+        return (
+            <>
+            </>
+        );
+    } //end if
+
     const [name, setName] = useState("");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

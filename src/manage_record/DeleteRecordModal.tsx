@@ -13,7 +13,7 @@ interface DeleteResponse {
 }
 
 interface Props {
-    record: Record,
+    record: Record | null,
     show: boolean,
     setShow: (show: boolean) => void,
     requestUrl: string,
@@ -24,7 +24,11 @@ interface Props {
 }
 
 function deleteRecord(props: Props, setShowSuccess: (showSuccess: boolean) => void,
-                      setShowError: (showError: boolean) => void) {
+                      setShowError: (showError: boolean) => void): void {
+    if (props.record === null) {
+        return;
+    } //end if
+
     const deleteRequestUrl = `${props.requestUrl}?id=${props.record.id}`;
 
     const config = {
@@ -54,6 +58,13 @@ function deleteRecord(props: Props, setShowSuccess: (showSuccess: boolean) => vo
 } //deleteRecord
 
 function DeleteRecordModal(props: Props) {
+    if (props.record === null) {
+        return (
+            <>
+            </>
+        );
+    } //end if
+
     const hideModal = () => {
         props.setShow(false);
     };

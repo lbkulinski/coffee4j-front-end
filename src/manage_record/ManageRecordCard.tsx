@@ -26,10 +26,7 @@ function ManageRecordCard(props: Props) {
 
     const [createShow, setCreateShow] = useState(false);
 
-    const [record, setRecord] = useState({
-        "id": 0,
-        "name": ""
-    });
+    const [record, setRecord] = useState<Record | null>(null);
 
     const [updateShow, setUpdateShow] = useState(false);
 
