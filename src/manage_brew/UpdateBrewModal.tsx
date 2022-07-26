@@ -296,17 +296,11 @@ function UpdateBrewModal(props: Props) {
         "zone": "utc"
     };
 
-    const isoOptions = {
-        "suppressSeconds": true,
-        "suppressMilliseconds": true,
-        "includeOffset": false
-    };
+    const format = "yyyy-LL-dd'T'HH:mm";
 
     const defaultTimestamp = DateTime.fromISO(props.brew.timestamp, timeZone)
                                      .toLocal()
-                                     .toISO(isoOptions);
-
-    console.log(defaultTimestamp);
+                                     .toFormat(format);
 
     const coffeeValue = String(props.brew.coffee.id);
 
