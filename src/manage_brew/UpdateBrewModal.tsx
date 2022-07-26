@@ -108,7 +108,7 @@ function processResults(results: (number | null)[], id: number, timestamp: strin
 
     const formData = new FormData();
 
-    const idString = String(coffeeId);
+    const idString = String(id);
 
     formData.append("id", idString);
 
@@ -318,13 +318,13 @@ function UpdateBrewModal(props: Props) {
 
     const id = props.brew.id;
 
-    const timeZone = {
+    const options = {
         "zone": "utc"
     };
 
     const format = "yyyy-LL-dd'T'HH:mm";
 
-    const defaultTimestamp = DateTime.fromISO(props.brew.timestamp, timeZone)
+    const defaultTimestamp = DateTime.fromISO(props.brew.timestamp, options)
                                      .toLocal()
                                      .toFormat(format);
 
