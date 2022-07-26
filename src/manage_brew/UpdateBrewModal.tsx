@@ -16,6 +16,11 @@ interface CreateResponse {
 }
 
 interface UpdateBrewValues {
+    id: number,
+    timestamp: {
+        value: string,
+        setShowError: (showError: CSSProperties) => void
+    },
     coffee: {
         value: Option | null,
         setShowError: (showError: CSSProperties) => void
@@ -55,8 +60,8 @@ interface Props {
     setBrews: (brews: Brew[]) => void
 }
 
-function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
-                        setShowSuccess: (showSuccess: boolean) => void,
+function processResults(results: (number | null)[], id: number, timestamp: string, coffeeMass: number,
+                        waterMass: number, setShowSuccess: (showSuccess: boolean) => void,
                         setShowError: (showError: boolean) => void, setOffsetIds: (offsetIds: number[]) => void,
                         setNextDisabled: (nextDisabled: boolean) => void, setBrews: (brews: Brew[]) => void): void {
     const coffeeId = results[0];
@@ -102,6 +107,12 @@ function processResults(results: (number | null)[], coffeeMass: number, waterMas
     const requestUrl = "/api/brew";
 
     const formData = new FormData();
+
+    const idString = String(coffeeId);
+
+    formData.append("id", idString);
+
+    formData.append("timestamp", timestamp);
 
     const coffeeIdString = String(coffeeId);
 
@@ -160,6 +171,14 @@ function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) =
                   setShowSuccess: (showSuccess: boolean) => void,
                   setShowError: (showError: boolean) => void, props: Props): void {
     let dataValid = true;
+
+    if (updateBrewValues.timestamp.value === "") {
+        updateBrewValues.timestamp.setShowError({
+            "display": "block"
+        });
+
+        dataValid = false;
+    } //end if
 
     if (updateBrewValues.coffee.value === null) {
         updateBrewValues.coffee.setShowError({
@@ -273,6 +292,10 @@ function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) =
 
     const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
 
+    const id = updateBrewValues.id;
+
+    const timestamp = updateBrewValues.timestamp.value;
+
     const coffeeMass = updateBrewValues.coffeeMass.value;
 
     const waterMass = updateBrewValues.waterMass.value;
@@ -280,8 +303,9 @@ function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) =
     const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
 
     Promise.all(promises)
-           .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError,
-                                                 props.setOffsetIds, props.setNextDisabled, props.setBrews));
+           .then((results) => processResults(results, id, timestamp, coffeeMass, waterMass, setShowSuccess,
+                                                 setShowError, props.setOffsetIds, props.setNextDisabled,
+                                                 props.setBrews));
 } //saveBrew
 
 function UpdateBrewModal(props: Props) {
@@ -292,6 +316,8 @@ function UpdateBrewModal(props: Props) {
         );
     } //endif
 
+    const id = props.brew.id;
+
     const timeZone = {
         "zone": "utc"
     };
@@ -301,6 +327,38 @@ function UpdateBrewModal(props: Props) {
     const defaultTimestamp = DateTime.fromISO(props.brew.timestamp, timeZone)
                                      .toLocal()
                                      .toFormat(format);
+
+    const [timestamp, setTimestamp] = useState(defaultTimestamp);
+
+    const [showTimestampError, setShowTimestampError] = useState<CSSProperties>({
+        "display": "none"
+    });
+
+    const handleTimestampChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const timestamp = DateTime.fromISO(event.target.value)
+                                  .toUTC()
+                                  .toString();
+        
+        console.log(timestamp);
+
+        const invalidDateTime = "Invalid DateTime";
+
+        if (timestamp === invalidDateTime) {
+            setTimestamp("");
+
+            setShowTimestampError({
+                "display": "block"
+            });
+
+            return;
+        } //end if
+
+        setTimestamp(timestamp);
+
+        setShowTimestampError({
+            "display": "none"
+        });
+    };
 
     const coffeeValue = String(props.brew.coffee.id);
 
@@ -556,6 +614,11 @@ function UpdateBrewModal(props: Props) {
 
     const handleSave = () => {
         const updateBrewValues: UpdateBrewValues = {
+            "id": id,
+            "timestamp": {
+                "value": timestamp,
+                "setShowError": setShowTimestampError
+            },
             "coffee": {
                 "value": coffee,
                 "setShowError": setShowCoffeeError
@@ -602,8 +665,9 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Timestamp
                         </Form.Label>
-                        <Form.Control type="datetime-local" defaultValue={defaultTimestamp} />
-                        <Form.Control.Feedback type="invalid" style={showCoffeeError}>
+                        <Form.Control type="datetime-local" onChange={handleTimestampChange}
+                                      defaultValue={defaultTimestamp} />
+                        <Form.Control.Feedback type="invalid" style={showTimestampError}>
                             Please enter a valid timestamp.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -661,8 +725,8 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Coffee Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue={props.brew.coffeeMass}
-                                      onChange={handleCoffeeMassChange} />
+                        <Form.Control type="text" onChange={handleCoffeeMassChange}
+                                      defaultValue={props.brew.coffeeMass} />
                         <Form.Control.Feedback type="invalid" style={showCoffeeMassError}>
                             Please enter a valid coffee mass.
                         </Form.Control.Feedback>
@@ -671,8 +735,8 @@ function UpdateBrewModal(props: Props) {
                         <Form.Label>
                             Water Mass
                         </Form.Label>
-                        <Form.Control type="text" defaultValue={props.brew.waterMass}
-                                      onChange={handleWaterMassChange} />
+                        <Form.Control type="text" onChange={handleWaterMassChange}
+                                      defaultValue={props.brew.waterMass} />
                         <Form.Control.Feedback type="invalid" style={showWaterMassError}>
                             Please enter a valid water mass.
                         </Form.Control.Feedback>
