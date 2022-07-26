@@ -2,8 +2,7 @@ import React from "react";
 import {ReactElement} from "react";
 import {ListGroup, Modal} from "react-bootstrap";
 import Brew from "./Brew";
-import getLocalTimestampString from "../utilities";
-import Utilities from "../utilities";
+import {DateTime} from "luxon";
 
 interface Props {
     brew: Brew | null,
@@ -23,9 +22,13 @@ function ReadBrewModal(props: Props): ReactElement {
         props.setShow(false);
     };
 
-    const utcTimestamp = new Date(props.brew.timestamp);
+    const timeZone = {
+        "zone": "utc"
+    };
 
-    const localTimestampString = Utilities.getLocalTimestampString(utcTimestamp);
+    const timestampString = DateTime.fromISO(props.brew.timestamp, timeZone)
+                                    .toLocal()
+                                    .toLocaleString(DateTime.DATETIME_SHORT);
 
     const coffeeMassString = props.brew.coffeeMass.toLocaleString();
 
@@ -47,7 +50,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    localTimestampString
+                                    timestampString
                                 }
                             </div>
                         </ListGroup.Item>

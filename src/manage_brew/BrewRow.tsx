@@ -6,9 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons"
 import "bootstrap/dist/css/bootstrap.min.css";
 import Brew from "./Brew";
-import {LinkContainer} from "react-router-bootstrap";
-import getLocalTimestampString from "../utilities";
-import Utilities from "../utilities";
+import {DateTime} from "luxon";
 
 interface Props {
     brew: Brew,
@@ -18,9 +16,13 @@ interface Props {
 }
 
 function BrewRow(props: Props) {
-    const utcTimestamp = new Date(props.brew.timestamp);
+    const timeZone = {
+        "zone": "utc"
+    };
 
-    const localTimestampString = Utilities.getLocalTimestampString(utcTimestamp);
+    const timestampString = DateTime.fromISO(props.brew.timestamp, timeZone)
+                                    .toLocal()
+                                    .toLocaleString(DateTime.DATETIME_SHORT);
 
     const handleReadClick = () => {
         props.setBrew(props.brew);
@@ -38,7 +40,7 @@ function BrewRow(props: Props) {
         <tr>
             <td>
                 {
-                    localTimestampString
+                    timestampString
                 }
             </td>
             <td>
