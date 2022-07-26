@@ -10,7 +10,7 @@ import loadBrews from "./loadBrews";
 import {Option, loadOptions, getRecordPromise} from "./loadOptions";
 import {DateTime} from "luxon";
 
-interface CreateResponse {
+interface UpdateResponse {
     status: string,
     content: string
 }
@@ -148,8 +148,8 @@ function processResults(results: (number | null)[], id: number, timestamp: strin
 
     const axios = require("axios").default;
 
-    axios.post(requestUrl, formData, config)
-         .then((response: AxiosResponse<CreateResponse>) => {
+    axios.put(requestUrl, formData, config)
+         .then((response: AxiosResponse<UpdateResponse>) => {
              if (response.data.status !== "SUCCESS") {
                  setShowError(true);
 
@@ -338,8 +338,6 @@ function UpdateBrewModal(props: Props) {
         const timestamp = DateTime.fromISO(event.target.value)
                                   .toUTC()
                                   .toString();
-        
-        console.log(timestamp);
 
         const invalidDateTime = "Invalid DateTime";
 
