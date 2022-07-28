@@ -782,8 +782,8 @@ interface Props {
 }
 
 interface State {
-    id: number,
-    timestamp: string,
+    id: number | null,
+    timestamp: string | null,
     showTimestampError: CSSProperties,
     coffee: Option | null,
     showCoffeeError: CSSProperties,
@@ -795,9 +795,9 @@ interface State {
     showFilterError: CSSProperties,
     vessel: Option | null,
     showVesselError: CSSProperties,
-    coffeeMass: number,
+    coffeeMass: number | null,
     showCoffeeMassError: CSSProperties,
-    waterMass: number,
+    waterMass: number | null,
     showWaterMassError: CSSProperties
 }
 
@@ -805,83 +805,37 @@ class UpdateBrewModal extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
 
-        const brew = this.props.brew;
-
-        if (brew === null) {
-            throw new Error("brew is null");
-        } //end if
-
-        const options = {
-            "zone": "utc"
-        };
-
-        const format = "yyyy-LL-dd'T'HH:mm";
-
-        const timestamp = DateTime.fromISO(brew.timestamp, options)
-                                  .toLocal()
-                                  .toFormat(format);
-
-        const coffeeValue = String(brew.coffee.id);
-
-        const waterValue = String(brew.water.id);
-
-        const brewerValue = String(brew.brewer.id);
-
-        const filterValue = String(brew.filter.id);
-
-        const vesselValue = String(brew.vessel.id);
-
         this.state = {
-            "id": brew.id,
-            "timestamp": timestamp,
+            "id": null,
+            "timestamp": null,
             "showTimestampError": {
                 "display": "none"
             },
-            "coffee": {
-                "value": coffeeValue,
-                "label": brew.coffee.name,
-                "__isNew__": false
-            },
+            "coffee": null,
             "showCoffeeError": {
                 "display": "none"
             },
-            "water": {
-                "value": waterValue,
-                "label": brew.water.name,
-                "__isNew__": false
-            },
+            "water": null,
             "showWaterError": {
                 "display": "none"
             },
-            "brewer": {
-                "value": brewerValue,
-                "label": brew.brewer.name,
-                "__isNew__": false
-            },
+            "brewer": null,
             "showBrewerError": {
                 "display": "none"
             },
-            "filter": {
-                "value": filterValue,
-                "label": brew.filter.name,
-                "__isNew__": false
-            },
+            "filter": null,
             "showFilterError": {
                 "display": "none"
             },
-            "vessel": {
-                "value": vesselValue,
-                "label": brew.vessel.name,
-                "__isNew__": false
-            },
+            "vessel": null,
             "showVesselError": {
                 "display": "none"
             },
-            "coffeeMass": 18,
+            "coffeeMass": null,
             "showCoffeeMassError": {
                 "display": "none"
             },
-            "waterMass": 300,
+            "waterMass": null,
             "showWaterMassError": {
                 "display": "none"
             }
@@ -1084,6 +1038,64 @@ class UpdateBrewModal extends React.Component<Props, State> {
     } //handleSave
 
     public render(): ReactNode {
+        const brew = this.props.brew;
+
+        if (brew === null) {
+            return (
+                <></>
+            );
+        } //end if
+
+        const options = {
+            "zone": "utc"
+        };
+
+        const format = "yyyy-LL-dd'T'HH:mm";
+
+        const timestamp = DateTime.fromISO(brew.timestamp, options)
+                                  .toLocal()
+                                  .toFormat(format);
+
+        const coffeeValue = String(brew.coffee.id);
+
+        const coffee: Option = {
+            "value": coffeeValue,
+            "label": brew.coffee.name,
+            "__isNew__": false
+        };
+
+        const waterValue = String(brew.water.id);
+
+        const water: Option = {
+            "value": waterValue,
+            "label": brew.water.name,
+            "__isNew__": false
+        };
+
+        const brewerValue = String(brew.brewer.id);
+
+        const brewer: Option = {
+            "value": brewerValue,
+            "label": brew.brewer.name,
+            "__isNew__": false
+        };
+
+        const filterValue = String(brew.filter.id);
+
+        const filter: Option = {
+            "value": filterValue,
+            "label": brew.filter.name,
+            "__isNew__": false
+        };
+
+        const vesselValue = String(brew.vessel.id);
+
+        const vessel: Option = {
+            "value": vesselValue,
+            "label": brew.vessel.name,
+            "__isNew__": false
+        };
+
         return (
             <>
                 <Modal show={this.props.show} onHide={this.hideModal}>
@@ -1098,7 +1110,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                                 Timestamp
                             </Form.Label>
                             <Form.Control type="datetime-local" onChange={this.handleTimestampChange}
-                                          defaultValue={this.state.timestamp} />
+                                          defaultValue={timestamp} />
                             <Form.Control.Feedback type="invalid" style={this.state.showTimestampError}>
                                 Please enter a valid timestamp.
                             </Form.Control.Feedback>
@@ -1109,7 +1121,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </Form.Label>
                             <AsyncCreatableSelect cacheOptions loadOptions={this.loadCoffeeOptions}
                                                   defaultOptions={true} onChange={this.handleCoffeeChange}
-                                                  defaultValue={this.state.coffee} />
+                                                  defaultValue={coffee} />
                             <Form.Control.Feedback type="invalid" style={this.state.showCoffeeError}>
                                 Please select a coffee.
                             </Form.Control.Feedback>
@@ -1120,7 +1132,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </Form.Label>
                             <AsyncCreatableSelect cacheOptions loadOptions={this.loadWaterOptions}
                                                   defaultOptions={true} onChange={this.handleWaterChange}
-                                                  defaultValue={this.state.water} />
+                                                  defaultValue={water} />
                             <Form.Control.Feedback type="invalid" style={this.state.showWaterError}>
                                 Please select a water.
                             </Form.Control.Feedback>
@@ -1131,7 +1143,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </Form.Label>
                             <AsyncCreatableSelect cacheOptions loadOptions={this.loadBrewerOptions}
                                                   defaultOptions={true} onChange={this.handleBrewerChange}
-                                                  defaultValue={this.state.brewer} />
+                                                  defaultValue={brewer} />
                             <Form.Control.Feedback type="invalid" style={this.state.showBrewerError}>
                                 Please select a brewer.
                             </Form.Control.Feedback>
@@ -1142,7 +1154,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </Form.Label>
                             <AsyncCreatableSelect cacheOptions loadOptions={this.loadFilterOptions}
                                                   defaultOptions={true} onChange={this.handleFilterChange}
-                                                  defaultValue={this.state.filter} />
+                                                  defaultValue={filter} />
                             <Form.Control.Feedback type="invalid" style={this.state.showFilterError}>
                                 Please select a filter.
                             </Form.Control.Feedback>
@@ -1153,7 +1165,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </Form.Label>
                             <AsyncCreatableSelect cacheOptions loadOptions={this.loadVesselOptions}
                                                   defaultOptions={true} onChange={this.handleVesselChange}
-                                                  defaultValue={this.state.vessel} />
+                                                  defaultValue={vessel} />
                             <Form.Control.Feedback type="invalid" style={this.state.showVesselError}>
                                 Please select a vessel.
                             </Form.Control.Feedback>
@@ -1163,7 +1175,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                                 Coffee Mass
                             </Form.Label>
                             <Form.Control type="text" onChange={this.handleCoffeeMassChange}
-                                          defaultValue={this.state.coffeeMass} />
+                                          defaultValue={brew.coffeeMass} />
                             <Form.Control.Feedback type="invalid" style={this.state.showCoffeeMassError}>
                                 Please enter a valid coffee mass.
                             </Form.Control.Feedback>
@@ -1173,7 +1185,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                                 Water Mass
                             </Form.Label>
                             <Form.Control type="text" onChange={this.handleWaterMassChange}
-                                          defaultValue={this.state.waterMass} />
+                                          defaultValue={brew.waterMass} />
                             <Form.Control.Feedback type="invalid" style={this.state.showWaterMassError}>
                                 Please enter a valid water mass.
                             </Form.Control.Feedback>
