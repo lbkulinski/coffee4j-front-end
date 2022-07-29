@@ -10,7 +10,7 @@ import {Option, loadOptions, getRecordPromise} from "./loadOptions";
 import {DateTime} from "luxon";
 
 interface Props {
-    brew: Brew | null,
+    brew: Brew,
     show: boolean,
     setShow: (show: boolean) => void,
     setOffsetIds: (offsetIds: number[]) => void,
@@ -19,8 +19,8 @@ interface Props {
 }
 
 interface State {
-    id: number | null,
-    timestamp: string | null,
+    id: number,
+    timestamp: string,
     showTimestampError: CSSProperties,
     coffee: Option | null,
     showCoffeeError: CSSProperties,
@@ -32,9 +32,9 @@ interface State {
     showFilterError: CSSProperties,
     vessel: Option | null,
     showVesselError: CSSProperties,
-    coffeeMass: number | null,
+    coffeeMass: number,
     showCoffeeMassError: CSSProperties,
-    waterMass: number | null,
+    waterMass: number,
     showWaterMassError: CSSProperties,
     showSuccess: boolean,
     showError: boolean
@@ -49,37 +49,89 @@ class UpdateBrewModal extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
 
+        const brew = this.props.brew;
+
+        const options = {
+            "zone": "utc"
+        };
+
+        const format = "yyyy-LL-dd'T'HH:mm";
+
+        const timestamp = DateTime.fromISO(brew.timestamp, options)
+                                  .toLocal()
+                                  .toFormat(format);
+
+        const coffeeValue = String(brew.coffee.id);
+
+        const coffee: Option = {
+            "value": coffeeValue,
+            "label": brew.coffee.name,
+            "__isNew__": false
+        };
+
+        const waterValue = String(brew.water.id);
+
+        const water: Option = {
+            "value": waterValue,
+            "label": brew.water.name,
+            "__isNew__": false
+        };
+
+        const brewerValue = String(brew.brewer.id);
+
+        const brewer: Option = {
+            "value": brewerValue,
+            "label": brew.brewer.name,
+            "__isNew__": false
+        };
+
+        const filterValue = String(brew.filter.id);
+
+        const filter: Option = {
+            "value": filterValue,
+            "label": brew.filter.name,
+            "__isNew__": false
+        };
+
+        const vesselValue = String(brew.vessel.id);
+
+        const vessel: Option = {
+            "value": vesselValue,
+            "label": brew.vessel.name,
+            "__isNew__": false
+        };
+
         this.state = {
-            "id": null,
-            "timestamp": null,
+            "id": brew.id,
+            "timestamp": timestamp,
             "showTimestampError": {
                 "display": "none"
             },
-            "coffee": null,
+            "coffee": coffee,
             "showCoffeeError": {
                 "display": "none"
             },
-            "water": null,
+            "water": water,
             "showWaterError": {
                 "display": "none"
             },
-            "brewer": null,
+            "brewer": brewer,
             "showBrewerError": {
                 "display": "none"
             },
-            "filter": null,
+            "filter": filter,
             "showFilterError": {
                 "display": "none"
             },
-            "vessel": null,
+            "vessel": vessel,
             "showVesselError": {
                 "display": "none"
             },
-            "coffeeMass": null,
+            "coffeeMass": brew.coffeeMass,
             "showCoffeeMassError": {
                 "display": "none"
             },
-            "waterMass": null,
+            "waterMass": brew.waterMass,
             "showWaterMassError": {
                 "display": "none"
             },
@@ -128,37 +180,6 @@ class UpdateBrewModal extends React.Component<Props, State> {
 
     private hideModal(): void {
         this.props.setShow(false);
-
-        this.setState({
-            "coffee": null,
-            "showCoffeeError": {
-                "display": "none"
-            },
-            "water": null,
-            "showWaterError": {
-                "display": "none"
-            },
-            "brewer": null,
-            "showBrewerError": {
-                "display": "none"
-            },
-            "filter": null,
-            "showFilterError": {
-                "display": "none"
-            },
-            "vessel": null,
-            "showVesselError": {
-                "display": "none"
-            },
-            "coffeeMass": 0,
-            "showCoffeeMassError": {
-                "display": "none"
-            },
-            "waterMass": 0,
-            "showWaterMassError": {
-                "display": "none"
-            }
-        });
     } //hideModal
 
     private handleTimestampChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -335,6 +356,12 @@ class UpdateBrewModal extends React.Component<Props, State> {
             return;
         } //end if
 
+        const format = "yyyy-LL-dd'T'HH:mm:ss'.'u'Z'";
+
+        const timestamp = DateTime.fromISO(this.state.timestamp)
+                                  .toUTC()
+                                  .toFormat(format);
+
         const coffeeId = results[0];
 
         if (coffeeId === null) {
@@ -405,7 +432,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
 
         const data = {
             "id": this.state.id,
-            "timestamp": this.state.timestamp,
+            "timestamp": timestamp,
             "coffeeId": coffeeId,
             "waterId": waterId,
             "brewerId": brewerId,
@@ -415,13 +442,22 @@ class UpdateBrewModal extends React.Component<Props, State> {
             "waterMass": this.state.waterMass
         };
 
+        const formData = new FormData();
+
+        Object.entries(data)
+              .forEach(([key, value]) => {
+                  const valueString = String(value);
+
+                  formData.append(key, valueString);
+              });
+
         const config = {
             "withCredentials": true,
         };
 
         const axios = require("axios").default;
 
-        axios.put(requestUrl, data, config)
+        axios.put(requestUrl, formData, config)
              .then((response: AxiosResponse<UpdateResponse>) => {
                  if (response.data.status !== "SUCCESS") {
                      this.setState({
@@ -549,23 +585,19 @@ class UpdateBrewModal extends React.Component<Props, State> {
 
     private hideSuccessToast(): void {
         this.setState({
-            "showSuccess": true
+            "showSuccess": false
         });
     } //hideSuccessToast
 
     private hideErrorToast(): void {
         this.setState({
-            "showError": true
+            "showError": false
         });
     } //hideSuccessToast
 
-    public render(): ReactNode {
-        const brew = this.props.brew;
-
-        if (brew === null) {
-            return (
-                <></>
-            );
+    public componentDidUpdate(prevProps: Props) {
+        if (this.props.brew === prevProps.brew) {
+            return;
         } //end if
 
         const options = {
@@ -574,61 +606,113 @@ class UpdateBrewModal extends React.Component<Props, State> {
 
         const format = "yyyy-LL-dd'T'HH:mm";
 
-        const timestamp = DateTime.fromISO(brew.timestamp, options)
+        const timestamp = DateTime.fromISO(this.props.brew.timestamp, options)
                                   .toLocal()
                                   .toFormat(format);
 
-        const coffeeValue = String(brew.coffee.id);
+        const coffeeValue = String(this.props.brew.coffee.id);
 
         const coffee: Option = {
             "value": coffeeValue,
-            "label": brew.coffee.name,
+            "label": this.props.brew.coffee.name,
             "__isNew__": false
         };
 
-        const waterValue = String(brew.water.id);
+        const waterValue = String(this.props.brew.water.id);
 
         const water: Option = {
             "value": waterValue,
-            "label": brew.water.name,
+            "label": this.props.brew.water.name,
             "__isNew__": false
         };
 
-        const brewerValue = String(brew.brewer.id);
+        const brewerValue = String(this.props.brew.brewer.id);
 
         const brewer: Option = {
             "value": brewerValue,
-            "label": brew.brewer.name,
+            "label": this.props.brew.brewer.name,
             "__isNew__": false
         };
 
-        const filterValue = String(brew.filter.id);
+        const filterValue = String(this.props.brew.filter.id);
 
         const filter: Option = {
             "value": filterValue,
-            "label": brew.filter.name,
+            "label": this.props.brew.filter.name,
             "__isNew__": false
         };
 
-        const vesselValue = String(brew.vessel.id);
+        const vesselValue = String(this.props.brew.vessel.id);
 
         const vessel: Option = {
             "value": vesselValue,
-            "label": brew.vessel.name,
+            "label": this.props.brew.vessel.name,
             "__isNew__": false
         };
 
         this.setState({
-            "id": brew.id,
+            "id": this.props.brew.id,
             "timestamp": timestamp,
             "coffee": coffee,
             "water": water,
             "brewer": brewer,
             "filter": filter,
             "vessel": vessel,
-            "coffeeMass": brew.coffeeMass,
-            "waterMass": brew.waterMass
+            "coffeeMass": this.props.brew.coffeeMass,
+            "waterMass": this.props.brew.waterMass
         });
+    } //componentDidUpdate
+
+    public render(): ReactNode {
+        const options = {
+            "zone": "utc"
+        };
+
+        const format = "yyyy-LL-dd'T'HH:mm";
+
+        const timestamp = DateTime.fromISO(this.props.brew.timestamp, options)
+                                  .toLocal()
+                                  .toFormat(format);
+
+        const coffeeValue = String(this.props.brew.coffee.id);
+
+        const coffee: Option = {
+            "value": coffeeValue,
+            "label": this.props.brew.coffee.name,
+            "__isNew__": false
+        };
+
+        const waterValue = String(this.props.brew.water.id);
+
+        const water: Option = {
+            "value": waterValue,
+            "label": this.props.brew.water.name,
+            "__isNew__": false
+        };
+
+        const brewerValue = String(this.props.brew.brewer.id);
+
+        const brewer: Option = {
+            "value": brewerValue,
+            "label": this.props.brew.brewer.name,
+            "__isNew__": false
+        };
+
+        const filterValue = String(this.props.brew.filter.id);
+
+        const filter: Option = {
+            "value": filterValue,
+            "label": this.props.brew.filter.name,
+            "__isNew__": false
+        };
+
+        const vesselValue = String(this.props.brew.vessel.id);
+
+        const vessel: Option = {
+            "value": vesselValue,
+            "label": this.props.brew.vessel.name,
+            "__isNew__": false
+        };
 
         return (
             <>
@@ -709,7 +793,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                                 Coffee Mass
                             </Form.Label>
                             <Form.Control type="text" onChange={this.handleCoffeeMassChange}
-                                          defaultValue={brew.coffeeMass} />
+                                          defaultValue={this.props.brew.coffeeMass} />
                             <Form.Control.Feedback type="invalid" style={this.state.showCoffeeMassError}>
                                 Please enter a valid coffee mass.
                             </Form.Control.Feedback>
@@ -719,7 +803,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                                 Water Mass
                             </Form.Label>
                             <Form.Control type="text" onChange={this.handleWaterMassChange}
-                                          defaultValue={brew.waterMass} />
+                                          defaultValue={this.props.brew.waterMass} />
                             <Form.Control.Feedback type="invalid" style={this.state.showWaterMassError}>
                                 Please enter a valid water mass.
                             </Form.Control.Feedback>

@@ -50,8 +50,11 @@ function BrewCard() {
             <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
                              setNextDisabled={setNextDisabled} setBrews={setBrews} />
             <ReadBrewModal brew={brew} show={readShow} setShow={setReadShow} />
-            <UpdateBrewModal brew={brew} show={updateShow} setShow={setUpdateShow} setOffsetIds={setOffsetIds}
-                             setNextDisabled={setNextDisabled} setBrews={setBrews} />
+            {
+                (brew !== null) && <UpdateBrewModal brew={brew} show={updateShow} setShow={setUpdateShow}
+                                                    setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled}
+                                                    setBrews={setBrews} />
+            }
         </>
     );
 } //BrewCard
