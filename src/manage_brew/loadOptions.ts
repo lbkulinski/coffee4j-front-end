@@ -25,7 +25,11 @@ interface CreateResponse {
 export function loadOptions(type: RecordType, searchTerm: string): Promise<Option[]> {
     const typeString = type.toLowerCase();
 
-    let requestUrl = `/api/typeahead/${typeString}?searchTerm=${searchTerm}`;
+    let requestUrl = `/api/typeahead/${typeString}`;
+
+    if (searchTerm !== "") {
+        requestUrl += `?searchTerm=${searchTerm}`;
+    } //end if
 
     const config = {
         "withCredentials": true

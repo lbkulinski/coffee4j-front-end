@@ -1,4 +1,4 @@
-import React, {CSSProperties, ReactNode, useState} from "react";
+import React, {CSSProperties, ReactNode} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
@@ -6,771 +6,8 @@ import {AxiosResponse} from "axios";
 import {SingleValue} from "react-select";
 import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
-import loadBrews from "./loadBrews";
 import {Option, loadOptions, getRecordPromise} from "./loadOptions";
 import {DateTime} from "luxon";
-
-/*
-interface UpdateResponse {
-    status: string,
-    content: string
-}
-
-interface UpdateBrewValues {
-    id: number,
-    timestamp: {
-        value: string,
-        setShowError: (showError: CSSProperties) => void
-    },
-    coffee: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    water: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    brewer: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    filter: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    vessel: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    coffeeMass: {
-        value: number,
-        setShowError: (showError: CSSProperties) => void
-    },
-    waterMass: {
-        value: number,
-        setShowError: (showError: CSSProperties) => void
-    }
-}
-
-function processResults(results: (number | null)[], id: number, timestamp: string, coffeeMass: number,
-                        waterMass: number, setShowSuccess: (showSuccess: boolean) => void,
-                        setShowError: (showError: boolean) => void, setOffsetIds: (offsetIds: number[]) => void,
-                        setNextDisabled: (nextDisabled: boolean) => void, setBrews: (brews: Brew[]) => void): void {
-    const coffeeId = results[0];
-
-    if (coffeeId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const waterId = results[1];
-
-    if (waterId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const brewerId = results[2];
-
-    if (brewerId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const filterId = results[3];
-
-    if (filterId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const vesselId = results[4];
-
-    if (vesselId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const requestUrl = "/api/brew";
-
-    const formData = new FormData();
-
-    const idString = String(id);
-
-    formData.append("id", idString);
-
-    formData.append("timestamp", timestamp);
-
-    const coffeeIdString = String(coffeeId);
-
-    formData.append("coffeeId", coffeeIdString);
-
-    const waterIdString = String(waterId);
-
-    formData.append("waterId", waterIdString);
-
-    const brewerIdString = String(brewerId);
-
-    formData.append("brewerId", brewerIdString);
-
-    const filterIdString = String(filterId);
-
-    formData.append("filterId", filterIdString);
-
-    const vesselIdString = String(vesselId);
-
-    formData.append("vesselId", vesselIdString);
-
-    const coffeeMassString = String(coffeeMass);
-
-    formData.append("coffeeMass", coffeeMassString);
-
-    const waterMassString = String(waterMass);
-
-    formData.append("waterMass", waterMassString);
-
-    const config = {
-        "withCredentials": true,
-    };
-
-    const axios = require("axios").default;
-
-    axios.put(requestUrl, formData, config)
-         .then((response: AxiosResponse<UpdateResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 setShowError(true);
-
-                 return;
-             } //end if
-
-             const offsetIds: number[] = [];
-
-             loadBrews(offsetIds, setOffsetIds, setNextDisabled, setBrews);
-
-             setShowSuccess(true);
-         })
-         .catch(() => {
-             setShowError(true);
-         });
-} //processResults
-
-function saveBrew(updateBrewValues: UpdateBrewValues, setShow: (show: boolean) => void,
-                  setShowSuccess: (showSuccess: boolean) => void,
-                  setShowError: (showError: boolean) => void, props: Props): void {
-    let dataValid = true;
-
-    if (updateBrewValues.timestamp.value === "") {
-        updateBrewValues.timestamp.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (updateBrewValues.coffee.value === null) {
-        updateBrewValues.coffee.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (updateBrewValues.water.value === null) {
-        updateBrewValues.water.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (updateBrewValues.brewer.value === null) {
-        updateBrewValues.brewer.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (updateBrewValues.filter.value === null) {
-        updateBrewValues.filter.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (updateBrewValues.vessel.value === null) {
-        updateBrewValues.vessel.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (isNaN(updateBrewValues.coffeeMass.value)) {
-        updateBrewValues.coffeeMass.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (isNaN(updateBrewValues.waterMass.value)) {
-        updateBrewValues.waterMass.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (!dataValid) {
-        return;
-    } //end if
-
-    setShow(false);
-
-    const coffeeOption = updateBrewValues.coffee.value;
-
-    if (coffeeOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
-
-    const waterOption = updateBrewValues.water.value;
-
-    if (waterOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const waterPromise = getRecordPromise(waterOption, RecordType.WATER);
-
-    const brewerOption = updateBrewValues.brewer.value;
-
-    if (brewerOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const brewerPromise = getRecordPromise(brewerOption, RecordType.BREWER);
-
-    const filterOption = updateBrewValues.filter.value;
-
-    if (filterOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const filterPromise = getRecordPromise(filterOption, RecordType.FILTER);
-
-    const vesselOption = updateBrewValues.vessel.value;
-
-    if (vesselOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
-
-    const id = updateBrewValues.id;
-
-    const timestamp = updateBrewValues.timestamp.value;
-
-    const coffeeMass = updateBrewValues.coffeeMass.value;
-
-    const waterMass = updateBrewValues.waterMass.value;
-
-    const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
-
-    Promise.all(promises)
-           .then((results) => processResults(results, id, timestamp, coffeeMass, waterMass, setShowSuccess,
-                                                 setShowError, props.setOffsetIds, props.setNextDisabled,
-                                                 props.setBrews));
-} //saveBrew
-
-function UpdateBrewModal(props: Props) {
-    if (props.brew === null) {
-        return (
-            <>
-            </>
-        );
-    } //endif
-
-    const id = props.brew.id;
-
-    const options = {
-        "zone": "utc"
-    };
-
-    const format = "yyyy-LL-dd'T'HH:mm";
-
-    const defaultTimestamp = DateTime.fromISO(props.brew.timestamp, options)
-                                     .toLocal()
-                                     .toFormat(format);
-
-    const [timestamp, setTimestamp] = useState(defaultTimestamp);
-
-    const [showTimestampError, setShowTimestampError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const handleTimestampChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const timestamp = DateTime.fromISO(event.target.value)
-                                  .toUTC()
-                                  .toString();
-
-        const invalidDateTime = "Invalid DateTime";
-
-        if (timestamp === invalidDateTime) {
-            setTimestamp("");
-
-            setShowTimestampError({
-                "display": "block"
-            });
-
-            return;
-        } //end if
-
-        setTimestamp(timestamp);
-
-        setShowTimestampError({
-            "display": "none"
-        });
-    };
-
-    const coffeeValue = String(props.brew.coffee.id);
-
-    const defaultCoffee = {
-        "value": coffeeValue,
-        "label": props.brew.coffee.name,
-        "__isNew__": false
-    };
-
-    const [coffee, setCoffee] = useState<Option | null>(defaultCoffee);
-
-    const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadCoffeeOptions = (searchTerm: string) => loadOptions(RecordType.COFFEE, searchTerm);
-
-    const handleCoffeeChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setCoffee(newValue);
-        
-        setShowCoffeeError({
-            "display": "none"
-        });
-    };
-
-    const waterValue = String(props.brew.water.id);
-
-    const defaultWater = {
-        "value": waterValue,
-        "label": props.brew.water.name,
-        "__isNew__": false
-    };
-
-    const [water, setWater] = useState<Option | null>(defaultWater);
-
-    const [showWaterError, setShowWaterError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadWaterOptions = (searchTerm: string) => loadOptions(RecordType.WATER, searchTerm);
-
-    const handleWaterChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-       setWater(newValue);
-        
-        setShowWaterError({
-            "display": "none"
-        });
-    };
-
-    const brewerValue = String(props.brew.brewer.id);
-
-    const defaultBrewer = {
-        "value": brewerValue,
-        "label": props.brew.brewer.name,
-        "__isNew__": false
-    };
-
-    const [brewer, setBrewer] = useState<Option | null>(defaultBrewer);
-
-    const [showBrewerError, setShowBrewerError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadBrewerOptions = (searchTerm: string) => loadOptions(RecordType.BREWER, searchTerm);
-
-    const handleBrewerChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setBrewer(newValue);
-        
-        setShowBrewerError({
-            "display": "none"
-        });
-    };
-
-    const filterValue = String(props.brew.filter.id);
-
-    const defaultFilter = {
-        "value": filterValue,
-        "label": props.brew.filter.name,
-        "__isNew__": false
-    };
-
-    const [filter, setFilter] = useState<Option | null>(defaultFilter);
-
-    const [showFilterError, setShowFilterError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadFilterOptions = (searchTerm: string) => loadOptions(RecordType.FILTER, searchTerm);
-
-    const handleFilterChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setFilter(newValue);
-        
-        setShowFilterError({
-            "display": "none"
-        });
-    };
-
-    const vesselValue = String(props.brew.vessel.id);
-
-    const defaultVessel = {
-        "value": vesselValue,
-        "label": props.brew.vessel.name,
-        "__isNew__": false
-    };
-
-    const [vessel, setVessel] = useState<Option | null>(defaultVessel);
-
-    const [showVesselError, setShowVesselError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadVesselOptions = (searchTerm: string) => loadOptions(RecordType.VESSEL, searchTerm);
-
-    const handleVesselChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setVessel(newValue);
-
-        setShowVesselError({
-            "display": "none"
-        });
-    };
-
-    const [coffeeMass, setCoffeeMass] = useState(props.brew.coffeeMass);
-
-    const [showCoffeeMassError, setShowCoffeeMassError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const handleCoffeeMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = Number(event.target.value);
-
-        setCoffeeMass(newValue);
-
-        if (isNaN(newValue)) {
-            setShowCoffeeMassError({
-                "display": "block"
-            });
-
-            return;
-        } //end if
-
-        setShowCoffeeMassError({
-            "display": "none"
-        });
-    };
-
-    const [waterMass, setWaterMass] = useState(props.brew.waterMass);
-
-    const [showWaterMassError, setShowWaterMassError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = Number(event.target.value);
-
-        setWaterMass(newValue);
-
-        if (isNaN(newValue)) {
-            setShowWaterMassError({
-                "display": "block"
-            });
-
-            return;
-        } //end if
-        
-        setShowWaterMassError({
-            "display": "none"
-        });
-    };
-
-    const hideModal = () => {
-        props.setShow(false);
-
-        setCoffee(null);
-
-        setShowCoffeeError({
-            "display": "none"
-        });
-
-        setWater(null);
-
-        setShowWaterError({
-            "display": "none"
-        });
-
-        setBrewer(null);
-
-        setShowBrewerError({
-            "display": "none"
-        });
-
-        setFilter(null);
-
-        setShowFilterError({
-            "display": "none"
-        });
-
-        setVessel(null);
-
-        setShowVesselError({
-            "display": "none"
-        });
-
-        const defaultCoffeeMass = 18;
-
-        setCoffeeMass(defaultCoffeeMass);
-
-        setShowCoffeeMassError({
-            "display": "none"
-        });
-
-        const defaultWaterMass = 300;
-
-        setWaterMass(defaultWaterMass);
-
-        setShowWaterMassError({
-            "display": "none"
-        });
-    };
-
-    const [showSuccess, setShowSuccess] = useState(false);
-
-    const hideSuccessToast = () => setShowSuccess(false);
-
-    const successMessage = "The specified brew was successfully updated.";
-
-    const [showError, setShowError] = useState(false);
-
-    const hideErrorToast = () => setShowError(false);
-
-    const errorMessage = "The specified brew could not be updated.";
-
-    const handleClose = () => props.setShow(false);
-
-    const handleSave = () => {
-        const updateBrewValues: UpdateBrewValues = {
-            "id": id,
-            "timestamp": {
-                "value": timestamp,
-                "setShowError": setShowTimestampError
-            },
-            "coffee": {
-                "value": coffee,
-                "setShowError": setShowCoffeeError
-            },
-            "water": {
-                "value": water,
-                "setShowError": setShowWaterError
-            },
-            "brewer": {
-                "value": brewer,
-                "setShowError": setShowBrewerError
-            },
-            "filter": {
-                "value": filter,
-                "setShowError": setShowFilterError
-            },
-            "vessel": {
-                "value": vessel,
-                "setShowError": setShowVesselError
-            },
-            "coffeeMass": {
-                "value": coffeeMass,
-                "setShowError": setShowCoffeeMassError
-            },
-            "waterMass": {
-                "value": waterMass,
-                "setShowError": setShowWaterMassError
-            }
-        };
-
-        saveBrew(updateBrewValues, props.setShow, setShowSuccess, setShowError, props);
-    };
-
-    return (
-        <>
-            <Modal show={props.show} onHide={hideModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        Update
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Timestamp
-                        </Form.Label>
-                        <Form.Control type="datetime-local" onChange={handleTimestampChange}
-                                      defaultValue={defaultTimestamp} />
-                        <Form.Control.Feedback type="invalid" style={showTimestampError}>
-                            Please enter a valid timestamp.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Coffee
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onChange={handleCoffeeChange} defaultValue={defaultCoffee} />
-                        <Form.Control.Feedback type="invalid" style={showCoffeeError}>
-                            Please select a coffee.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Water
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onChange={handleWaterChange} defaultValue={defaultWater} />
-                        <Form.Control.Feedback type="invalid" style={showWaterError}>
-                            Please select a water.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Brewer
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onChange={handleBrewerChange} defaultValue={defaultBrewer} />
-                        <Form.Control.Feedback type="invalid" style={showBrewerError}>
-                            Please select a brewer.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Filter
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onChange={handleFilterChange} defaultValue={defaultFilter} />
-                        <Form.Control.Feedback type="invalid" style={showFilterError}>
-                            Please select a filter.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Vessel
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onChange={handleVesselChange} defaultValue={defaultVessel} />
-                        <Form.Control.Feedback type="invalid" style={showVesselError}>
-                            Please select a vessel.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Coffee Mass
-                        </Form.Label>
-                        <Form.Control type="text" onChange={handleCoffeeMassChange}
-                                      defaultValue={props.brew.coffeeMass} />
-                        <Form.Control.Feedback type="invalid" style={showCoffeeMassError}>
-                            Please enter a valid coffee mass.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Water Mass
-                        </Form.Label>
-                        <Form.Control type="text" onChange={handleWaterMassChange}
-                                      defaultValue={props.brew.waterMass} />
-                        <Form.Control.Feedback type="invalid" style={showWaterMassError}>
-                            Please enter a valid water mass.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="outline-primary" onClick={handleSave}>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <ToastContainer className="p-3" position="top-end">
-                <Toast show={showSuccess} onClose={hideSuccessToast} delay={3000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">
-                            Coffee4j
-                        </strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        {
-                            successMessage
-                        }
-                    </Toast.Body>
-                </Toast>
-                <Toast show={showError} onClose={hideErrorToast} delay={3000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">
-                            Coffee4j
-                        </strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        {
-                            errorMessage
-                        }
-                    </Toast.Body>
-                </Toast>
-            </ToastContainer>
-        </>
-    );
-} //UpdateBrewModal
-*/
 
 interface Props {
     brew: Brew | null,
@@ -798,7 +35,14 @@ interface State {
     coffeeMass: number | null,
     showCoffeeMassError: CSSProperties,
     waterMass: number | null,
-    showWaterMassError: CSSProperties
+    showWaterMassError: CSSProperties,
+    showSuccess: boolean,
+    showError: boolean
+}
+
+interface UpdateResponse {
+    status: string,
+    content: string
 }
 
 class UpdateBrewModal extends React.Component<Props, State> {
@@ -838,11 +82,51 @@ class UpdateBrewModal extends React.Component<Props, State> {
             "waterMass": null,
             "showWaterMassError": {
                 "display": "none"
-            }
+            },
+            "showSuccess": false,
+            "showError": false
         };
+
+        this.hideModal = this.hideModal.bind(this);
+
+        this.handleTimestampChange = this.handleTimestampChange.bind(this);
+
+        this.loadCoffeeOptions = this.loadCoffeeOptions.bind(this);
+
+        this.handleCoffeeChange = this.handleCoffeeChange.bind(this);
+
+        this.loadWaterOptions = this.loadWaterOptions.bind(this);
+
+        this.handleWaterChange = this.handleWaterChange.bind(this);
+
+        this.loadBrewerOptions = this.loadBrewerOptions.bind(this);
+
+        this.handleBrewerChange = this.handleBrewerChange.bind(this);
+
+        this.loadFilterOptions = this.loadFilterOptions.bind(this);
+
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+
+        this.loadVesselOptions = this.loadVesselOptions.bind(this);
+
+        this.handleVesselChange = this.handleVesselChange.bind(this);
+
+        this.handleCoffeeMassChange = this.handleCoffeeMassChange.bind(this);
+
+        this.handleWaterMassChange = this.handleWaterMassChange.bind(this);
+
+        this.handleClose = this.handleClose.bind(this);
+
+        this.handleResults = this.handleResults.bind(this);
+
+        this.handleSave = this.handleSave.bind(this);
+
+        this.hideSuccessToast = this.hideSuccessToast.bind(this);
+
+        this.hideErrorToast = this.hideErrorToast.bind(this);
     } //constructor
 
-    public hideModal(): void {
+    private hideModal(): void {
         this.props.setShow(false);
 
         this.setState({
@@ -877,7 +161,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //hideModal
 
-    public handleTimestampChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    private handleTimestampChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const timestamp = DateTime.fromISO(event.target.value)
                                   .toUTC()
                                   .toString();
@@ -903,11 +187,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleTimestampChange
 
-    public loadCoffeeOptions(searchTerm: string): Promise<Option[]> {
+    private loadCoffeeOptions(searchTerm: string): Promise<Option[]> {
         return loadOptions(RecordType.COFFEE, searchTerm);
     } //loadCoffeeOptions
 
-    public handleCoffeeChange(newValue: SingleValue<Option>): void {
+    private handleCoffeeChange(newValue: SingleValue<Option>): void {
         if (newValue === null) {
             return;
         } //end if
@@ -920,11 +204,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleCoffeeChange
 
-    public loadWaterOptions(searchTerm: string): Promise<Option[]> {
+    private loadWaterOptions(searchTerm: string): Promise<Option[]> {
         return loadOptions(RecordType.WATER, searchTerm);
     } //loadWaterOptions
 
-    public handleWaterChange(newValue: SingleValue<Option>): void {
+    private handleWaterChange(newValue: SingleValue<Option>): void {
         if (newValue === null) {
             return;
         } //end if
@@ -937,11 +221,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleWaterChange
 
-    public loadBrewerOptions(searchTerm: string): Promise<Option[]> {
+    private loadBrewerOptions(searchTerm: string): Promise<Option[]> {
         return loadOptions(RecordType.BREWER, searchTerm);
     } //loadBrewerOptions
 
-    public handleBrewerChange(newValue: SingleValue<Option>): void {
+    private handleBrewerChange(newValue: SingleValue<Option>): void {
         if (newValue === null) {
             return;
         } //end if
@@ -954,11 +238,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleBrewerChange
 
-    public loadFilterOptions(searchTerm: string): Promise<Option[]> {
+    private loadFilterOptions(searchTerm: string): Promise<Option[]> {
         return loadOptions(RecordType.FILTER, searchTerm);
     } //loadFilterOptions
 
-    public handleFilterChange(newValue: SingleValue<Option>): void {
+    private handleFilterChange(newValue: SingleValue<Option>): void {
         if (newValue === null) {
             return;
         } //end if
@@ -971,11 +255,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleFilterChange
 
-    public loadVesselOptions(searchTerm: string): Promise<Option[]> {
+    private loadVesselOptions(searchTerm: string): Promise<Option[]> {
         return loadOptions(RecordType.VESSEL, searchTerm);
     } //loadVesselOptions
 
-    public handleVesselChange(newValue: SingleValue<Option>): void {
+    private handleVesselChange(newValue: SingleValue<Option>): void {
         if (newValue === null) {
             return;
         } //end if
@@ -988,7 +272,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleVesselChange
 
-    public handleCoffeeMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    private handleCoffeeMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const newValue = Number(event.target.value);
 
         let showCoffeeMassError;
@@ -1009,7 +293,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleCoffeeMassChange
 
-    public handleWaterMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    private handleWaterMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const newValue = Number(event.target.value);
 
         let showWaterMassError;
@@ -1030,12 +314,250 @@ class UpdateBrewModal extends React.Component<Props, State> {
         });
     } //handleWaterMassChange
 
-    public handleClose(): void {
+    private handleClose(): void {
         this.props.setShow(false);
     } //handleClose
 
-    public handleSave(): void {
+    private handleResults(results: (number | null)[]): void {
+        if (this.state.id === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        if ((this.state.timestamp === null) || (this.state.timestamp === "")) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const coffeeId = results[0];
+
+        if (coffeeId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const waterId = results[1];
+
+        if (waterId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const brewerId = results[2];
+
+        if (brewerId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const filterId = results[3];
+
+        if (filterId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const vesselId = results[4];
+
+        if (vesselId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        if ((this.state.coffeeMass === null) || isNaN(this.state.coffeeMass)) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        if ((this.state.waterMass === null) || isNaN(this.state.waterMass)) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const requestUrl = "/api/brew";
+
+        const data = {
+            "id": this.state.id,
+            "timestamp": this.state.timestamp,
+            "coffeeId": coffeeId,
+            "waterId": waterId,
+            "brewerId": brewerId,
+            "filterId": filterId,
+            "vesselId": vesselId,
+            "coffeeMass": this.state.coffeeMass,
+            "waterMass": this.state.waterMass
+        };
+
+        const config = {
+            "withCredentials": true,
+        };
+
+        const axios = require("axios").default;
+
+        axios.put(requestUrl, data, config)
+             .then((response: AxiosResponse<UpdateResponse>) => {
+                 if (response.data.status !== "SUCCESS") {
+                     this.setState({
+                         "showError": true
+                     });
+
+                     return;
+                 } //end if
+
+                 this.setState({
+                     "showSuccess": true
+                 });
+             })
+             .catch(() => {
+                 this.setState({
+                     "showError": true
+                 });
+             });
+    } //handleResults
+
+    private handleSave(): void {
+        let dataValid = true;
+
+        if ((this.state.timestamp === null) || (this.state.timestamp === "")) {
+            this.setState({
+                "showTimestampError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.coffee === null) {
+            this.setState({
+                "showCoffeeError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.water === null) {
+            this.setState({
+                "showWaterError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.brewer === null) {
+            this.setState({
+                "showBrewerError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.filter === null) {
+            this.setState({
+                "showFilterError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.vessel === null) {
+            this.setState({
+                "showVesselError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if ((this.state.coffeeMass === null) || isNaN(this.state.coffeeMass)) {
+            this.setState({
+                "showCoffeeMassError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if ((this.state.waterMass === null) || isNaN(this.state.waterMass)) {
+            this.setState({
+                "showWaterMassError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (!dataValid) {
+            return;
+        } //end if
+
+        this.props.setShow(false);
+
+        const coffeePromise = getRecordPromise(this.state.coffee!, RecordType.COFFEE);
+
+        const waterPromise = getRecordPromise(this.state.water!, RecordType.WATER);
+
+        const brewerPromise = getRecordPromise(this.state.brewer!, RecordType.BREWER);
+
+        const filterPromise = getRecordPromise(this.state.filter!, RecordType.FILTER);
+
+        const vesselPromise = getRecordPromise(this.state.vessel!, RecordType.VESSEL);
+
+        const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
+
+        Promise.all(promises)
+               .then(this.handleResults);
     } //handleSave
+
+    private hideSuccessToast(): void {
+        this.setState({
+            "showSuccess": true
+        });
+    } //hideSuccessToast
+
+    private hideErrorToast(): void {
+        this.setState({
+            "showError": true
+        });
+    } //hideSuccessToast
 
     public render(): ReactNode {
         const brew = this.props.brew;
@@ -1095,6 +617,18 @@ class UpdateBrewModal extends React.Component<Props, State> {
             "label": brew.vessel.name,
             "__isNew__": false
         };
+
+        this.setState({
+            "id": brew.id,
+            "timestamp": timestamp,
+            "coffee": coffee,
+            "water": water,
+            "brewer": brewer,
+            "filter": filter,
+            "vessel": vessel,
+            "coffeeMass": brew.coffeeMass,
+            "waterMass": brew.waterMass
+        });
 
         return (
             <>
@@ -1200,34 +734,28 @@ class UpdateBrewModal extends React.Component<Props, State> {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                {/*
                 <ToastContainer className="p-3" position="top-end">
-                    <Toast show={showSuccess} onClose={hideSuccessToast} delay={3000} autohide>
+                    <Toast show={this.state.showSuccess} onClose={this.hideSuccessToast} delay={3000} autohide>
                         <Toast.Header>
                             <strong className="me-auto">
                                 Coffee4j
                             </strong>
                         </Toast.Header>
                         <Toast.Body>
-                            {
-                                successMessage
-                            }
+                            The specified brew was successfully updated.
                         </Toast.Body>
                     </Toast>
-                    <Toast show={showError} onClose={hideErrorToast} delay={3000} autohide>
+                    <Toast show={this.state.showError} onClose={this.hideErrorToast} delay={3000} autohide>
                         <Toast.Header>
                             <strong className="me-auto">
                                 Coffee4j
                             </strong>
                         </Toast.Header>
                         <Toast.Body>
-                            {
-                                errorMessage
-                            }
+                            The specified brew could not be updated.
                         </Toast.Body>
                     </Toast>
                 </ToastContainer>
-                */}
             </>
         );
     } //render
