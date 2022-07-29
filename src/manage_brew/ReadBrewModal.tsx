@@ -1,42 +1,46 @@
-import React from "react";
-import {ReactElement} from "react";
+import React, {ReactNode} from "react";
 import {ListGroup, Modal} from "react-bootstrap";
 import Brew from "./Brew";
 import {DateTime} from "luxon";
 
 interface Props {
-    brew: Brew | null,
+    brew: Brew,
     show: boolean,
     setShow: (show: boolean) => void
 }
 
-function ReadBrewModal(props: Props): ReactElement {
-    if (props.brew === null) {
+interface State {
+}
+
+class ReadBrewModal extends React.Component<Props, State> {
+    public constructor(props: Props) {
+        super(props);
+
+        this.state = {
+        };
+
+        this.handleHide = this.handleHide.bind(this);
+    } //constructor
+
+    private handleHide(): void {
+        this.props.setShow(false);
+    } //handleHide
+
+    public render(): ReactNode {
+        const options = {
+            "zone": "utc"
+        };
+
+        const timestamp = DateTime.fromISO(this.props.brew.timestamp, options)
+                                  .toLocal()
+                                  .toLocaleString(DateTime.DATETIME_SHORT);
+
+        const coffeeMass = this.props.brew.coffeeMass.toLocaleString();
+
+        const waterMass = this.props.brew.waterMass.toLocaleString();
+
         return (
-            <>
-            </>
-        );
-    } //endif
-
-    const handleHide = () => {
-        props.setShow(false);
-    };
-
-    const timeZone = {
-        "zone": "utc"
-    };
-
-    const timestampString = DateTime.fromISO(props.brew.timestamp, timeZone)
-                                    .toLocal()
-                                    .toLocaleString(DateTime.DATETIME_SHORT);
-
-    const coffeeMassString = props.brew.coffeeMass.toLocaleString();
-
-    const waterMassString = props.brew.waterMass.toLocaleString();
-
-    return (
-        <>
-            <Modal show={props.show} onHide={handleHide}>
+            <Modal show={this.props.show} onHide={this.handleHide}>
                 <Modal.Header closeButton>
                     <Modal.Title>
                         Brew Detail
@@ -50,7 +54,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    timestampString
+                                    timestamp
                                 }
                             </div>
                         </ListGroup.Item>
@@ -60,7 +64,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    props.brew.coffee.name
+                                    this.props.brew.coffee.name
                                 }
                             </div>
                         </ListGroup.Item>
@@ -70,7 +74,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    props.brew.water.name
+                                    this.props.brew.water.name
                                 }
                             </div>
                         </ListGroup.Item>
@@ -80,7 +84,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    props.brew!.brewer.name
+                                    this.props.brew!.brewer.name
                                 }
                             </div>
                         </ListGroup.Item>
@@ -90,7 +94,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    props.brew.filter.name
+                                    this.props.brew.filter.name
                                 }
                             </div>
                         </ListGroup.Item>
@@ -100,7 +104,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    props.brew.vessel.name
+                                    this.props.brew.vessel.name
                                 }
                             </div>
                         </ListGroup.Item>
@@ -110,7 +114,7 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    coffeeMassString
+                                    coffeeMass
                                 }
                             </div>
                         </ListGroup.Item>
@@ -120,15 +124,15 @@ function ReadBrewModal(props: Props): ReactElement {
                             </div>
                             <div>
                                 {
-                                    waterMassString
+                                    waterMass
                                 }
                             </div>
                         </ListGroup.Item>
                     </ListGroup>
                 </Modal.Body>
             </Modal>
-        </>
-    );
-} //ReadBrewModal
+        );
+    } //render
+}
 
 export default ReadBrewModal;

@@ -49,7 +49,9 @@ function BrewCard() {
             </Card>
             <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
                              setNextDisabled={setNextDisabled} setBrews={setBrews} />
-            <ReadBrewModal brew={brew} show={readShow} setShow={setReadShow} />
+            {
+                (brew !== null) && <ReadBrewModal brew={brew} show={readShow} setShow={setReadShow} />
+            }
             {
                 (brew !== null) && <UpdateBrewModal brew={brew} show={updateShow} setShow={setUpdateShow}
                                                     setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled}
