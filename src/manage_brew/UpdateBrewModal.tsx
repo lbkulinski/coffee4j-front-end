@@ -8,6 +8,7 @@ import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
 import {Option, loadOptions, getRecordPromise} from "./loadOptions";
 import {DateTime} from "luxon";
+import loadBrews from "./loadBrews";
 
 interface Props {
     brew: Brew,
@@ -466,6 +467,10 @@ class UpdateBrewModal extends React.Component<Props, State> {
 
                      return;
                  } //end if
+
+                 const offsetIds: number[] = [];
+
+                 loadBrews(offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
 
                  this.setState({
                      "showSuccess": true
