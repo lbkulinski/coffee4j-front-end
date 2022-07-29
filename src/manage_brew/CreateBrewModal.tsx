@@ -1,4 +1,4 @@
-import React, {CSSProperties, useState} from "react";
+import React, {CSSProperties, ReactElement, ReactNode, useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
@@ -53,6 +53,10 @@ interface Props {
     setBrews: (brews: Brew[]) => void
 }
 
+interface State {
+}
+
+/*
 function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
                         setShowSuccess: (showSuccess: boolean) => void,
                         setShowError: (showError: boolean) => void, setOffsetIds: (offsetIds: number[]) => void,
@@ -646,5 +650,15 @@ function CreateBrewModal(props: Props) {
         </>
     );
 } //CreateBrewModal
+*/
+
+class CreateBrewModal extends React.Component<Props, State> {
+    public render(): ReactNode {
+        return (
+            <>
+            </>
+        );
+    } //render
+}
 
 export default CreateBrewModal;
