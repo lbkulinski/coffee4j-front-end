@@ -2,47 +2,17 @@ import React, {CSSProperties, ReactElement, ReactNode, useState} from "react";
 import {Form, Modal, Toast, ToastContainer} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import {AxiosResponse} from "axios";
+import {AxiosResponse, default as axios} from "axios";
 import {SingleValue} from "react-select";
 import RecordType from "../manage_record/RecordType";
 import Brew from "./Brew";
 import loadBrews from "./loadBrews";
 import {Option, loadOptions, getRecordPromise} from "./loadOptions";
+import {DateTime} from "luxon";
 
 interface CreateResponse {
     status: string,
     content: string
-}
-
-interface CreateBrewValues {
-    coffee: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    water: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    brewer: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    filter: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    vessel: {
-        value: Option | null,
-        setShowError: (showError: CSSProperties) => void
-    },
-    coffeeMass: {
-        value: number,
-        setShowError: (showError: CSSProperties) => void
-    },
-    waterMass: {
-        value: number,
-        setShowError: (showError: CSSProperties) => void
-    }
 }
 
 interface Props {
@@ -54,608 +24,575 @@ interface Props {
 }
 
 interface State {
+    coffee: Option | null,
+    showCoffeeError: CSSProperties,
+    water: Option | null,
+    showWaterError: CSSProperties,
+    brewer: Option | null,
+    showBrewerError: CSSProperties,
+    filter: Option | null,
+    showFilterError: CSSProperties,
+    vessel: Option | null,
+    showVesselError: CSSProperties,
+    coffeeMass: number,
+    showCoffeeMassError: CSSProperties,
+    waterMass: number,
+    showWaterMassError: CSSProperties,
+    showSuccess: boolean,
+    showError: boolean
 }
 
-/*
-function processResults(results: (number | null)[], coffeeMass: number, waterMass: number,
-                        setShowSuccess: (showSuccess: boolean) => void,
-                        setShowError: (showError: boolean) => void, setOffsetIds: (offsetIds: number[]) => void,
-                        setNextDisabled: (nextDisabled: boolean) => void, setBrews: (brews: Brew[]) => void): void {
-    const coffeeId = results[0];
-
-    if (coffeeId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const waterId = results[1];
-
-    if (waterId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const brewerId = results[2];
-
-    if (brewerId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const filterId = results[3];
-
-    if (filterId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const vesselId = results[4];
-
-    if (vesselId === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const requestUrl = "/api/brew";
-
-    const formData = new FormData();
-
-    const coffeeIdString = String(coffeeId);
-
-    formData.append("coffeeId", coffeeIdString);
-
-    const waterIdString = String(waterId);
-
-    formData.append("waterId", waterIdString);
-
-    const brewerIdString = String(brewerId);
-
-    formData.append("brewerId", brewerIdString);
-
-    const filterIdString = String(filterId);
-
-    formData.append("filterId", filterIdString);
-
-    const vesselIdString = String(vesselId);
-
-    formData.append("vesselId", vesselIdString);
-
-    const coffeeMassString = String(coffeeMass);
-
-    formData.append("coffeeMass", coffeeMassString);
-
-    const waterMassString = String(waterMass);
-
-    formData.append("waterMass", waterMassString);
-
-    const config = {
-        "withCredentials": true,
-    };
-
-    const axios = require("axios").default;
-
-    axios.post(requestUrl, formData, config)
-         .then((response: AxiosResponse<CreateResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 setShowError(true);
-
-                 return;
-             } //end if
-
-             const offsetIds: number[] = [];
-
-             loadBrews(offsetIds, setOffsetIds, setNextDisabled, setBrews);
-
-             setShowSuccess(true);
-         })
-         .catch(() => {
-             setShowError(true);
-         });
-} //processResults
-
-function saveBrew(createBrewValues: CreateBrewValues, setShow: (show: boolean) => void,
-                  setShowSuccess: (showSuccess: boolean) => void,
-                  setShowError: (showError: boolean) => void, props: Props): void {
-    let dataValid = true;
-
-    if (createBrewValues.coffee.value === null) {
-        createBrewValues.coffee.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (createBrewValues.water.value === null) {
-        createBrewValues.water.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (createBrewValues.brewer.value === null) {
-        createBrewValues.brewer.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (createBrewValues.filter.value === null) {
-        createBrewValues.filter.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (createBrewValues.vessel.value === null) {
-        createBrewValues.vessel.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (isNaN(createBrewValues.coffeeMass.value)) {
-        createBrewValues.coffeeMass.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (isNaN(createBrewValues.waterMass.value)) {
-        createBrewValues.waterMass.setShowError({
-            "display": "block"
-        });
-
-        dataValid = false;
-    } //end if
-
-    if (!dataValid) {
-        return;
-    } //end if
-
-    setShow(false);
-
-    const coffeeOption = createBrewValues.coffee.value;
-
-    if (coffeeOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const coffeePromise = getRecordPromise(coffeeOption, RecordType.COFFEE);
-
-    const waterOption = createBrewValues.water.value;
-
-    if (waterOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const waterPromise = getRecordPromise(waterOption, RecordType.WATER);
-
-    const brewerOption = createBrewValues.brewer.value;
-
-    if (brewerOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const brewerPromise = getRecordPromise(brewerOption, RecordType.BREWER);
-
-    const filterOption = createBrewValues.filter.value;
-
-    if (filterOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const filterPromise = getRecordPromise(filterOption, RecordType.FILTER);
-
-    const vesselOption = createBrewValues.vessel.value;
-
-    if (vesselOption === null) {
-        setShowError(true);
-
-        return;
-    } //end if
-
-    const vesselPromise = getRecordPromise(vesselOption, RecordType.VESSEL);
-
-    const coffeeMass = createBrewValues.coffeeMass.value;
-
-    const waterMass = createBrewValues.waterMass.value;
-
-    const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
-
-    Promise.all(promises)
-           .then((results) => processResults(results, coffeeMass, waterMass, setShowSuccess, setShowError,
-                                                 props.setOffsetIds, props.setNextDisabled, props.setBrews));
-} //saveBrew
-
-function CreateBrewModal(props: Props) {
-    const [coffee, setCoffee] = useState<Option | null>(null);
-
-    const [showCoffeeError, setShowCoffeeError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadCoffeeOptions = (searchTerm: string) => loadOptions(RecordType.COFFEE, searchTerm);
-
-    const handleCoffeeChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setCoffee(newValue);
-        
-        setShowCoffeeError({
-            "display": "none"
-        });
-    };
-
-    const [water, setWater] = useState<Option | null>(null);
-
-    const [showWaterError, setShowWaterError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadWaterOptions = (searchTerm: string) => loadOptions(RecordType.WATER, searchTerm);
-
-    const handleWaterChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-       setWater(newValue);
-        
-        setShowWaterError({
-            "display": "none"
-        });
-    };
-
-    const [brewer, setBrewer] = useState<Option | null>(null);
-
-    const [showBrewerError, setShowBrewerError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadBrewerOptions = (searchTerm: string) => loadOptions(RecordType.BREWER, searchTerm);
-
-    const handleBrewerChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setBrewer(newValue);
-        
-        setShowBrewerError({
-            "display": "none"
-        });
-    };
-
-    const [filter, setFilter] = useState<Option | null>(null);
-
-    const [showFilterError, setShowFilterError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadFilterOptions = (searchTerm: string) => loadOptions(RecordType.FILTER, searchTerm);
-
-    const handleFilterChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setFilter(newValue);
-        
-        setShowFilterError({
-            "display": "none"
-        });
-    };
-
-    const [vessel, setVessel] = useState<Option | null>(null);
-
-    const [showVesselError, setShowVesselError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const loadVesselOptions = (searchTerm: string) => loadOptions(RecordType.VESSEL, searchTerm);
-
-    const handleVesselChange = (newValue: SingleValue<Option>) => {
-        if (newValue === null) {
-            return;
-        } //end if
-
-        setVessel(newValue);
-
-        setShowVesselError({
-            "display": "none"
-        });
-    };
-
-    const [coffeeMass, setCoffeeMass] = useState(18.0);
-
-    const [showCoffeeMassError, setShowCoffeeMassError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const handleCoffeeMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = Number(event.target.value);
-
-        setCoffeeMass(newValue);
-
-        if (isNaN(newValue)) {
-            setShowCoffeeMassError({
-                "display": "block"
-            });
-
-            return;
-        } //end if
-
-        setShowCoffeeMassError({
-            "display": "none"
-        });
-    };
-
-    const [waterMass, setWaterMass] = useState(300.0);
-
-    const [showWaterMassError, setShowWaterMassError] = useState<CSSProperties>({
-        "display": "none"
-    });
-
-    const handleWaterMassChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const newValue = Number(event.target.value);
-
-        setWaterMass(newValue);
-
-        if (isNaN(newValue)) {
-            setShowWaterMassError({
-                "display": "block"
-            });
-
-            return;
-        } //end if
-        
-        setShowWaterMassError({
-            "display": "none"
-        });
-    };
-
-    const hideModal = () => {
-        props.setShow(false);
-
-        setCoffee(null);
-
-        setShowCoffeeError({
-            "display": "none"
-        });
-
-        setWater(null);
-
-        setShowWaterError({
-            "display": "none"
-        });
-
-        setBrewer(null);
-
-        setShowBrewerError({
-            "display": "none"
-        });
-
-        setFilter(null);
-
-        setShowFilterError({
-            "display": "none"
-        });
-
-        setVessel(null);
-
-        setShowVesselError({
-            "display": "none"
-        });
-
-        const defaultCoffeeMass = 18;
-
-        setCoffeeMass(defaultCoffeeMass);
-
-        setShowCoffeeMassError({
-            "display": "none"
-        });
-
-        const defaultWaterMass = 300;
-
-        setWaterMass(defaultWaterMass);
-
-        setShowWaterMassError({
-            "display": "none"
-        });
-    };
-
-    const [showSuccess, setShowSuccess] = useState(false);
-
-    const hideSuccessToast = () => setShowSuccess(false);
-
-    const successMessage = "The specified brew was successfully created.";
-
-    const [showError, setShowError] = useState(false);
-
-    const hideErrorToast = () => setShowError(false);
-
-    const errorMessage = "The specified brew could not be created.";
-
-    const handleClose = () => props.setShow(false);
-
-    const handleSave = () => {
-        const createBrewValues: CreateBrewValues = {
-            "coffee": {
-                "value": coffee,
-                "setShowError": setShowCoffeeError
+class CreateBrewModal extends React.Component<Props, State> {
+    public constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            "coffee": null,
+            "showCoffeeError": {
+                "display": "none"
             },
-            "water": {
-                "value": water,
-                "setShowError": setShowWaterError
+            "water": null,
+            "showWaterError": {
+                "display": "none"
             },
-            "brewer": {
-                "value": brewer,
-                "setShowError": setShowBrewerError
+            "brewer": null,
+            "showBrewerError": {
+                "display": "none"
             },
-            "filter": {
-                "value": filter,
-                "setShowError": setShowFilterError
+            "filter": null,
+            "showFilterError": {
+                "display": "none"
             },
-            "vessel": {
-                "value": vessel,
-                "setShowError": setShowVesselError
+            "vessel": null,
+            "showVesselError": {
+                "display": "none"
             },
-            "coffeeMass": {
-                "value": coffeeMass,
-                "setShowError": setShowCoffeeMassError
+            "coffeeMass": 18,
+            "showCoffeeMassError": {
+                "display": "none"
             },
-            "waterMass": {
-                "value": waterMass,
-                "setShowError": setShowWaterMassError
-            }
+            "waterMass": 300,
+            "showWaterMassError": {
+                "display": "none"
+            },
+            "showSuccess": false,
+            "showError": false
         };
 
-        saveBrew(createBrewValues, props.setShow, setShowSuccess, setShowError, props);
-    };
+        this.hideModal = this.hideModal.bind(this);
 
-    return (
-        <>
-            <Modal show={props.show} onHide={hideModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        Create
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Coffee
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadCoffeeOptions} defaultOptions={true}
-                                              onChange={handleCoffeeChange} />
-                        <Form.Control.Feedback type="invalid" style={showCoffeeError}>
-                            Please select a coffee.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Water
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadWaterOptions} defaultOptions={true}
-                                              onChange={handleWaterChange} />
-                        <Form.Control.Feedback type="invalid" style={showWaterError}>
-                            Please select a water.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Brewer
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadBrewerOptions} defaultOptions={true}
-                                              onChange={handleBrewerChange} />
-                        <Form.Control.Feedback type="invalid" style={showBrewerError}>
-                            Please select a brewer.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Filter
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadFilterOptions} defaultOptions={true}
-                                              onChange={handleFilterChange} />
-                        <Form.Control.Feedback type="invalid" style={showFilterError}>
-                            Please select a filter.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Vessel
-                        </Form.Label>
-                        <AsyncCreatableSelect cacheOptions loadOptions={loadVesselOptions} defaultOptions={true}
-                                              onChange={handleVesselChange} />
-                        <Form.Control.Feedback type="invalid" style={showVesselError}>
-                            Please select a vessel.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Coffee Mass
-                        </Form.Label>
-                        <Form.Control type="text" defaultValue="18" onChange={handleCoffeeMassChange} />
-                        <Form.Control.Feedback type="invalid" style={showCoffeeMassError}>
-                            Please enter a valid coffee mass.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>
-                            Water Mass
-                        </Form.Label>
-                        <Form.Control type="text" defaultValue="300" onChange={handleWaterMassChange} />
-                        <Form.Control.Feedback type="invalid" style={showWaterMassError}>
-                            Please enter a valid water mass.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="outline-primary" onClick={handleSave}>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <ToastContainer className="p-3" position="top-end">
-                <Toast show={showSuccess} onClose={hideSuccessToast} delay={3000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">
-                            Coffee4j
-                        </strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        {
-                            successMessage
-                        }
-                    </Toast.Body>
-                </Toast>
-                <Toast show={showError} onClose={hideErrorToast} delay={3000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">
-                            Coffee4j
-                        </strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        {
-                            errorMessage
-                        }
-                    </Toast.Body>
-                </Toast>
-            </ToastContainer>
-        </>
-    );
-} //CreateBrewModal
-*/
+        this.loadCoffeeOptions = this.loadCoffeeOptions.bind(this);
 
-class CreateBrewModal extends React.Component<Props, State> {
+        this.handleCoffeeChange = this.handleCoffeeChange.bind(this);
+
+        this.loadWaterOptions = this.loadWaterOptions.bind(this);
+
+        this.handleWaterChange = this.handleWaterChange.bind(this);
+
+        this.loadBrewerOptions = this.loadBrewerOptions.bind(this);
+
+        this.handleBrewerChange = this.handleBrewerChange.bind(this);
+
+        this.loadFilterOptions = this.loadFilterOptions.bind(this);
+
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+
+        this.loadVesselOptions = this.loadVesselOptions.bind(this);
+
+        this.handleVesselChange = this.handleVesselChange.bind(this);
+
+        this.handleCoffeeMassChange = this.handleCoffeeMassChange.bind(this);
+
+        this.handleWaterMassChange = this.handleWaterMassChange.bind(this);
+
+        this.handleClose = this.handleClose.bind(this);
+
+        this.handleResults = this.handleResults.bind(this);
+
+        this.handleSave = this.handleSave.bind(this);
+
+        this.hideSuccessToast = this.hideSuccessToast.bind(this);
+
+        this.hideErrorToast = this.hideErrorToast.bind(this);
+    } //constructor
+
+    private hideModal(): void {
+        this.props.setShow(false);
+    } //hideModal
+
+    private loadCoffeeOptions(searchTerm: string): Promise<Option[]> {
+        return loadOptions(RecordType.COFFEE, searchTerm);
+    } //loadCoffeeOptions
+
+    private handleCoffeeChange(newValue: SingleValue<Option>): void {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        this.setState({
+            "coffee": newValue,
+            "showCoffeeError": {
+                "display": "none"
+            }
+        });
+    } //handleCoffeeChange
+
+    private loadWaterOptions(searchTerm: string): Promise<Option[]> {
+        return loadOptions(RecordType.WATER, searchTerm);
+    } //loadWaterOptions
+
+    private handleWaterChange(newValue: SingleValue<Option>): void {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        this.setState({
+            "water": newValue,
+            "showWaterError": {
+                "display": "none"
+            }
+        });
+    } //handleWaterChange
+
+    private loadBrewerOptions(searchTerm: string): Promise<Option[]> {
+        return loadOptions(RecordType.BREWER, searchTerm);
+    } //loadBrewerOptions
+
+    private handleBrewerChange(newValue: SingleValue<Option>): void {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        this.setState({
+            "brewer": newValue,
+            "showBrewerError": {
+                "display": "none"
+            }
+        });
+    } //handleBrewerChange
+
+    private loadFilterOptions(searchTerm: string): Promise<Option[]> {
+        return loadOptions(RecordType.FILTER, searchTerm);
+    } //loadFilterOptions
+
+    private handleFilterChange(newValue: SingleValue<Option>): void {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        this.setState({
+            "filter": newValue,
+            "showFilterError": {
+                "display": "none"
+            }
+        });
+    } //handleFilterChange
+
+    private loadVesselOptions(searchTerm: string): Promise<Option[]> {
+        return loadOptions(RecordType.VESSEL, searchTerm);
+    } //loadVesselOptions
+
+    private handleVesselChange(newValue: SingleValue<Option>): void {
+        if (newValue === null) {
+            return;
+        } //end if
+
+        this.setState({
+            "vessel": newValue,
+            "showVesselError": {
+                "display": "none"
+            }
+        });
+    } //handleVesselChange
+
+    private handleCoffeeMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+        const newValue = Number(event.target.value);
+
+        let showCoffeeMassError;
+
+        if (isNaN(newValue)) {
+            showCoffeeMassError = {
+                "display": "block"
+            };
+        } else {
+            showCoffeeMassError = {
+                "display": "none"
+            };
+        } //end if
+
+        this.setState({
+            "coffeeMass": newValue,
+            "showCoffeeMassError": showCoffeeMassError
+        });
+    } //handleCoffeeMassChange
+
+    private handleWaterMassChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+        const newValue = Number(event.target.value);
+
+        let showWaterMassError;
+
+        if (isNaN(newValue)) {
+            showWaterMassError = {
+                "display": "block"
+            };
+        } else {
+            showWaterMassError = {
+                "display": "none"
+            };
+        } //end if
+
+        this.setState({
+            "waterMass": newValue,
+            "showWaterMassError": showWaterMassError
+        });
+    } //handleWaterMassChange
+
+    private handleClose(): void {
+        this.props.setShow(false);
+    } //handleClose
+
+    private handleResults(results: (number | null)[]): void {
+        const format = "yyyy-LL-dd'T'HH:mm:ss'.'u'Z'";
+
+        const timestamp = DateTime.utc()
+                                  .toFormat(format);
+
+        const coffeeId = results[0];
+
+        if (coffeeId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const waterId = results[1];
+
+        if (waterId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const brewerId = results[2];
+
+        if (brewerId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const filterId = results[3];
+
+        if (filterId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const vesselId = results[4];
+
+        if (vesselId === null) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        if ((this.state.coffeeMass === null) || isNaN(this.state.coffeeMass)) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        if ((this.state.waterMass === null) || isNaN(this.state.waterMass)) {
+            this.setState({
+                "showError": true
+            });
+
+            return;
+        } //end if
+
+        const requestUrl = "/api/brew";
+
+        const data = {
+            "timestamp": timestamp,
+            "coffeeId": coffeeId,
+            "waterId": waterId,
+            "brewerId": brewerId,
+            "filterId": filterId,
+            "vesselId": vesselId,
+            "coffeeMass": this.state.coffeeMass,
+            "waterMass": this.state.waterMass
+        };
+
+        const formData = new FormData();
+
+        Object.entries(data)
+              .forEach(([key, value]) => {
+                  const valueString = String(value);
+
+                  formData.append(key, valueString);
+              });
+
+        const config = {
+            "withCredentials": true,
+        };
+
+        const axios = require("axios").default;
+
+        axios.post(requestUrl, formData, config)
+             .then((response: AxiosResponse<CreateResponse>) => {
+                 if (response.data.status !== "SUCCESS") {
+                     this.setState({
+                         "showError": true
+                     });
+
+                     return;
+                 } //end if
+
+                 const offsetIds: number[] = [];
+
+                 loadBrews(offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+
+                 this.setState({
+                     "showSuccess": true
+                 });
+             })
+             .catch(() => {
+                 this.setState({
+                     "showError": true
+                 });
+             });
+    } //handleResults
+
+    private handleSave(): void {
+        let dataValid = true;
+
+        if (this.state.coffee === null) {
+            this.setState({
+                "showCoffeeError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.water === null) {
+            this.setState({
+                "showWaterError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.brewer === null) {
+            this.setState({
+                "showBrewerError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.filter === null) {
+            this.setState({
+                "showFilterError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (this.state.vessel === null) {
+            this.setState({
+                "showVesselError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if ((this.state.coffeeMass === null) || isNaN(this.state.coffeeMass)) {
+            this.setState({
+                "showCoffeeMassError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if ((this.state.waterMass === null) || isNaN(this.state.waterMass)) {
+            this.setState({
+                "showWaterMassError": {
+                    "display": "block"
+                }
+            });
+
+            dataValid = false;
+        } //end if
+
+        if (!dataValid) {
+            return;
+        } //end if
+
+        this.props.setShow(false);
+
+        const coffeePromise = getRecordPromise(this.state.coffee!, RecordType.COFFEE);
+
+        const waterPromise = getRecordPromise(this.state.water!, RecordType.WATER);
+
+        const brewerPromise = getRecordPromise(this.state.brewer!, RecordType.BREWER);
+
+        const filterPromise = getRecordPromise(this.state.filter!, RecordType.FILTER);
+
+        const vesselPromise = getRecordPromise(this.state.vessel!, RecordType.VESSEL);
+
+        const promises = [coffeePromise, waterPromise, brewerPromise, filterPromise, vesselPromise];
+
+        Promise.all(promises)
+               .then(this.handleResults);
+    } //handleSave
+
+    private hideSuccessToast(): void {
+        this.setState({
+            "showSuccess": false
+        });
+    } //hideSuccessToast
+
+    private hideErrorToast(): void {
+        this.setState({
+            "showError": false
+        });
+    } //hideErrorToast
+
     public render(): ReactNode {
         return (
             <>
+                <Modal show={this.props.show} onHide={this.hideModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            Create
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Coffee
+                            </Form.Label>
+                            <AsyncCreatableSelect cacheOptions loadOptions={this.loadCoffeeOptions}
+                                                  defaultOptions={true} onChange={this.handleCoffeeChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showCoffeeError}>
+                                Please select a coffee.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Water
+                            </Form.Label>
+                            <AsyncCreatableSelect cacheOptions loadOptions={this.loadWaterOptions}
+                                                  defaultOptions={true} onChange={this.handleWaterChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showWaterError}>
+                                Please select a water.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Brewer
+                            </Form.Label>
+                            <AsyncCreatableSelect cacheOptions loadOptions={this.loadBrewerOptions}
+                                                  defaultOptions={true} onChange={this.handleBrewerChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showBrewerError}>
+                                Please select a brewer.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Filter
+                            </Form.Label>
+                            <AsyncCreatableSelect cacheOptions loadOptions={this.loadFilterOptions}
+                                                  defaultOptions={true} onChange={this.handleFilterChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showFilterError}>
+                                Please select a filter.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Vessel
+                            </Form.Label>
+                            <AsyncCreatableSelect cacheOptions loadOptions={this.loadVesselOptions}
+                                                  defaultOptions={true} onChange={this.handleVesselChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showVesselError}>
+                                Please select a vessel.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Coffee Mass
+                            </Form.Label>
+                            <Form.Control type="text" defaultValue="18" onChange={this.handleCoffeeMassChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showCoffeeMassError}>
+                                Please enter a valid coffee mass.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                Water Mass
+                            </Form.Label>
+                            <Form.Control type="text" defaultValue="300" onChange={this.handleWaterMassChange} />
+                            <Form.Control.Feedback type="invalid" style={this.state.showWaterMassError}>
+                                Please enter a valid water mass.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="outline-secondary" onClick={this.handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="outline-primary" onClick={this.handleSave}>
+                            Save
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <ToastContainer className="p-3" position="top-end">
+                    <Toast show={this.state.showSuccess} onClose={this.hideSuccessToast} delay={3000} autohide>
+                        <Toast.Header>
+                            <strong className="me-auto">
+                                Coffee4j
+                            </strong>
+                        </Toast.Header>
+                        <Toast.Body>
+                            The specified brew was successfully created.
+                        </Toast.Body>
+                    </Toast>
+                    <Toast show={this.state.showError} onClose={this.hideErrorToast} delay={3000} autohide>
+                        <Toast.Header>
+                            <strong className="me-auto">
+                                Coffee4j
+                            </strong>
+                        </Toast.Header>
+                        <Toast.Body>
+                            The specified brew could not be created. Please try again later.
+                        </Toast.Body>
+                    </Toast>
+                </ToastContainer>
             </>
         );
     } //render

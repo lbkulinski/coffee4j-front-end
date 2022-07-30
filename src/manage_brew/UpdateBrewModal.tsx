@@ -50,60 +50,58 @@ class UpdateBrewModal extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
 
-        const brew = this.props.brew;
-
         const options = {
             "zone": "utc"
         };
 
         const format = "yyyy-LL-dd'T'HH:mm";
 
-        const timestamp = DateTime.fromISO(brew.timestamp, options)
+        const timestamp = DateTime.fromISO(this.props.brew.timestamp, options)
                                   .toLocal()
                                   .toFormat(format);
 
-        const coffeeValue = String(brew.coffee.id);
+        const coffeeValue = String(this.props.brew.coffee.id);
 
         const coffee: Option = {
             "value": coffeeValue,
-            "label": brew.coffee.name,
+            "label": this.props.brew.coffee.name,
             "__isNew__": false
         };
 
-        const waterValue = String(brew.water.id);
+        const waterValue = String(this.props.brew.water.id);
 
         const water: Option = {
             "value": waterValue,
-            "label": brew.water.name,
+            "label": this.props.brew.water.name,
             "__isNew__": false
         };
 
-        const brewerValue = String(brew.brewer.id);
+        const brewerValue = String(this.props.brew.brewer.id);
 
         const brewer: Option = {
             "value": brewerValue,
-            "label": brew.brewer.name,
+            "label": this.props.brew.brewer.name,
             "__isNew__": false
         };
 
-        const filterValue = String(brew.filter.id);
+        const filterValue = String(this.props.brew.filter.id);
 
         const filter: Option = {
             "value": filterValue,
-            "label": brew.filter.name,
+            "label": this.props.brew.filter.name,
             "__isNew__": false
         };
 
-        const vesselValue = String(brew.vessel.id);
+        const vesselValue = String(this.props.brew.vessel.id);
 
         const vessel: Option = {
             "value": vesselValue,
-            "label": brew.vessel.name,
+            "label": this.props.brew.vessel.name,
             "__isNew__": false
         };
 
         this.state = {
-            "id": brew.id,
+            "id": this.props.brew.id,
             "timestamp": timestamp,
             "showTimestampError": {
                 "display": "none"
@@ -128,11 +126,11 @@ class UpdateBrewModal extends React.Component<Props, State> {
             "showVesselError": {
                 "display": "none"
             },
-            "coffeeMass": brew.coffeeMass,
+            "coffeeMass": this.props.brew.coffeeMass,
             "showCoffeeMassError": {
                 "display": "none"
             },
-            "waterMass": brew.waterMass,
+            "waterMass": this.props.brew.waterMass,
             "showWaterMassError": {
                 "display": "none"
             },
@@ -841,7 +839,7 @@ class UpdateBrewModal extends React.Component<Props, State> {
                             </strong>
                         </Toast.Header>
                         <Toast.Body>
-                            The specified brew could not be updated.
+                            The specified brew could not be updated. Please try again later.
                         </Toast.Body>
                     </Toast>
                 </ToastContainer>
