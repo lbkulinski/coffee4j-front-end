@@ -195,21 +195,21 @@ class BrewCard extends React.Component<Props, State> {
             offsetIds: offsetIdsCopy
         });
 
-        loadBrews(offsetIdsCopy, this.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+        //loadBrews(offsetIdsCopy, this.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
     } //loadPreviousBrews
 
     private loadNextBrews(): void {
-        if (this.props.offsetIds.length >= 1) {
+        if (this.state.offsetIds.length >= 1) {
             this.setState({
                 "previousDisabled": false
             });
         } //end if
 
-        loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+        //loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
     } //loadNextBrews
 
     public componentDidMount() {
-        loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+        //loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
     } //componentDidMount
 
     public render(): ReactNode {
@@ -237,16 +237,18 @@ class BrewCard extends React.Component<Props, State> {
                         </Pagination>
                     </Card.Body>
                 </Card>
+                {/*
                 <CreateBrewModal show={createShow} setShow={setCreateShow} setOffsetIds={setOffsetIds}
                                  setNextDisabled={setNextDisabled} setBrews={setBrews} />
-                {
+                */}
+                {/*
                     (brew !== null) && <ReadBrewModal brew={brew} show={readShow} setShow={setReadShow} />
-                }
-                {
+                */}
+                {/*
                     (brew !== null) && <UpdateBrewModal brew={brew} show={updateShow} setShow={setUpdateShow}
                                                         setOffsetIds={setOffsetIds} setNextDisabled={setNextDisabled}
                                                         setBrews={setBrews} />
-                }
+                */}
             </>
         );
     } //render

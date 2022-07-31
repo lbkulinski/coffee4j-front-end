@@ -1,4 +1,4 @@
-import {AxiosResponse} from "axios";
+import {AxiosResponse, default as axios} from "axios";
 import Brew from "./Brew";
 
 interface ReadResponse {
@@ -6,54 +6,55 @@ interface ReadResponse {
     content: Brew[]
 }
 
-function loadBrews(offsetIds: number[], setOffsetIds: (offsetIds: number[]) => void,
-                   setNextDisabled: (nextDisabled: boolean) => void, setBrews: (brews: Brew[]) => void): void {
-    const lastIndex = offsetIds.length - 1;
+function loadBrews(offsetId?: number): Promise<Brew[]> {
+    return new Promise<Brew[]>((resolve) => {
+        let requestUrl = "/api/brew";
 
-    let requestUrl = "/api/brew";
+        if (offsetId !== undefined) {
+            requestUrl = `${requestUrl}?offsetId=${offsetId}`;
+        } //end if
 
-    if (lastIndex >= 0) {
-        const lastOffsetId = offsetIds[lastIndex];
+        const config = {
+            "withCredentials": true
+        };
 
-        requestUrl = `${requestUrl}?offsetId=${lastOffsetId}`;
-    } //end if
+        const axios = require("axios").default;
 
-    const config = {
-        "withCredentials": true
-    };
+        axios.get(requestUrl, config)
+             .then((response: AxiosResponse<ReadResponse>) => {
+                 if (response.data.status !== "SUCCESS") {
+                     return;
+                 } //end if
 
-    const axios = require("axios").default;
+                 const content = response.data.content;
 
-    axios.get(requestUrl, config)
-         .then((response: AxiosResponse<ReadResponse>) => {
-             if (response.data.status !== "SUCCESS") {
-                 return;
-             } //end if
+                 resolve(content);
 
-             const content = response.data.content;
+                 /*
+                 const expectedLength = 10;
 
-             const expectedLength = 10;
+                 const recordCount = parseInt(response.headers["x-record-count"]);
 
-             const recordCount = parseInt(response.headers["x-record-count"]);
+                 const nextDisabled = (content.length !== expectedLength) || ((offsetIds.length * 10) === recordCount);
 
-             const nextDisabled = (content.length !== expectedLength) || ((offsetIds.length * 10) === recordCount);
+                 setNextDisabled(nextDisabled);
 
-             setNextDisabled(nextDisabled);
+                 const lastIndex = content.length - 1;
 
-             const lastIndex = content.length - 1;
+                 const offsetIdsCopy = [...offsetIds];
 
-             const offsetIdsCopy = [...offsetIds];
+                 if (lastIndex >= 0) {
+                     const offsetId = content[lastIndex].id;
 
-             if (lastIndex >= 0) {
-                 const offsetId = content[lastIndex].id;
+                     offsetIdsCopy.push(offsetId);
 
-                 offsetIdsCopy.push(offsetId);
+                     setOffsetIds(offsetIdsCopy);
+                 } //end if
 
-                 setOffsetIds(offsetIdsCopy);
-             } //end if
-
-             setBrews(content);
-         });
+                 setBrews(content);
+                  */
+             });
+    });
 } //loadBrews
 
 export default loadBrews;
