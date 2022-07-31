@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
@@ -15,57 +15,73 @@ interface Props {
     setUpdateShow: (show: boolean) => void
 }
 
-function BrewRow(props: Props) {
-    const timeZone = {
-        "zone": "utc"
-    };
+interface State {
+}
 
-    const timestampString = DateTime.fromISO(props.brew.timestamp, timeZone)
-                                    .toLocal()
-                                    .toLocaleString(DateTime.DATETIME_SHORT);
+class BrewRow extends React.Component<Props, State> {
+    public constructor(props: Props) {
+        super(props);
 
-    const handleReadClick = () => {
-        props.setBrew(props.brew);
+        this.state = {
+        };
 
-        props.setReadShow(true);
-    };
+        this.handleReadClick = this.handleReadClick.bind(this);
 
-    const handleUpdateClick = () => {
-        props.setBrew(props.brew);
+        this.handleUpdateClick = this.handleUpdateClick.bind(this);
+    } //constructor
 
-        props.setUpdateShow(true);
-    };
+    private handleReadClick(): void {
+        this.props.setBrew(this.props.brew);
 
-    return (
-        <tr>
-            <td>
-                {
-                    timestampString
-                }
-            </td>
-            <td>
-                <Container>
-                    <Row>
-                        <Col xs="1">
-                            <a onClick={handleReadClick}>
-                                <FontAwesomeIcon icon={faEye} />
-                            </a>
-                        </Col>
-                        <Col xs="1">
-                            <a onClick={handleUpdateClick}>
-                                <FontAwesomeIcon icon={faPenToSquare} />
-                            </a>
-                        </Col>
-                        <Col xs="1">
-                            <a>
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </a>
-                        </Col>
-                    </Row>
-                </Container>
-            </td>
-        </tr>
-    );
-} //BrewRow
+        this.props.setReadShow(true);
+    } //handleReadClick
+
+    private handleUpdateClick(): void {
+        this.props.setBrew(this.props.brew);
+
+        this.props.setUpdateShow(true);
+    } //handleUpdateClick
+
+    public render(): ReactNode {
+        const timeZone = {
+            "zone": "utc"
+        };
+
+        const timestamp = DateTime.fromISO(this.props.brew.timestamp, timeZone)
+                                  .toLocal()
+                                  .toLocaleString(DateTime.DATETIME_SHORT);
+
+        return (
+            <tr>
+                <td>
+                    {
+                        timestamp
+                    }
+                </td>
+                <td>
+                    <Container>
+                        <Row>
+                            <Col xs="1">
+                                <a onClick={this.handleReadClick}>
+                                    <FontAwesomeIcon icon={faEye} />
+                                </a>
+                            </Col>
+                            <Col xs="1">
+                                <a onClick={this.handleUpdateClick}>
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                </a>
+                            </Col>
+                            <Col xs="1">
+                                <a>
+                                    <FontAwesomeIcon icon={faTrashCan} />
+                                </a>
+                            </Col>
+                        </Row>
+                    </Container>
+                </td>
+            </tr>
+        );
+    } //render
+}
 
 export default BrewRow;
