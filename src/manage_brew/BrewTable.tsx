@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,19 +20,29 @@ interface Props {
     setUpdateShow: (show: boolean) => void
 }
 
-function BrewTable(props: Props) {
-    const [previousDisabled, setPreviousDisabled] = useState(true);
+interface State {
+    previousDisabled: boolean,
+}
 
-    useEffect(() => {
-        loadBrews(props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setBrews);
-    }, []);
+class BrewTable extends React.Component<Props, State> {
+    public constructor(props: Props) {
+        super(props);
 
-    const loadPreviousBrews = () => {
-        if (props.offsetIds.length === 0) {
+        this.state = {
+            "previousDisabled": true
+        };
+
+        this.loadPreviousBrews = this.loadPreviousBrews.bind(this);
+
+        this.loadNextBrews = this.loadNextBrews.bind(this);
+    } //constructor
+
+    private loadPreviousBrews(): void {
+        if (this.props.offsetIds.length === 0) {
             return;
         } //end if
 
-        const offsetIdsCopy = [...props.offsetIds];
+        const offsetIdsCopy = [...this.props.offsetIds];
 
         offsetIdsCopy.pop();
 
@@ -41,54 +51,65 @@ function BrewTable(props: Props) {
         } //end if
 
         if (offsetIdsCopy.length === 0) {
-            setPreviousDisabled(true);
+            this.setState({
+                "previousDisabled": true
+            });
         } //end if
 
-        props.setOffsetIds(offsetIdsCopy);
+        this.props.setOffsetIds(offsetIdsCopy);
 
-        loadBrews(offsetIdsCopy, props.setOffsetIds, props.setNextDisabled, props.setBrews);
-    };
+        loadBrews(offsetIdsCopy, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+    } //loadPreviousBrews
 
-    const loadNextBrews = () => {
-        if (props.offsetIds.length >= 1) {
-            setPreviousDisabled(false);
+    private loadNextBrews(): void {
+        if (this.props.offsetIds.length >= 1) {
+            this.setState({
+                "previousDisabled": false
+            });
         } //end if
 
-        loadBrews(props.offsetIds, props.setOffsetIds, props.setNextDisabled, props.setBrews);
-    };
+        loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+    } //loadNextBrews
 
-    return (
-        <>
-            <Table striped hover responsive>
-                <thead>
-                <tr>
-                    <th>
-                        Timestamp
-                    </th>
-                    <th>
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    props.brews.map((brew: Brew) => (
-                        <BrewRow key={brew.id} brew={brew} setBrew={props.setBrew} setReadShow={props.setReadShow}
-                                 setUpdateShow={props.setUpdateShow} />
-                    ))
-                }
-                </tbody>
-            </Table>
-            <Pagination className="justify-content-end">
-                <Pagination.Prev disabled={previousDisabled} onClick={loadPreviousBrews}>
-                    <FontAwesomeIcon icon={faAngleLeft} />
-                </Pagination.Prev>
-                <Pagination.Next disabled={props.nextDisabled} onClick={loadNextBrews}>
-                    <FontAwesomeIcon icon={faAngleRight} />
-                </Pagination.Next>
-            </Pagination>
-        </>
-    );
-} //BrewTable
+    public componentDidMount() {
+        loadBrews(this.props.offsetIds, this.props.setOffsetIds, this.props.setNextDisabled, this.props.setBrews);
+    } //componentDidMount
+
+    public render(): ReactNode{
+        return (
+            <>
+                <Table striped hover responsive>
+                    <thead>
+                    <tr>
+                        <th>
+                            Timestamp
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        this.props.brews.map((brew: Brew) => <BrewRow key={brew.id} brew={brew}
+                                                                      setBrew={this.props.setBrew}
+                                                                      setReadShow={this.props.setReadShow}
+                                                                      setUpdateShow={this.props.setUpdateShow} />
+                        )
+                    }
+                    </tbody>
+                </Table>
+                <Pagination className="justify-content-end">
+                    <Pagination.Prev disabled={this.state.previousDisabled} onClick={this.loadPreviousBrews}>
+                        <FontAwesomeIcon icon={faAngleLeft} />
+                    </Pagination.Prev>
+                    <Pagination.Next disabled={this.props.nextDisabled} onClick={this.loadNextBrews}>
+                        <FontAwesomeIcon icon={faAngleRight} />
+                    </Pagination.Next>
+                </Pagination>
+            </>
+        );
+    } //render
+}
 
 export default BrewTable;
